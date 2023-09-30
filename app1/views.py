@@ -41190,7 +41190,12 @@ def view_bank(request,id):
     bank=bankings_G.objects.get(id=id)
     bank_list=bankings_G.objects.filter(cid=cmp1)
     trans=bank_transactions.objects.filter(banking_id=id)
-    return render(request,'app1/view_bank.html',{"bank":bank,'bl':bank_list,'trans':trans})
+    print(bank)
+    getloan=loan_transaction.objects.filter(to_trans=bank.bankname)
+    toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
+    
+
+    return render(request,'app1/view_bank.html',{"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
 
 
 
@@ -41599,11 +41604,17 @@ def delet_bank(request,id):
 def bnk_statement(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
     bank=bankings_G.objects.get(id=id)
+    print(bank)
     bnk=bank_transactions.objects.filter(banking=bank.id)
+    getloan=loan_transaction.objects.filter(to_trans=bank.bankname)
+    toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
+    print(getloan)
     context={
         'cmp1':cmp1,
         'bank':bank,
         'bnk':bnk,
+        'getloan':getloan,
+        'toloan':toloan
 
     }
     return render(request,'app1/bank_statement.html',context)
@@ -41613,12 +41624,14 @@ def cash_in_hand(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     bnk= bank_transactions.objects.filter(cid=cmp1)
     loan= loan_transaction.objects.filter(cid=cmp1)
-    
+    getloan=loan_transaction.objects.filter(to_trans='cash')
+    toloan=loan_transaction.objects.filter(from_trans='cash')
     context={
         'cmp1':cmp1,
         'bnk':bnk,
-        'loan':loan
-        
+        'loan':loan,
+        'getloan':getloan,
+        'toloan':toloan ,       
      }
     return render(request,'app1/cash_in_hand.html',context)
 
@@ -44668,60 +44681,38 @@ def loan_edit(request,id):
     return
 
 def loan_statement(request,id):
-    today_date = date.today().isoformat()
-    cmp1 = company.objects.get(id=request.session["uid"])
-    
-    bnk=loan_transaction.objects.filter(loan_id=id)
     loan=loan_account.objects.get(id=id)
-
-
-    
-
-    context={
+    cmp1 = company.objects.get(id=request.session["uid"])
+    if request.method == 'POST':
+        sdate=request.POST.get('sdate')
+        edate=request.POST.get('edate')
+        
+        searchrslt=loan_transaction.objects.raw('select * from app1_loan_transaction where loan_date between "'+sdate+'" and "'+edate+'" ')
+        context={
         'cmp1':cmp1,
-        'bnk':bnk,
+        'bnk':searchrslt,
         'ids':id,
         'loan':loan,
-        'today_date':today_date,
 
-    }
-    return render(request,'app1/loan_statement.html',context)
+        }
+        return render(request,'app1/loan_statement.html',context)
+    
+    else:
+        bnk=loan_transaction.objects.filter(loan_id=id)
+        loan=loan_account.objects.get(id=id)
+        cmp1 = company.objects.get(id=request.session["uid"])
 
+        
 
+        context={
+            'cmp1':cmp1,
+            'bnk':bnk,
+            'ids':id,
+            'loan':loan,
 
-def transactions_between_dates(request):
-    # Get the start and end dates from the request
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
+            }
+        return render(request,'app1/loan_statement.html',context)
 
-    # Convert start_date and end_date from string to datetime objects
-    start_date = datetime.strptime(start_date, '%Y-%m-%d')
-    end_date = datetime.strptime(end_date, '%Y-%m-%d')
-
-    # Query the database to retrieve transactions within the specified date range
-    transactions = get_list_or_404(bank_transactions, loan_date__range=[start_date, end_date])
-
-    # Serialize the transactions to JSON
-    serialized_transactions = [{
-        'bank_type': transaction.bank_type,
-        'from_trans': transaction.from_trans,
-        'to_trans': transaction.to_trans,
-        'amount': transaction.amount,
-        'adj_date': transaction.adj_date.strftime('%Y-%m-%d'),
-        'desc': transaction.desc,
-        'type': transaction.type,
-        'cash_adjust': transaction.cash_adjust,
-        'cash_cash': transaction.cash_cash,
-        'cash_description': transaction.cash_description,
-        'cash_date': transaction.cash_date.strftime('%Y-%m-%d'),
-        'loan_amount': transaction.loan_amount,
-        'loan_desc': transaction.loan_desc,
-        'loan_date': transaction.loan_date.strftime('%Y-%m-%d'),
-        'loan_intrest': transaction.loan_intrest,
-        'balance': transaction.balance,
-    } for transaction in transactions]
-
-    return JsonResponse(serialized_transactions, safe=False)
 
 def loan_pdf(request,id):
 
@@ -44774,3 +44765,6 @@ def inactive_status(request,id):
     loan.status = 'In-Active'
     loan.save()
     return redirect('loan_statement',id)
+
+def sales_report(request):
+    return render(request,'app1/sales_report.html')

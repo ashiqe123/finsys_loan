@@ -17,11 +17,17 @@
 
                    
         <!-- HTML -->
-                   <!-- HTML template with date input fields -->
-                <input type="date" id="start_date" value="{{ today_date }}">
-                <span class="ml-2 mr-2 mt-2"> TO </span>
-                <input type="date" id="end_date" value="{{ today_date }}">
-               
+            <!-- HTML template with date input fields -->
+           <form method='POST'>
+            {% csrf_token %}
+            <input type="date" id="start_date" name='sdate' value="{{ today_date }}">
+            <span class="ml-2 mr-2 mt-2"> TO </span>
+            <input type="date" id="end_date" name='edate' value="{{ today_date }}">
+            <input type="submit" value='View'>
+           </form>
+
+
+        
 
                 
 
@@ -495,4 +501,14 @@
        </script>
 
     {% endif %}
+
+
+    <script>
+        function filterDataByDate() {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            
+        }
+    </script>
+
     {% endblock %}

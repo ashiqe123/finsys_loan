@@ -1,7 +1,15 @@
 {% extends 'app1/base.html' %}
 {% load static %}
 {% block body %}
-
+<script>
+    function showAlertdelet() {
+        alert("You Can't Delete, pls go to loan section");
+    }
+    function showAlertedit() {
+        alert("You Can't Edit, pls go to loan section");
+    }
+    
+    </script>
 <div class="page-content">
     <div class="card radius-15 h-20">
         <div class="row">
@@ -81,7 +89,42 @@
                         <th>ACTION</th>
                     </thead>
                     <tbody>
-                   
+                        {% for i in toloan %}
+                        <tr>
+                            <td>{{i.bank_type}}</td>
+                            <td>{{i.type}}</td>
+                            <td>{{i.loan_date}}</td>
+                            <td>{{i.loan_desc}}</td>
+                            <td>{{i.loan_amount}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                        <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% for i in getloan %}
+                        <tr>
+                            <td>{{i.bank_type}}</td>
+                            <td>{{i.type}}</td>
+                            <td>{{i.loan_date}}</td>
+                            <td>{{i.loan_desc}}</td>
+                            <td>{{i.loan_amount}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                        <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
                {% for a in bnk %}
                         <tr>
                             {% if a.type != 'OPENING BAL' %}

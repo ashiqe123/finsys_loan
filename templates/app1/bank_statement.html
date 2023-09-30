@@ -342,7 +342,29 @@
                                     </tr>
                                     {% endfor %}
                                        
-                                   
+                                    {% for i in toloan %}
+                                    <tr>
+                                        
+                                        <td>{{i.type}}</td>
+                                        <td>{{i.bank_type}}</td>
+                                        <td>{{i.from_trans}}</td>
+                                        <td>{{i.loan_date}}</td>
+                                        <td>{{i.loan_amount}}</td>
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                    {% for i in getloan %}
+                                    <tr>
+                                       
+                                        <td>{{i.type}}</td>
+                                        <td>{{i.bank_type}}</td>
+                                        <td>{{i.from_trans}}</td>
+                                        <td>{{i.loan_date}}</td>
+                                        
+                                        <td>{{i.loan_amount}}</td>
+                                        
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </section>
