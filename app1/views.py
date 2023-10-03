@@ -44767,4 +44767,8 @@ def inactive_status(request,id):
     return redirect('loan_statement',id)
 
 def sales_report(request):
-    return render(request,'app1/sales_report.html')
+    cmp1 = company.objects.get(id=request.session["uid"])
+    context={
+        'cmp1':cmp1,
+    }
+    return render(request,'app1/sales_report.html',context)
