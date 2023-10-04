@@ -44766,9 +44766,42 @@ def inactive_status(request,id):
     loan.save()
     return redirect('loan_statement',id)
 
+
+
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
+
 def sales_report(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    context={
-        'cmp1':cmp1,
+    
+    # Retrieve the data from your models and annotate the dates
+    invs = invoice.objects.filter(cid=cmp1).annotate(start_date=F('invoicedate')).values('start_date', 'grandtotal')
+    pdebit = salescreditnote.objects.filter(cid=cmp1).annotate(start_date=F('creditdate')).values('start_date', 'grandtotal') 
+    recinvoices = recinvoice.objects.filter(cid=cmp1).annotate(start_date=F('startdate')).values('start_date', 'grandtotal')
+    
+    # Combine the querysets into a single queryset
+    combined_data = list(invs) + list(pdebit) + list(recinvoices)
+    
+    # Create a dictionary to store the data
+    data_dict = {}
+    
+    # Loop through the data and organize it by start date and calculate the total amount
+    for data_item in combined_data:
+        start_date_str = data_item['start_date'].strftime('%Y-%m-%d')
+        amount = float(data_item['grandtotal'])
+        if start_date_str in data_dict:
+            data_dict[start_date_str] += amount
+        else:
+            data_dict[start_date_str] = amount
+    
+    # Separate the data into start date labels and total amount values
+    start_date_labels = list(data_dict.keys())
+    total_amount_values = list(data_dict.values())
+    
+    context = {
+        'cmp1': cmp1,
+        'start_date_labels': json.dumps(start_date_labels),
+        'total_amount_values': json.dumps(total_amount_values),
     }
-    return render(request,'app1/sales_report.html',context)
+    
+    return render(request, 'app1/sales_report.html', context)

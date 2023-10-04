@@ -2063,7 +2063,7 @@ class recinvoice(models.Model):
     profilename = models.CharField(max_length=100)
     recinvoiceno = models.IntegerField(default=1000)
     terms = models.CharField(max_length=100, default='')
-    startdate = models.CharField(max_length=100, default='')
+    startdate = models.DateField( default='')
     enddate = models.CharField(max_length=100, default='')
     bname = models.CharField(max_length=255, default='')
     placosupply = models.CharField(max_length=100, default='')

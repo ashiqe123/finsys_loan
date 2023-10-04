@@ -3,73 +3,127 @@
 {% block body %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script>
+    // Parse the JSON data from the Django view
+    const start_date_labels = JSON.parse('{{ start_date_labels|escapejs }}');
+    const total_amount_values = JSON.parse('{{ total_amount_values|escapejs }}');
+    
+    let chartVisible = false;
+
+    function toggleGraph() {
+        const chart = document.getElementById('myChart');
+        const pageContent = document.getElementById('pageContent');
+        chart.style.display = chartVisible ? 'none' : 'block';
+        pageContent.style.display = chartVisible ? 'block' : 'none';
+        chartVisible = !chartVisible;
+    }
+
+    // Initialize the chart when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        new Chart("myChart", {
+            type: "line",
+            data: {
+                labels: start_date_labels,
+                datasets: [{
+                    label: 'Total Amount',
+                    data: total_amount_values,
+                    fill: false,
+                    borderColor: 'rgba(0, 0, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            parser: 'YYYY-MM-DD'  // Date format should match the one used in the view
+                        },
+                        title: {
+                            display: true,
+                            text: 'Start Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Total Amount'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 
 <script>
-    document.getElementById('DownloadtoExcel').addEventListener('click',function(){
+    document.getElementById('DownloadtoExcel').addEventListener('click', function () {
         var table2excel = new Table2Excel();
         table2excel.export(document.querySelectorAll("#tabletobe"));
     });
 </script>
-
-<div class="page-content">
-    <div class="card radius-15 h-20">
-        <div class="row">
-            <div class="col-md-12">
-                <center><h2 class="mt-3">SALES REPORT</h2></center>
-                
-                <hr style="width:95%">
-            </div>
+<div class="card radius-15 h-20">
+    <div class="row">
+        <div class="col-md-12">
+            <center><h2 class="mt-3">SALES REPORT</h2></center>
+            
+            <hr style="width:95%">
         </div>
     </div>
-    <div class="row">
-        <!-- Left-aligned div -->
-        <div class="col-md-6">
-            <div class="container-fluid m-3 form-inline">
-                <input style="width: 20%;" class="form-control" type="date" id="start_date" value="{{ today_date }}">
-                <span class="ml-2 mr-2 mt-2"> TO </span>
-                <input style="width: 20%;" class="form-control" type="date" id="end_date" value="{{ today_date }}">
-                <button class="btn btn-primary ml-2" id="apply_filter">SHOW</button>
-            </div>
-        </div>
-        
-        <!-- Right-aligned div -->
-        <div class="col-md-6 text-right">
-            <i class="fa fa-bar-chart-o ml-5" style="font-size:26px" title="Graph"></i>
-            <i class="fa fa-file-excel-o ml-5" id="DownloadtoExcel" style="font-size:26px" title="Export to Excel"></i>
-            <i class="fa fa-print ml-5" style="font-size:26px" title="Print"></i>
+</div>
+<div class="row container-fluid">
+    <!-- Left-aligned div -->
+    <div class="col-md-6">
+        <div class="container-fluid m-3 form-inline">
+            <input style="width: 20%;" class="form-control" type="date" id="start_date" value="{{ today_date }}">
+            <span class="ml-2 mr-2 mt-2"> TO </span>
+            <input style="width: 20%;" class="form-control" type="date" id="end_date" value="{{ today_date }}">
+            <button class="btn btn-primary ml-2" id="apply_filter">SHOW</button>
         </div>
     </div>
     
-            <div class="row mt-3">
+    <!-- Right-aligned div -->
+    <!-- Right-aligned div -->
+    <div class="col-md-6 text-right">
+        <i class="fa fa-bar-chart-o ml-5" style="font-size:26px" title="Graph" onclick="toggleGraph()"></i>
+        <i class="fa fa-file-excel-o ml-5" id="DownloadtoExcel" style="font-size:26px" title="Export to Excel"></i>
+        <i class="fa fa-print ml-5" style="font-size:26px" title="Print"></i>
+    </div>
+</div>
+<canvas id="myChart" style="width: 100%; display: none;"></canvas>
+
+<div class="page-content" id="pageContent">
+    
+   
+    
+    <div class="row mt-3">
         <div class="col-md-2">
             <div class="card">
                 <div class="card-body">
-                    <h1>0</h1>
+                    <h1>0.00</h1>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
              <div class="card">
                 <div class="card-body">
-                    <h1>0</h1>
+                    <h1>0.00</h1>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
              <div class="card">
                 <div class="card-body">
-                    <h1>0</h1>
+                    <h1>0.00</h1>
                 </div>
             </div>
         </div>
 
-            <div class="col-md-3" >
-               
-            </div>
-            
-            
+        <div class="col-md-3" >
            
-
+        </div>
     </div>
     <div class="row">
         <div class="container-fluid">
@@ -88,10 +142,8 @@
                     <div class="input-group-append">
                         <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
                     </div>
-                   
-            
-                        </div>
-                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-6">
             
@@ -100,6 +152,7 @@
             <button class="btn btn-primary">+ Add Sales</button>
         </div>
     </div>
+    
     <div class="row">
         <div class="container-fluid">
             <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
@@ -114,59 +167,7 @@
                 </tr>
                 </thead>
                 <tbody>
-               
-           {% for a in bnk %}
-                    <tr>
-                        {% if a.bank_type == 'OPENING BAL' %}
-                       
-                            <td>{{a.bank_type}}</td>
-                        {% elif a.bank_type == 'PROCESSING FEE' %}
-                        <td>{{a.bank_type}}</td>
-                        {% elif a.bank_type == 'EMI PAID' %}
-                        <td>{{a.bank_type}}</td>
-                        {% endif %}
-                        {% if a.type == 'LOAN APPROVED' %}
-                        <td>{{a.type}}</td>
-                        {% elif a.type == 'LOAN ADJ' %}
-                        <td>{{a.type}}</td>
-                        {% endif %}
-                        {% if a.type == 'LOAN ADJ'   %}
-                        <td>{{a.loan_date}}</td>
-                        {% elif a.type == 'LOAN APPROVED' %}
-                        <td>{{a.loan_date}}</td>
-
-                        {% endif %}
-                        {% if a.type == 'LOAN ADJ' %}
-                        <td>{{a.loan_desc}}</td>
-                        {% elif a.type == 'LOAN APPROVED' %}
-                        <td>{{a.loan_desc}}</td>
-                        {% else %}
-                        <td>{{a.cash_description}}</td>
-                        {% endif %}
-                        {% if a.type == 'LOAN ADJ' %}
-                            <td>{{a.loan_amount }}</td>
-                            {% elif a.type == 'LOAN APPROVED' %}
-                            <td>{{a.loan_amount }}</td>
-                            {% else %}
-                            {% if a.cash_adjust == 'ADD CASH' %}
-                            <td>+ {{a.cash_cash}}</td>
-                            {% elif a.cash_adjust == 'REDUCE CASH' %}
-                            <td>- {{a.cash_cash}}</td>
-                            {% endif %}
-                            {% endif %}
-                            <td>{{a.balance}}</td>
-
-                    </tr>
-                   
-                    <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                     
-                        
-                 {% endfor %}
-                    
-              
-              
-               
-              
+                    <!-- Your table data here -->
                 </tbody>
             </table>
         </div>
