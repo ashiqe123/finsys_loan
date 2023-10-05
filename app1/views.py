@@ -44289,6 +44289,10 @@ def pdfrbill_view(request,id):
 
 #################################################
 
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
+from itertools import chain
+
 def loan(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     loan=loan_account.objects.filter(cid=cmp1)
@@ -44569,10 +44573,11 @@ def loan_list(request,id):
     global loan_id_global
     loan_id_global = id
     cid = company.objects.get(id=request.session["uid"])
-    loan=loan_account.objects.filter(cid=cid)
-    cmp1 = company.objects.get(id=request.session["uid"])
-    loan_tr=loan_transaction.objects.filter(loan_id=id)
     
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan=loan_account.objects.get(id=id)
+    loan_tr=loan_transaction.objects.filter(loan_id=id)
+    print(loan)
     context={
         'cmp1':cmp1,
         'loan':loan,
@@ -44597,85 +44602,131 @@ def loan_trans(request,id):
     }
     return render(request,'app1/loan_payment.html',context)
 
-def crt_loan_trans(request,id):
-    
 
+def crt_loan_trans(request, id):
     cid = company.objects.get(id=request.session["uid"])
+    
     if request.method == 'POST':
-        principal=int(request.POST.get('principal'))
-        date=request.POST.get('date')
-        intrest=request.POST.get('interest')
-        total=int(request.POST.get('total'))
-        recieved_from=request.POST.get('recieved')
-        principal=request.POST.get('principal')
-        bank=bankings_G.objects.filter(cid=cid)
-        loan=loan_account.objects.get(id=id)
-        print(recieved_from)
-        lender_bank = bankings_G.objects.get(id=recieved_from)
-        if recieved_from == 'cash':
-            
-            cid.cash - int(total)
+        principal = int(request.POST.get('principal'))
+        date = request.POST.get('date')
+        intrest = request.POST.get('interest')
+        total = int(request.POST.get('total'))
+        received_from = request.POST.get('recieved')
+        
+        # Fetch the loan account
+        loan = loan_account.objects.get(id=id)
+
+        # Deduct payment based on source (cash or bank)
+        if received_from == 'cash':
+            # Deduct from company's cash balance
+            cid.cash -= principal
             cid.save()
         else:
-            recieved_from = bankings_G.objects.get(id=recieved_from)
-                       # Deduct payment from lender bank
-            balan=recieved_from.balance - int(total)
-            recieved_from.balance = balan
-            recieved_from.save()
-            print(loan.balance)
-            print(principal)
-        bal=int(loan.balance) - int(principal)
-        loan.balance = bal
+            # Deduct from the selected bank's balance
+            received_bank = bankings_G.objects.get(id=received_from)
+            received_bank.balance -= principal
+            received_bank.save()
+            
+            # Add the payment amount to the lender bank (if not cash)
+            if loan.lenderbank != 'cash':
+                lender_bank = bankings_G.objects.get(id=received_from)
+                lender_bank.balance += principal
+                lender_bank.save()
+            else:
+                cid.cash += principal
+                cid.save()
+        
+        # Update the loan account balance
+        loan.balance -= principal
         loan.save()
         
-        if loan.lenderbank == 'cash':
-            cid.cash+=int(principal)
+        # Create a transaction record
+        transaction = loan_transaction(
+            bank_type='EMI PAID',
+            from_trans=received_from if received_from != 'cash' else 'CASH',
+            to_trans=loan.lenderbank,
+            cid=cid,
+            loan_desc=received_from if received_from != 'cash' else loan.lenderbank,
+            type='LOAN ADJ',
+            loan_amount=principal,
+            loan_intrest=intrest,
+            loan_date=date,
+            loan_id=loan.id,
+            balance=loan.balance,
+        )
+        transaction.save()
+
+    return redirect('loan')
+
+
+def edit_payment(request,id):
+
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan_tr = loan_transaction.objects.get(id=id)
+   
+    bank=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/edit_loan_payment.html',{'loan_tr':loan_tr,'cmp1':cmp1,'bank':bank})
+
+
+
+def edit_loan_payment(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+    loan = loan_transaction.objects.get(id=id)
+    bal=loan.balance
+    l=loan.loan_id
+    ac=loan_account.objects.get(id=l)
+    print(ac.balance)
+    if request.method == 'POST':
+        principal = int(request.POST.get('principal'))
+        date = request.POST.get('date')
+        intrest = request.POST.get('interest')
+        total = int(request.POST.get('total'))
+        received_from = request.POST.get('recieved')
+        principal = request.POST.get('principal')
+        bank = bankings_G.objects.filter(cid=cid)
+
+        # Calculate the difference in principal amount for balance adjustment
+        principal_difference = loan.balance - int(principal)
+        # Update the loan transaction record
+        loan.loan_amount = principal
+        loan.loan_date = date
+        loan.loan_intrest = intrest
+        loan.recieved_bank = received_from
+        loan.balance += bal
+        
+        loan.save()
+        ac.balance  += bal
+        ac.save()
+        loan.balance -= principal_difference
+        
+        
+        loan.save()
+        ac.balance  -= int(principal)
+        ac.save()
+        # Handle balance adjustments based on received_from
+        if received_from == 'cash':
+            cid.cash -= principal_difference
             cid.save()
         else:
-            # Add payment to received bank
-            lender=bankings_G.objects.get(id=loan.lenderbank)
-            lender.balance+=int(principal)
-            lender.save()
+            received_from_bank = bankings_G.objects.get(bankname=received_from)
+            received_from_bank.balance -= principal_difference
+            received_from_bank.save()
         
-        if loan.lenderbank == 'cash':
-            # Create a transaction record
-            transaction = loan_transaction(
-                bank_type='EMI PAID',
-                from_trans=recieved_from,
-                to_trans=loan.lenderbank,
-                cid=cid,
-                loan_desc='FROM  '+ recieved_from.bankname,  # Replace with the appropriate field from loan_account
-                type='LOAN ADJ',
-                loan_amount=principal,
-                loan_intrest=intrest,
-                loan_date=date,
-                loan_id=loan.id,
-                balance = loan.balance,
-                
-
-                
-                )
-            transaction.save()
+        # Handle balance adjustments for lender bank (if not cash)
+        if loan.to_trans != 'cash':
+            lender_bank = bankings_G.objects.get(bankname=loan.to_trans)
+            lender_bank.balance += principal_difference
+            lender_bank.save()
         else:
-            transaction = loan_transaction(
-                bank_type='EMI PAID',
-                from_trans=recieved_from,
-                to_trans=loan.lenderbank,
-                cid=cid,
-                loan_desc='FROM  '+ recieved_from.bankname,  # Replace with the appropriate field from loan_account
-                type='LOAN ADJ',
-                loan_amount=principal,
-                loan_intrest=intrest,
-                loan_date=date,
-                loan_id=loan.id,
-                balance = loan.balance,
-                
+            cid.cash += principal_difference
+            cid.save()
+        # Create a transaction record
+        
 
-                
-            )
-            transaction.save()
-            
-    return redirect('loan')
+        return redirect('loan')  # Redirect to the appropriate URL after editing
+
+    return render(request, 'edit_loan_transaction.html', {'loan': loan})
+
 
 def loan_edit(request,id):
     return
@@ -44768,23 +44819,40 @@ def inactive_status(request,id):
 
 
 
-from django.db.models import Sum, F
-from django.db.models.functions import Coalesce
+import json
+from django.db.models import F, Sum, ExpressionWrapper, DecimalField
+from itertools import chain
 
 def sales_report(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    
+
+    if request.method == 'POST':
+        start_date = request.POST.get('sdate')
+        end_date = request.POST.get('edate')
+
+        invs = invoice.objects.filter(cid=cmp1, invoicedate__range=(start_date, end_date))
+        pdebit = salescreditnote.objects.filter(cid=cmp1, creditdate__range=(start_date, end_date))
+        recinvoices = recinvoice.objects.filter(cid=cmp1, startdate__range=(start_date, end_date))
+
+        combined_data = list(invs) + list(pdebit) + list(recinvoices)
+    else:
+        invs = invoice.objects.filter(cid=cmp1)
+        pdebit = salescreditnote.objects.filter(cid=cmp1)
+        recinvoices = recinvoice.objects.filter(cid=cmp1)
+
+        combined_data = list(invs) + list(pdebit) + list(recinvoices)
+
     # Retrieve the data from your models and annotate the dates
-    invs = invoice.objects.filter(cid=cmp1).annotate(start_date=F('invoicedate')).values('start_date', 'grandtotal')
-    pdebit = salescreditnote.objects.filter(cid=cmp1).annotate(start_date=F('creditdate')).values('start_date', 'grandtotal') 
-    recinvoices = recinvoice.objects.filter(cid=cmp1).annotate(start_date=F('startdate')).values('start_date', 'grandtotal')
-    
+    invs = invs.annotate(start_date=F('invoicedate')).values('start_date', 'grandtotal','invoicedate','customername','invoiceno','status','baldue')
+    pdebit = pdebit.annotate(start_date=F('creditdate')).values('start_date', 'grandtotal','creditdate','credit_no','customer','grandtotal')
+    recinvoices = recinvoices.annotate(start_date=F('startdate')).values('start_date', 'grandtotal','startdate','customername','baldue','status','recinvoiceno')
+
     # Combine the querysets into a single queryset
     combined_data = list(invs) + list(pdebit) + list(recinvoices)
-    
+    print(combined_data)
     # Create a dictionary to store the data
     data_dict = {}
-    
+
     # Loop through the data and organize it by start date and calculate the total amount
     for data_item in combined_data:
         start_date_str = data_item['start_date'].strftime('%Y-%m-%d')
@@ -44793,15 +44861,16 @@ def sales_report(request):
             data_dict[start_date_str] += amount
         else:
             data_dict[start_date_str] = amount
-    
+
     # Separate the data into start date labels and total amount values
     start_date_labels = list(data_dict.keys())
     total_amount_values = list(data_dict.values())
-    
+
     context = {
         'cmp1': cmp1,
         'start_date_labels': json.dumps(start_date_labels),
         'total_amount_values': json.dumps(total_amount_values),
+        'all_data': combined_data,
     }
-    
+
     return render(request, 'app1/sales_report.html', context)

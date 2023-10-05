@@ -8,11 +8,12 @@
         <div class="row">
            
                 <div class="col-md-9">
-                    <h5>BANK : <span style="font-size: x-large;">{{bank.bankname}}</span></h5>
-                    <h5>finsys O P : <span style="font-size: x-large;">{{bank.openingbalance}}</span></h5>
+                    <h6>NAME : <span style="font-size: x-large;">{{loan.account_name}}</span></h6>
+                    <h6> ACCOUNT NUMBER : <span style="font-size: x-large;">{{loan.account_number}}</span></h6>
+                    <h6>RECIEVED BANK :<span style="font-size: x-large;">{{loan.recieced_bank}}</span> </h6>
                 </div>
                 <div class="col-md-3 mt-4">
-                    <h5 class="mt-1">finsys BALANCE : <span style="font-size: x-large;">{{bank.balance}}</span></h5>
+                    <h6 class="mt-1"> BALANCE : <span style="font-size: x-large;">{{loan.balance}}</span></h6>
                 </div>
                 
                 <hr style="width:95%">
@@ -96,7 +97,7 @@
             <th><h6><b>INTEREST</b></h6></th>
 
             <th><h6><b>ACTION</b></h6></th>
-            <th style="display: none;"><h6><b><td>{{loan_id_global}}</td></b></h6></th>
+            <th style="display:none;"><h6><b><td>{{loan_id_global}}</td></b></h6></th>
                         
                     </tr>
                     </thead>
@@ -119,7 +120,7 @@
                                     <div class="dropdown">
                                         <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ a.id }}">Edit</a>
+                                            <a class="dropdown-item " href="{% url 'edit_payment' a.id %}">Edit</a>
                                             <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
                                         </div>
                                     </div>
