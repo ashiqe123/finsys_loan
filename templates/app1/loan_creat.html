@@ -41,7 +41,7 @@
                             <select  style="width: 160%;"   name="lender" class="form-control  text-white" id="">
                                 <option class="form-control bg-dark text-white" value="cash">CASH</option>
                                 {% for i in bank %}
-                                <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                                <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
                                 {% endfor %}
                             </select> 
                         </div>
@@ -115,7 +115,7 @@
                          <select style="width: 160%;"  name="recieved" class="form-control  text-white" id="">
                     <option class="form-control bg-dark text-white" value="cash">CASH</option>
                     {% for i in bank %}
-                    <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                    <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
                     {% endfor %}
                 </select>  
                     </div>
@@ -179,7 +179,7 @@
                          <select   style="width: 160%;"  name="paid" class="form-control  text-white" id="">
                     <option class="form-control bg-dark text-white" value="cash">CASH</option>
                     {% for i in bank %}
-                    <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                    <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
                     {% endfor %}
                 </select>      
                     </div>

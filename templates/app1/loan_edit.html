@@ -42,7 +42,7 @@
                                 <option class="form-control bg-dark text-white" value="{{loan.lenderbank}}" selected>{{loan.lenderbank}}</option>
                                 <option class="form-control bg-dark text-white" value="cash">CASH</option>
                                 {% for i in bank %}
-                                <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                                <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
                                 {% endfor %}
                             </select> 
                         </div>
@@ -113,11 +113,11 @@
 
                     </div>
                     <div class="col-md-3">
-                         <select style="width: 160%;"  name="recieved" class="form-control  text-white" id="">
+                         <select style="width: 160%;"  name="received" class="form-control  text-white" id="">
                             <option class="form-control bg-dark text-white" value="{{loan.recieced_bank}}" selected>{{loan.recieced_bank}}</option>
                     <option class="form-control bg-dark text-white" value="cash">CASH</option>
                     {% for i in bank %}
-                    <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                    <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
                     {% endfor %}
                 </select>  
                     </div>
@@ -183,7 +183,7 @@
                             <option value="{{loan.paid}}" selected>{{loan.paid}}</option>
                     <option class="form-control bg-dark text-white" value="cash">CASH</option>
                     {% for i in bank %}
-                    <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                    <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
                     {% endfor %}
                 </select>      
                     </div>

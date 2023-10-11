@@ -44340,7 +44340,7 @@ def create_loan_account(request):
             cid.cash -= loan_amount
             cid.save()
         else:
-            lender = bankings_G.objects.get(id=lenderbank)
+            lender = bankings_G.objects.get(bankname=lenderbank)
             lender_bankname = lender.bankname
             lender.balance -= loan_amount
             lender.save()
@@ -44350,7 +44350,7 @@ def create_loan_account(request):
             cid.cash += balance
             cid.save()
         else:
-            received = bankings_G.objects.get(id=received_bank)
+            received = bankings_G.objects.get(bankname=received_bank)
             received_bankname = received.bankname
             received.balance += balance
             received.save()
@@ -44360,7 +44360,7 @@ def create_loan_account(request):
             cid.cash -= processing
             cid.save()
         else:
-            processing_bank = bankings_G.objects.get(id=paid)
+            processing_bank = bankings_G.objects.get(bankname=paid)
             processing_bankname = processing_bank.bankname
             processing_bank.balance -= processing
             processing_bank.save()
@@ -44464,104 +44464,124 @@ def edit_loan(request,id):
     return render(request,'app1/loan_edit.html',{'loan':loan,'cmp1':cid,'bank':bank})
 
 
-
 def edit_loan_account(request, id):
-    # Retrieve the company and loan account objects
-    cid = company.objects.get(id=request.session["uid"])
-    loa = loan_account.objects.get(id=id)
-    loan = loan_account.objects.get(id=id)
-    cash=cid.cash
     if request.method == 'POST':
-        if loan.lenderbank == 'cash':
-            lender_bankname = 'cash'
-            cash += loa.loan_amount  # Add the saved loan amount
-            cash -= loan.loan_amount  # Subtract the new loan amount
-            cid.cash = cash
+        # Retrieve the company and loan account objects
+        cid = company.objects.get(id=request.session["uid"])
+        loan = loan_account.objects.get(id=id)
+        cash = cid.cash
+        print(cash)
+        if loan.recieced_bank == 'cash':
+            cid.cash -= cash
+            print('P')
+            print(cid.cash)
             cid.save()
-        else:
-            lender = bankings_G.objects.get(id=loan.lenderbank)
-            lender_bankname = lender.bankname
-            lender.balance += loa.loan_amount
-            lender.balance -= loan.loan_amount
-            lender.save()
-
-        if loan.received_bank == 'cash':
-            received_bankname = 'cash'
-            cash -= loa.balance  # Subtract the saved received money
-            cash += loan.balance  # Add the new value
-            cid.cash = cash
-            cid.save()
+            
         else:
             received = bankings_G.objects.get(bankname=loan.recieced_bank)
-            received_bankname = received.bankname
-            received.balance -= loa.balance
-            received.balance += loan.balance
-            received.save()
 
-        if loan.paid == 'cash':
-            processing_bankname = 'cash'
-            cid.cash -= loan.processing
+            received.balance = int(loan.balance) - int(loan.processing)
+            print(received.balance)
+            received.save()
+        if loan.lenderbank == 'cash':
+            cid.cash += int(loan.loan_amount)
+            print('lender')
+            print(cid.cash)
             cid.save()
         else:
-            processing_bank = bankings_G.objects.get(bankname=loan.paid)
-            processing_bankname = processing_bank.bankname
-            processing_bank.balance -= loan.processing
-            processing_bank.save()
-        # Retrieve and update the loan account fields here
+            lender = bankings_G.objects.get(bankname=loan.lenderbank)
+            lender.balance += int(loan.loan_amount)
+            lender.save()
+        # Handle lender, received bank, and processing bank options
         loan.account_name = request.POST.get('acc_name')
         loan.account_number = request.POST.get('acc_number')
         loan.lenderbank = request.POST.get('lender')
-        loan.received_bank = request.POST.get('received')
+        loan.recieced_bank = request.POST.get('received')
+        loan.paid = request.POST.get('paid')
         loan.interest = request.POST.get('interest')
         loan.term = request.POST.get('term')
         loan.loan_amount = int(request.POST.get('balance'))
         loan.processing = int(request.POST.get('processing'))
-        loan.paid = request.POST.get('paid')
         loan.status = "Active"
         loan.desc = request.POST.get('desc')
         loan.date = request.POST.get('date')
         loan.balance = loan.loan_amount
         loan.received_amount = loan.loan_amount - loan.processing
-        print(loan.recieced_bank)
-        # Handle lender, received bank, and processing bank options (similar to your create_loan_account code)
-        
 
         # Save the updated loan account
         loan.save()
 
+
+        # Check if lender is cash
+        if loan.lenderbank == 'cash':
+            cash -= loan.balance   # Subtract the new loan amount
+            cid.cash = cash
+
+            cid.save()
+        else:
+            lender = bankings_G.objects.get(bankname=loan.lenderbank)
+            lender.balance -= loan.balance 
+            lender.save()
+
+        # Check if received bank is cash
+        if loan.recieced_bank == 'cash':
+              # Add the new value
+            cid.cash = loan.received_amount
+            print('reciec')
+            print(cid.cash)
+            cid.save()
+        else:
+            received = bankings_G.objects.get(bankname=loan.recieced_bank)
+            received.balance += loan.received_amount
+            received.save()
+
+        # Check if paid bank is cash
+       
+        # Update the loan account fields
+       
         # Update related bank transactions
-        bnk = loan_transaction.objects.filter(loan_id=loan)
+        bnk = loan_transaction.objects.filter(loan=loan)
         for transaction in bnk:
             if loan.lenderbank == 'cash':
                 if transaction.bank_type == 'OPENING BAL':
                     transaction.loan_amount = loan.loan_amount
-                    transaction.loan_date = loan.date
                     transaction.balance = loan.loan_amount
-                    transaction.loan_desc = loan.desc
-                elif transaction.bank_type == 'PROCESSING FEE':
-                    transaction.lobaan_amount = loan.processing
                     transaction.loan_date = loan.date
                     transaction.loan_desc = loan.desc
+                    transaction.from_trans = loan.lenderbank
+                    transaction.to_trans = loan.recieced_bank
+                    transaction.save()
+                elif transaction.bank_type == 'PROCESSING FEE':
+                    transaction.loan_amount = loan.processing
                     transaction.balance = loan.received_amount
-
+                    transaction.loan_date = loan.date
+                    transaction.loan_desc = loan.desc
+                    transaction.from_trans = loan.lenderbank
+                    transaction.to_trans = loan.recieced_bank
+                    transaction.save()
             else:
                 if transaction.bank_type == 'OPENING BAL':
                     transaction.loan_amount = loan.loan_amount
-                    transaction.loan_date = loan.date
                     transaction.balance = loan.loan_amount
+                    transaction.loan_date = loan.date
                     transaction.loan_desc = loan.desc
+                    transaction.from_trans = loan.lenderbank
+                    transaction.to_trans = loan.recieced_bank
+                    transaction.save()
                 if transaction.bank_type == 'PROCESSING FEE':
                     transaction.loan_amount = loan.processing
-                    transaction.loan_date = loan.date
                     transaction.balance = loan.received_amount
+                    transaction.loan_date = loan.date
                     transaction.loan_desc = loan.desc
-            transaction.save()
+                    transaction.from_trans = loan.lenderbank
+                    transaction.to_trans = loan.recieced_bank
+                    transaction.save()
 
-        # Redirect to the loan list page or show a success message
+                # Redirect to the loan list page or show a success message
         return redirect('loan')
 
+    # Handle GET request and render the edit form
     return render(request, 'app1/loan_edit.html')
-
 
 def delet_loan(request,id):
     loan=loan_account.objects.get(id=id)
