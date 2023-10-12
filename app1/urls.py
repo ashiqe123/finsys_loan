@@ -1140,6 +1140,8 @@ urlpatterns = [
 
  
     path('loan',views.loan,name='loan'),
+    path('activeloan', views.activeloan, name='activeloan'),
+    path('inactiveloan', views.inactiveloan, name='inactiveloan'),
     path('loan_list/<int:id>',views.loan_list,name='loan_list'),
     path('loan_statement/<int:id>',views.loan_statement,name='loan_statement'),
     path('create_loan_account',views.create_loan_account,name='create_loan_account'),
@@ -1153,8 +1155,9 @@ urlpatterns = [
     path('active_status/<int:id>',views.active_status,name='active_status'),
     path('inactive_status/<int:id>',views.inactive_status,name='inactive_status'),
     path('sales_report',views.sales_report,name='sales_report'),
-    path('edit_payment/<int:pk>',views.edit_payment,name='edit_payment'),
-    path('edit_loan_payment/<int:id>',views.edit_loan_payment,name='edit_loan_payment')
+    path('edit_transaction/<int:id>',views.edit_transaction,name='edit_transaction'),
+    path('edit_loan_payment/<int:id>',views.edit_loan_payment,name='edit_loan_payment'),
+    path('delete_loan_payment/<int:id>',views.delete_loan_payment,name='delete_loan_payment')
     
      
 ]

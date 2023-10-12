@@ -44297,12 +44297,38 @@ def loan(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     loan=loan_account.objects.filter(cid=cmp1)
     bank=bankings_G.objects.filter(cid=cmp1)
+    
+    
     context={
         'cmp1':cmp1,
         'loan':loan,
         'bank':bank,
     }
     return render(request,'app1/loan_view.html',context)
+
+def activeloan(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan=loan_account.objects.filter(cid=cmp1,status='Active')
+    bank=bankings_G.objects.filter(cid=cmp1)
+    context={
+        'cmp1':cmp1,
+        'loan':loan,
+        'bank':bank,
+    }
+    return render(request,'app1/loan_view.html',context)
+
+    
+def inactiveloan(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan=loan_account.objects.filter(cid=cmp1,status='In-Active')
+    bank=bankings_G.objects.filter(cid=cmp1)
+    context={
+        'cmp1':cmp1,
+        'loan':loan,
+        'bank':bank,
+    }
+    return render(request,'app1/loan_view.html',context)
+
 
 def create_loan(request):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -44480,7 +44506,7 @@ def edit_loan_account(request, id):
         else:
             received = bankings_G.objects.get(bankname=loan.recieced_bank)
 
-            received.balance = int(loan.balance) - int(loan.processing)
+            received.balance = int(loan.balance) 
             print(received.balance)
             received.save()
         if loan.lenderbank == 'cash':
@@ -44583,10 +44609,31 @@ def edit_loan_account(request, id):
     # Handle GET request and render the edit form
     return render(request, 'app1/loan_edit.html')
 
-def delet_loan(request,id):
-    loan=loan_account.objects.get(id=id)
+def delet_loan(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+    loan = loan_account.objects.get(id=id)
+    print(loan.lenderbank)
+    # Check if the lender bank is 'cash'
+    if loan.lenderbank == 'cash':
+        cid.cash += loan.balance
+        cid.save()
+        # Add the loan amount to the lender bank's balance
+        received_bank = bankings_G.objects.get(bankname=loan.recieced_bank)
+        received_bank.balance -= loan.balance
+        received_bank.save()
+    else:
+        cid.cash -= loan.balance
+        cid.save()
+        # Subtract the loan amount from the received bank's balance
+        received_bank = bankings_G.objects.get(bankname=loan.lenderbank)
+        received_bank.balance += loan.balance
+        received_bank.save()
+
+    # Delete the loan
     loan.delete()
+    
     return redirect('loan')
+
 
 
 def loan_list(request,id):
@@ -44632,10 +44679,10 @@ def crt_loan_trans(request, id):
         intrest = request.POST.get('interest')
         total = int(request.POST.get('total'))
         received_from = request.POST.get('recieved')
-        
+        print(id)
         # Fetch the loan account
         loan = loan_account.objects.get(id=id)
-
+        print(loan.lenderbank)
         # Deduct payment based on source (cash or bank)
         if received_from == 'cash':
             # Deduct from company's cash balance
@@ -44643,18 +44690,21 @@ def crt_loan_trans(request, id):
             cid.save()
         else:
             # Deduct from the selected bank's balance
-            received_bank = bankings_G.objects.get(id=received_from)
+            received_bank = bankings_G.objects.get(bankname=received_from)
             received_bank.balance -= principal
             received_bank.save()
             
             # Add the payment amount to the lender bank (if not cash)
-            if loan.lenderbank != 'cash':
-                lender_bank = bankings_G.objects.get(id=received_from)
-                lender_bank.balance += principal
-                lender_bank.save()
-            else:
-                cid.cash += principal
-                cid.save()
+        if loan.lenderbank == 'cash':
+            cid.cash += principal
+            cid.save()
+        else:
+            lender_bank = bankings_G.objects.get(bankname=loan.lenderbank)
+            lender_bank.balance += principal
+            print('done')
+            print(lender_bank)
+            lender_bank.save()
+                
         
         # Update the loan account balance
         loan.balance -= principal
@@ -44679,7 +44729,7 @@ def crt_loan_trans(request, id):
     return redirect('loan')
 
 
-def edit_payment(request,id):
+def edit_transaction(request,id):
 
     cmp1 = company.objects.get(id=request.session["uid"])
     loan_tr = loan_transaction.objects.get(id=id)
@@ -44748,8 +44798,6 @@ def edit_loan_payment(request, id):
     return render(request, 'edit_loan_transaction.html', {'loan': loan})
 
 
-def loan_edit(request,id):
-    return
 
 def loan_statement(request,id):
     loan=loan_account.objects.get(id=id)
@@ -44894,3 +44942,42 @@ def sales_report(request):
     }
 
     return render(request, 'app1/sales_report.html', context)
+
+from django.shortcuts import get_object_or_404
+
+def delete_loan_payment(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+    dl_loan = get_object_or_404(loan_transaction, id=id) 
+    print(dl_loan) # Use get_object_or_404 to handle exceptions
+    from_trans = dl_loan.from_trans
+    to_trans = dl_loan.to_trans
+    amount = dl_loan.loan_amount
+    print(dl_loan.from_trans)
+    dl_acc = loan_account.objects.get(id=dl_loan.loan_id)
+    dl_acc.balance += amount
+    dl_acc.save()
+    # Update company cash and bank balances
+    if dl_loan.from_trans == 'CASH':
+        # Increase company's cash balance
+        cid.cash += amount
+        cid.save()
+        to_trans_bank = bankings_G.objects.get(bankname=to_trans)
+        to_trans_bank.balance -= amount
+        print('doncash')
+        to_trans_bank.save()
+    else:
+        cid.cash -= amount
+        cid.save()
+        # Decrease the 'to_trans' bank's balance
+        to_trans_bank = bankings_G.objects.get(bankname=to_trans)
+        to_trans_bank.balance += amount
+        print('set')
+        to_trans_bank.save()
+
+    # If 'to_trans' is cash, increase company's cash balance
+    dl_loan.balance += amount
+    dl_loan.save()
+    # Delete the loan transaction
+    dl_loan.delete()
+
+    return redirect('loan')

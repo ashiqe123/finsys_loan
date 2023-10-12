@@ -59,7 +59,7 @@
 
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" name="acc_number" value="">
+                        <input class="form-control" type="number" name="acc_number" value="">
 
                     </div>
                 </div>
@@ -191,7 +191,7 @@
     </div>
     <div class="modal-footer">
         <button type="reset" class="btn btn-secondary">Reset</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a class="btn btn-secondary" href="{% url 'loan' %}">Close</a>
         <input type="submit" class="btn btn-primary" value="Save">
     </div>
 </form>

@@ -97,7 +97,7 @@
             <th><h6><b>INTEREST</b></h6></th>
 
             <th><h6><b>ACTION</b></h6></th>
-            <th style="display:none;"><h6><b><td>{{loan_id_global}}</td></b></h6></th>
+            <th style="display:none;"><h6><b><td></td></b></h6></th>
                         
                     </tr>
                     </thead>
@@ -120,8 +120,8 @@
                                     <div class="dropdown">
                                         <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item " href="{% url 'edit_payment' a.id %}">Edit</a>
-                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                            <a class="dropdown-item " href="{% url 'edit_transaction' a.id %}">Edit</a>
+                                            <a class="dropdown-item delete-item" href="{% url 'delete_loan_payment' a.id %}" >Delete</a>
                                         </div>
                                     </div>
                                 </td>
