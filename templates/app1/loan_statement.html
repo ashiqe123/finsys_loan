@@ -13,69 +13,42 @@
                 <div class="card-title">
                     <center><h2 class="mb-0">LOAN STATEMENT</h2></center>
                     <hr>
-                    <div class="btn-group" style="float: right; ">
+                    <div class="btn-group" style="display: flex; justify-content: space-between; align-items: center;">
 
-                   
-        <!-- HTML -->
-            <!-- HTML template with date input fields -->
-           <form method='POST'>
-            {% csrf_token %}
-            <input type="date" id="start_date" name='sdate' value="{{ today_date }}">
-            <span class="ml-2 mr-2 mt-2"> TO </span>
-            <input type="date" id="end_date" name='edate' value="{{ today_date }}">
-            <input type="submit" value='View'>
-           </form>
-
-
-        
-
-                
-
-                            <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -10px;" onclick="uplodfile()">
-                                <li  class=" dropdown-toggle fa fa-share-alt "data-toggle="dropdown"> &nbsp;Share
-                            </li>
+                        <!-- Form on the left -->
+                        <form method="POST" class="form-inline">
+                            {% csrf_token %}
+                            <input class="form-control" type="date" id="start_date" name="sdate" value="{{ today_date }}">
+                            <span class="ml-2 mr-2 mt-2"> TO </span>
+                            <input class="form-control" type="date" id="end_date" name="edate" value="{{ today_date }}">
+                            <input class="form-control" type="submit" value="View">
+                        </form>
+                    
+                        <!-- Buttons on the right -->
+                        <div style="display: flex; align-items: center;">
+                            <div class="dropdown" style="padding: 10px; cursor: pointer; margin-top: -10px;" onclick="uplodfile()">
+                                <li class="dropdown-toggle fa fa-share-alt" data-toggle="dropdown">&nbsp;Share</li>
                                 <ul class="dropdown-menu" style="background-color: black;">
-                                    <!-- <a class="dropdown-item fa fa-facebook" target="_blank" 
-                                   > &nbsp;</a>{% post_to_facebook object_or_url "<p style='color: green;'>facebook</p>" %}
-                                   
-                                    <a class="dropdown-item fa fa-whatsapp" href=""> &nbsp;Whatsapp</a>
-                                    <a class="dropdown-item fa fa-envelope-o" href=""> &nbsp;Email</a> -->
-        
-                                 
-                                    <li style="margin-left: 25px;" >
-                                            <a href="" id="DownloadtoExcel">Export to Excel</a>
+                                    <li style="margin-left: 25px;">
+                                        <a href="" id="DownloadtoExcel">Export to Excel</a>
                                     </li>
-                                    
-                                   
-                                  
                                 </ul>
-                                
+                            </div>
+                            <a class="fa fa-print" style="padding: 10px; cursor: pointer;" href="{% url 'loan_pdf' ids %}">PDF</a>
+                            <a class="fa fa-print" style="padding: 10px; cursor: pointer;" onclick="printSpecificArea()">Print</a>
+                            <div class="dropdown" style="padding: 10px; cursor: pointer; margin-top: -14px;">
+                                <li class="dropdown-toggle" data-toggle="dropdown">&nbsp;Convert</li>
+                                <ul class="dropdown-menu" style="background-color: black;">
+                                    {% if loan.status == 'Active' %}
+                                    <a class="dropdown-item" href="{% url 'inactive_status' loan.id %}">&nbsp;IN-ACTIVE</a>
+                                    {% else %}
+                                    <a class="dropdown-item" href="{% url 'active_status' loan.id %}">&nbsp;ACTIVE</a>
+                                    {% endif %}
+                                </ul>
+                            </div>
                         </div>
-                            
-                        
-                        <a class="fa fa-print" style="padding: 10px; cursor: pointer;"  href="{% url 'loan_pdf' ids %}" > PDF</a>
-                        <a class="fa fa-print" style="padding: 10px; cursor: pointer;"  onclick="printSpecificArea()" > Print</a>
-        
-                          <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -14px;">
-                            <li  class=" dropdown-toggle  "data-toggle="dropdown"> &nbsp;Convert
-                        </li>
-                            <ul class="dropdown-menu" style="background-color: black;">
-                                {% if loan.status == 'Active' %}
-                                <a class="dropdown-item " href="{% url 'inactive_status' loan.id %}"> &nbsp;IN-ACTIVE </a>
-                                {% else %}
-                                <a class="dropdown-item " href="{% url 'active_status' loan.id %}"> &nbsp;ACTIVE </a>
-                                {% endif %}
-                                
-                            </ul>
                     </div>
                     
-                               
-                           
-                      
-                    
-               
-                   
-                    </div> 
                 </div>
             </div>
         </div>

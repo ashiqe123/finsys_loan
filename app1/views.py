@@ -44661,8 +44661,11 @@ def loan_trans(request,id):
     global loan_id_global
     loan_id_global = id
     cid = company.objects.get(id=request.session["uid"])
+    cmp1 = company.objects.get(id=request.session["uid"])
+
     bank=bankings_G.objects.filter(cid=cid)
     context={
+        'cmp1':cmp1,
         'cid':cid,
         'bank':bank, 
         'loan_id_global':loan_id_global, 
