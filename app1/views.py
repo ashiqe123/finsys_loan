@@ -44426,6 +44426,8 @@ def create_loan_account(request):
                 loan_amount=loan_amount,
                 loan_date=date,
                 loan=l_id,
+                total =loan_amount,
+
            
             )
             trans.save()
@@ -44442,6 +44444,7 @@ def create_loan_account(request):
                 loan_amount=processing,
                 loan_date=date,
                 loan=l_id,
+                total =processing,
                 
             )
             transaction.save()
@@ -44456,6 +44459,7 @@ def create_loan_account(request):
                 loan_amount=loan_amount,
                 loan_date=date,
                 loan=l_id,
+                total =loan_amount,
                 
             )
             trans.save()
@@ -44472,6 +44476,7 @@ def create_loan_account(request):
                 loan_amount=processing,
                 loan_date=date,
                 loan=l_id,
+                total =processing,
                 
             )
             transaction.save()
@@ -44576,6 +44581,7 @@ def edit_loan_account(request, id):
                     transaction.loan_desc = loan.desc
                     transaction.from_trans = loan.lenderbank
                     transaction.to_trans = loan.recieced_bank
+                    transaction.total = loan.loan_amount
                     transaction.save()
                 elif transaction.bank_type == 'PROCESSING FEE':
                     transaction.loan_amount = loan.processing
@@ -44584,6 +44590,7 @@ def edit_loan_account(request, id):
                     transaction.loan_desc = loan.desc
                     transaction.from_trans = loan.lenderbank
                     transaction.to_trans = loan.recieced_bank
+                    transaction.total = loan.processing
                     transaction.save()
             else:
                 if transaction.bank_type == 'OPENING BAL':
@@ -44593,6 +44600,7 @@ def edit_loan_account(request, id):
                     transaction.loan_desc = loan.desc
                     transaction.from_trans = loan.lenderbank
                     transaction.to_trans = loan.recieced_bank
+                    transaction.total = loan.loan_amount
                     transaction.save()
                 if transaction.bank_type == 'PROCESSING FEE':
                     transaction.loan_amount = loan.processing
@@ -44601,6 +44609,7 @@ def edit_loan_account(request, id):
                     transaction.loan_desc = loan.desc
                     transaction.from_trans = loan.lenderbank
                     transaction.to_trans = loan.recieced_bank
+                    transaction.total = loan.processing
                     transaction.save()
 
                 # Redirect to the loan list page or show a success message
@@ -44726,6 +44735,7 @@ def crt_loan_trans(request, id):
             loan_date=date,
             loan_id=loan.id,
             balance=loan.balance,
+            total = total
         )
         transaction.save()
 
@@ -44766,7 +44776,7 @@ def edit_loan_payment(request, id):
         loan.loan_intrest = intrest
         loan.recieved_bank = received_from
         loan.balance += bal
-        
+        loan.total = total
         loan.save()
         ac.balance  += bal
         ac.save()

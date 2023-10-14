@@ -17,7 +17,7 @@
    
 <div class="card radius-15">
     <div class="card-body">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4">
                 <div class="search-bar">
@@ -78,9 +78,9 @@
                         {% for i in loan %}
                 <tr >
                     
-                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_number}}</td>
 
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_name}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_number}}</td>
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}"> {{i.lenderbank}}</td>
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.loan_amount}}</td>
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.balance}}</td>

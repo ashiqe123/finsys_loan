@@ -2202,3 +2202,4 @@ class loan_transaction(models.Model):
     loan_intrest=models.TextField(max_length=100,default=0)
     balance=models.IntegerField(default=0)   
     type=models.TextField(max_length=100)
+    total = models.IntegerField(default=0)
