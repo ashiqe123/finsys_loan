@@ -2033,6 +2033,7 @@ class bankings_G(models.Model):
     bankname = models.CharField(max_length=100)
     ifsccode = models.CharField(max_length=20)
     branchname = models.CharField(max_length=100)
+    account_number = models.IntegerField(default=0)
     openingbalance = models.IntegerField()
     date = models.DateField()
     cid = models.ForeignKey(company, on_delete=models.CASCADE)

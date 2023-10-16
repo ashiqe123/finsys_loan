@@ -1033,6 +1033,13 @@ urlpatterns = [
     path('delet_bnk/<int:id>',views.delet_bnk,name='delet_bnk'),
     path('cash_statement',views.cash_statement,name='cash_statement'),
     path('edit_add_cash/<int:id>',views.edit_add_cash,name='edit_add_cash'),
+    path('create_bank',views.create_bank,name='create_bank'),
+    path('e_bank/<int:id>',views.e_bank,name='e_bank'),
+    path('edit_bank_trans/<int:id>',views.edit_bank_trans,name='edit_bank_trans'),
+    
+
+
+    
     
     path('gorecinvoices',views.gorecinvoices,name='gorecinvoices'),
     path('createrecinvoices',views.createrecinvoices,name='createrecinvoices'),

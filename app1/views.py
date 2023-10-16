@@ -36578,6 +36578,16 @@ def bnnk(request):
     context={'bank':bank,'cmp1':cmp1}
     return render(request,'app1/bnk.html',context)
 
+def create_bank(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+    cmp1 = company.objects.get(id=request.session["uid"])
+    return render(request,'app1/create_bank.html',{'cmp1':cmp1})
+
+
 
 @login_required(login_url='regcomp')
 def bnk1(request,pk):
@@ -41165,7 +41175,8 @@ def crt_bank(request):
         branch = request.POST.get('branch')
         opening_balance = request.POST.get('Opening')
         date = request.POST.get('date')
-        bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance)
+        acc_num = request.POST.get('acc_num')
+        bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num)
         bank.save()
         bnk=bank_transactions(
             from_trans=bname,
@@ -41173,7 +41184,8 @@ def crt_bank(request):
             adj_date=date,
             type="OPENING BAL",
             banking_id=bank.id,
-            cid=cmp1
+            cid=cmp1,
+            
         )
         bnk.save()
         
@@ -41393,6 +41405,16 @@ def b_adj(request):
 
     return redirect('bnnk')
 
+def e_bank(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        bank = bankings_G.objects.get(id=id)
+    return render(request,'app1/edit_bank.html',{'cmp1':cmp1,'a':bank})
+
 def edit_bank(request,id):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -41406,12 +41428,14 @@ def edit_bank(request,id):
         branch = request.POST.get('branch')
         opening_balance = request.POST.get('Opening')
         date = request.POST.get('date')
+        acc_num= request.POST.get('acc_num')
         bnk=bankings_G.objects.get(id=id)
         bnk.bankname=bname
         bnk.ifsccode=ifsc
         bnk.branchname=branch
         bnk.openingbalance=opening_balance
         bnk.date=date
+        bnk.account_number = acc_num
         bnk.save()
     return redirect('bnnk')
 
@@ -41425,7 +41449,15 @@ def delete(request,id):
     bk.delete()
     return redirect('bnnk')
 
+def edit_bank_trans(request,id):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    bank = bank_transactions.objects.get(id=id)
+    print('done')
+    print(bank.from_trans)
+    return render(request,'app1/edit_trans.html',{'cmp1':cmp1,'a':bank})
 
+
+    
 def edit_b_to_c(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
     record = bank_transactions.objects.get(id=id)

@@ -16,11 +16,10 @@
    
 <div class="card radius-15">
     <div class="card-body">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col"></div>
-                <div class="col"></div>
-                <div class="col-md-5">
+               
+                <div class="col-md-4">
                 <div class="search-bar">
                     <div class="input-group">
                         <div class="input-group-prepend search-arrow-back">
@@ -35,7 +34,8 @@
                             </div>
                         </div>
                       </div>
-
+                      <div class="col"></div>
+                      <div class="col"></div>
                  
                   <div class="col">
                     <div class="dropdown">
@@ -52,8 +52,8 @@
             </div>
             <div class="col">
                 <div class="dropdown">
-                    <button type="button" class="btn btn-outline-info text-grey" data-toggle="modal" data-target="#addBankModal">
-                        Add Bank
+                    <button type="button" class="btn btn-outline-info text-grey" >
+                       <a href="{% url 'create_bank' %}">Add Bank</a>
                     </button>
                 </div>
             </div>
@@ -67,31 +67,23 @@
                     <thead>
                     <tr>
                         <th id="nameList" >BANK NAME</th>
+                        <th>ACCOUNT NUMBER</th>
                         <th>IFSCE CODE</th>
                         <th>BRANCH NAME</th>
                         <th>OPENING BALANCE</th>
                         <th>BALANCE</th>
-                        <th>ACTION</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for a in bank %}
                 <tr >
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.bankname }}</td>
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{ a.account_number }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{ a.ifsccode }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.branchname }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.openingbalance }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{a.balance}}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ a.id }}">Edit</a>
-                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                
+                               
                                 
                             </tr>
 
@@ -114,6 +106,8 @@
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="bname" value="{{a.bankname}}" >
                                                 </div>
+
+                                                
                             
                                                 <div class="col-md-4">
                                                     <label for="">BANK IFSC CODE</label>
@@ -233,50 +227,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="bankForm" method="post" action="{% url 'crt_bank' %}">
-                    {% csrf_token %}
-                   <div class="form-group">
-                    <div class="col-md-4">
-                        <label for="">BANK NAME</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="bname" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">BANK IFSC CODE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="ifsc" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">BRANCH NAME</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="branch" >
-                    </div>
-                    <div class="col-md-4">
-                        <label for="">OPENING BALANCE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="Opening" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">DATE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="date" name="date" >
-                    </div>
-                   </div>
-                   <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" >Reset</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Save">
-                </div>
-                </form>
-                
+               
             </div>
             
         </div>
