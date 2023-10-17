@@ -18,118 +18,187 @@
                 {% if a.type == 'CASH WITHDRAW' %}
 
                 <!-- Edit Modal -->
-           
+              
                             <form id="bankForm" method="post" action="{% url 'edit_b_to_c' a.id %}">
                                 {% csrf_token %}
                                <div class="form-group">
-                                <div class="col-md-8">
-                                    <label for="">From</label>
+
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">From</label>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">To</label>
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <select class="form-control" name="bank" id="">
-                                        <option value="{{a.banking.id}}" selected >{{a.from_trans}}</option>
-                                       {% for i in bl %}
-                                       <option value="{{i.id}}">{{i.bankname}}</option>
-                                       {% endfor %}
-                                    </select>
-                                </div>
-            
-                                <div class="col-md-8 mt-2">
-                                    <label for="">To</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <select class="form-control" name="cash" id="">
-                                        <option class="form-control" selected  value="Cash">CASH</option>
-                                    </select>
-                                </div>
-            
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="bank" id="">
+                                            <option value="{{a.banking.id}}" selected >{{a.from_trans}}</option>
+                                           {% for i in bl %}
+                                           <option value="{{i.id}}">{{i.bankname}}</option>
+                                           {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="cash" id="">
+                                            <option class="form-control" selected  value="Cash">CASH</option>
+                                        </select>
+                                    </div>
+                                </div> <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">AMOUNT</label>
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">ADJUSTMENT DATE</label>
+
+                                    </div>
+                                </div> <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" type="text" value="{{a.amount}}" name="amount" >
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" type="date" value="{{a.adj_date | date:'Y-m-d' }}" name="adjdate" >
+
+                                    </div>
+                                </div> <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">DESCRIPTION</label>
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
                 
-                                <div class="col-md-8 mt-2">
-                                    <label for="">AMOUNT</label>
+                                    </div>
+                                </div> <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" type="text" value="{{a.desc}}" name="desc" >
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                
+                                    </div>
+                                </div> 
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="text" value="{{a.amount}}" name="amount" >
-                                </div>
-            
-                                
-                                <div class="col-md-8 mt-2">
-                                    <label for="">ADJUSTMENT DATE</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="date" value="{{a.adj_date | date:'Y-m-d' }}" name="adjdate" >
-                                </div>
-                                <div class="col-md-8 mt-2">
-                                    <label for="">DESCRIPTION</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="text" value="{{a.desc}}" name="desc" >
-                                </div>
-                               </div>
-                               <div class="modal-footer">
-                                <button type="reset" class="btn btn-secondary" >Reset</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <input type="submit" class="btn btn-primary" value="Save">
-                            </div>
+
+                               
+                                <div class="row mb-5">
+                                    <div class="col-md-8 mt-3"></div>
+                                    <div class="col-md-2 mt-3">
+                                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'bnnk' %}">Close</a>
+                            
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                      <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                        Save Bank Account
+                                      </button>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                  </div>
                             </form>
               
 
             {% elif a.type == 'BANK ADJ INCREASE' %}
 
-                <!-- Edit Modal -->
+                <!-- Edit Modal --> 
+                
      
                             <form id="bankForm" method="post" action="{% url 'edit_account_adjustment' a.id %}">
                                 {% csrf_token %}
+
+
                                <div class="form-group">
-                                <div class="col-md-8">
-                                    <label for="">Account Name</label>
-                                
-                                
-                                    <select class="form-control" name="bank" id="">
-                                        <option value="{{a.banking.id}}" selected >{{a.from_trans}}</option>
-                                        {% for i in bl %}
-                                        <option value="{{i.id}}">{{i.bankname}}</option>
-                                        {% endfor %}
-                                     </select>
+
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">Account Name</label>
                                     </div>
-                                    
-                                </div>
-            
-                                <div class="col-md-8 mt-2">
-                                <label for="">Type</label>
-                                
-                                <select class="form-control" name="typ" id="">
-                                    <option value="{{a.type}}" selected >{{a.type}}</option>
-                                    <option value="BANK ADJ INCREASE">Increase Balance</option>
-                                    <option value="BANK ADJ REDUCE">Reduce Balance</option>
-                                    
-                                 </select>
-                                </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">Type</label>
+                                    </div>
+                                </div>  <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="bank" id="">
+                                            <option value="{{a.banking.id}}" selected >{{a.from_trans}}</option>
+                                            {% for i in bl %}
+                                            <option value="{{i.id}}">{{i.bankname}}</option>
+                                            {% endfor %}
+                                         </select>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="typ" id="">
+                                            <option value="{{a.type}}" selected >{{a.type}}</option>
+                                            <option value="BANK ADJ INCREASE">Increase Balance</option>
+                                            <option value="BANK ADJ REDUCE">Reduce Balance</option>
+                                            
+                                         </select>
+                                    </div>
+                                </div>  <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">AMOUNT</label>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">ADJUSTMENT DATE</label>
                 
-                                <div class="col-md-8 mt-2">
-                                    <label for="">AMOUNT</label>
+                                    </div>
+                                </div>  <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{ a.adj_date | date:'Y-m-d' }}" type="date" name="adjdate" >
+
+                                    </div>
+                                </div>  <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">DESCRIPTION</label>
+                
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                
+                                    </div>
+                                </div>  <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
+                
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                
+                                    </div>
+                                </div> 
+
+
+
+                             
+                                    
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
+                               <div class="row mb-5">
+                                <div class="col-md-8 mt-3"></div>
+                                <div class="col-md-2 mt-3">
+                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'bnnk' %}">Close</a>
+                        
                                 </div>
-                                
-                                <div class="col-md-8 mt-2">
-                                    <label for="">ADJUSTMENT DATE</label>
+                                <div class="col-md-2 mt-3">
+                                  <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                    Save Bank Account
+                                  </button>
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{ a.adj_date | date:'Y-m-d' }}" type="date" name="adjdate" >
-                                </div>
-                                <div class="col-md-8 mt-2">
-                                    <label for="">DESCRIPTION</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
-                                </div>
-                               </div>
-                               <div class="modal-footer">
-                                <button type="reset" class="btn btn-secondary" >Reset</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <input type="submit" class="btn btn-primary" value="Save">
-                            </div>
+                                <div class="col-md-1"></div>
+                              </div>
                             </form>
             
 
@@ -137,60 +206,107 @@
             {% elif a.type == 'BANK ADJ REDUCE' %}
 
                 <!-- Edit Modal -->
-    
+              
+     
                             <form id="bankForm" method="post" action="{% url 'edit_account_adjustment' a.id %}">
                                 {% csrf_token %}
                                <div class="form-group">
-                                <div class="col-md-8">
-                                    <label for="">Account Name</label>
-                                
-                                
-                                    <select class="form-control" name="bank" id="">
-                                        <option value="{{a.banking.id}}" selected>{{a.from_trans}}</option>
-                                        {% for i in bl %}
-                                        <option value="{{i.id}}">{{i.bankname}}</option>
-                                        {% endfor %}
-                                     </select>
+
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">Account Name</label>
                                     </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">Type</label>
+                
+                                    </div>
+                                </div>
+                     
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="bank" id="">
+                                            <option value="{{a.banking.id}}" selected>{{a.from_trans}}</option>
+                                            {% for i in bl %}
+                                            <option value="{{i.id}}">{{i.bankname}}</option>
+                                            {% endfor %}
+                                         </select>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="typ" id="">
+                                            <option value="{{a.type}}" selected >{{a.type}}</option>
+                                            <option value="BANK ADJ INCREASE">Increase Balance</option>
+                                            <option value="BANK ADJ REDUCE">Reduce Balance</option>
+                                            
+                                         </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">AMOUNT</label>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">ADJUSTMENT DATE</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{ a.adj_date | date:'Y-m-d' }}" type="date" name="adjdate" >
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">DESCRIPTION</label>
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                
+                                    </div>
+                                </div>
+                               
+                                                                                                                     
+                               
                                     
                                 </div>
             
-                                <div class="col-md-8 mt-2">
-                                <label for="">Type</label>
                                 
-                                <select class="form-control" name="typ" id="">
-                                    <option value="{{a.type}}" selected >{{a.type}}</option>
-                                    <option value="BANK ADJ INCREASE">Increase Balance</option>
-                                    <option value="BANK ADJ REDUCE">Reduce Balance</option>
-                                    
-                                 </select>
-                                </div>
-                
-                                <div class="col-md-8 mt-2">
-                                    <label for="">AMOUNT</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
-                                </div>
-                                
-                                <div class="col-md-8 mt-2">
-                                    <label for="">ADJUSTMENT DATE</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{ a.adj_date | date:'Y-m-d' }}" type="date" name="adjdate" >
-                                </div>
-                                <div class="col-md-8 mt-2">
-                                    <label for="">DESCRIPTION</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
-                                </div>
-                               </div>
-                               <div class="modal-footer">
-                                <button type="reset" class="btn btn-secondary" >Reset</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <input type="submit" class="btn btn-primary" value="Save">
-                            </div>
+                                <div class="row mb-5">
+                                    <div class="col-md-8 mt-3"></div>
+                                    <div class="col-md-2 mt-3">
+                                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'bnnk' %}">Close</a>
+                            
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                      <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                        Save Bank Account
+                                      </button>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                  </div>
+                            
+                               
+                            
+                            
+                       
                             </form>
        
 
@@ -200,123 +316,206 @@
             {% elif a.type == 'TO BANK TRANSFER' %}
 
                 <!-- Edit Modal -->
-     
+        
                             <form id="bankForm" method="post" action="{% url 'update_bank_transfer' a.id %}">
+
                                 {% csrf_token %}
                                <div class="form-group">
-                                <div class="col-md-8">
-                                    <label for="">From</label>
-                                
-                                
-                                    <select class="form-control" name="fbank" id="">
-                                        <option value="{{a.banking.id}}">{{a.from_trans}}</option>
-                                        {% for i in bl %}
-                                        <option value="{{i.id}}">{{i.bankname}}</option>
-                                        {% endfor %}
-                                     </select>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">From</label>
                                     </div>
-                                    
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">To</label>
+                                    </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="fbank" id="">
+                                            <option value="{{a.banking.id}}">{{a.from_trans}}</option>
+                                            {% for i in bl %}
+                                            <option value="{{i.id}}">{{i.bankname}}</option>
+                                            {% endfor %}
+                                         </select>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <select class="form-control" name="tbank" id="">
+                                            <option value="{{a.banking.id}}">{{a.to_trans}}</option>
             
-                                <div class="col-md-8 mt-2">
-                                <label for="">To</label>
-                                
-                                <select class="form-control" name="tbank" id="">
-                                <option value="{{a.banking.id}}">{{a.to_trans}}</option>
+                                                {% for i in bl %}
+                                                <option value="{{i.id}}">{{i.bankname}}</option>
+                                                {% endfor %}
+                                             </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">AMOUNT</label>
+    
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <label for="">ADJUSTMENT DATE</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
 
-                                    {% for i in bl %}
-                                    <option value="{{i.id}}">{{i.bankname}}</option>
-                                    {% endfor %}
-                                 </select>
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{ a.adj_date |date:'Y-m-d' }}" type="date" name="adjdate" >
+    
+                                    </div>
                                 </div>
-                
-                                <div class="col-md-8 mt-2">
-                                    <label for="">AMOUNT</label>
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <label for="">DESCRIPTION</label>
+    
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+    
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
+                                <div class="row">
+                                    <div class="col-md-5 p-2">
+                                        <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
+
+                                    </div>
+                                    <div class="col-md-2 p-2"></div>
+                                    <div class="col-md-5 p-2">
+    
+                                    </div>
                                 </div>
-                                
-                                <div class="col-md-8 mt-2">
-                                    <label for="">ADJUSTMENT DATE</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{ a.adj_date |date:'Y-m-d' }}" type="date" name="adjdate" >
-                                </div>
-                                <div class="col-md-8 mt-2">
-                                    <label for="">DESCRIPTION</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
-                                </div>
+
                                </div>
-                               <div class="modal-footer">
-                                <button type="reset" class="btn btn-secondary" >Reset</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <input type="submit" class="btn btn-primary" value="Save">
-                            </div>
+                               <div class="row mb-5">
+                                <div class="col-md-8 mt-3"></div>
+                                <div class="col-md-2 mt-3">
+                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'bnnk' %}">Close</a>
+                        
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                  <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                    Save Bank Account
+                                  </button>
+                                </div>
+                                <div class="col-md-1"></div>
+                              </div>
+                               
                             </form>
                    
 
             {% elif a.type == 'FROM BANK TRANSFER' %}
 
             <!-- Edit Modal -->
-
+                           
                         <form id="bankForm" method="post" action="{% url 'update_bank_transfer' a.id %}">
                             {% csrf_token %}
                            <div class="form-group">
-                            <div class="col-md-8">
-                                <label for="">From</label>
-                            
-                            
-                                <select class="form-control" name="fbank" id="">
-                                    <option value="{{a.banking.id}}">{{a.from_trans}}</option>
+                            <div class="row">
+                                <div class="col-md-5 p-2">
+                                    <label for="">From</label>
 
-                                    {% for i in bl %}
-                                    <option value="{{i.id}}">{{i.bankname}}</option>
-                                    {% endfor %}
-                                 </select>
                                 </div>
+                                <div class="col-md-2 p-2"></div>
+                                <div class="col-md-5 p-2">
+                                    <label for="">To</label>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-5 p-2">
+                                    <select class="form-control" name="fbank" id="">
+                                        <option value="{{a.banking.id}}">{{a.from_trans}}</option>
+    
+                                        {% for i in bl %}
+                                        <option value="{{i.id}}">{{i.bankname}}</option>
+                                        {% endfor %}
+                                     </select>
+                                </div>
+                                <div class="col-md-2 p-2"></div>
+                                <div class="col-md-5 p-2">
+                                    <select class="form-control" name="tbank" id="">
+                                        <option value="{{a.banking.id}}">{{a.to_trans}}</option>
+        
+                                        {% for i in bl %}
+                                        <option value="{{i.id}}">{{i.bankname}}</option>
+                                        {% endfor %}
+                                     </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 p-2">
+                                    <label for="">AMOUNT</label>
+                                </div>
+                                <div class="col-md-2 p-2"></div>
+                                <div class="col-md-5 p-2">
+                                    <label for="">ADJUSTMENT DATE</label>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 p-2">
+                                    <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
+
+                                </div>
+                                <div class="col-md-2 p-2"></div>
+                                <div class="col-md-5 p-2">
+                                    <input class="form-control" value="{{a.adj_date |date:'Y-m-d' }}" type="date" name="adjdate" >
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-5 p-2">
+ 
+                                    <label for="">DESCRIPTION</label>
+                                </div>
+                                <div class="col-md-2 p-2"></div>
+                                <div class="col-md-5 p-2">
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 p-2">
+                                    <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
+
+                                </div>
+                                <div class="col-md-2 p-2"></div>
+                                <div class="col-md-5 p-2">
+
+                                </div>
+                            </div>
+
                                 
                             </div>
         
-                            <div class="col-md-8 mt-2">
-                            <label for="">To</label>
-                            
-                            <select class="form-control" name="tbank" id="">
-                                <option value="{{a.banking.id}}">{{a.to_trans}}</option>
-
-                                {% for i in bl %}
-                                <option value="{{i.id}}">{{i.bankname}}</option>
-                                {% endfor %}
-                             </select>
-                            </div>
-            
-                            <div class="col-md-8 mt-2">
-                                <label for="">AMOUNT</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input class="form-control" value="{{a.amount}}" type="text" name="amount" >
-                            </div>
-                            
-                            <div class="col-md-8 mt-2">
-                                <label for="">ADJUSTMENT DATE</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input class="form-control" value="{{a.adj_date |date:'Y-m-d' }}" type="date" name="adjdate" >
-                            </div>
-                            <div class="col-md-8 mt-2">
-                                <label for="">DESCRIPTION</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input class="form-control" value="{{a.desc}}" type="text" name="desc" >
-                            </div>
-                           </div>
-                           <div class="modal-footer">
-                            <button type="reset" class="btn btn-secondary" >Reset</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <input type="submit" class="btn btn-primary" value="Save">
-                        </div>
+                           
+                      
+                           
+                           
+                          
+                          
+                           
+                            <div class="row mb-5">
+                                <div class="col-md-8 mt-3"></div>
+                                <div class="col-md-2 mt-3">
+                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'bnnk' %}">Close</a>
+                        
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                  <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                    Save Bank Account
+                                  </button>
+                                </div>
+                                <div class="col-md-1"></div>
+                              </div>
                         </form>
              
 

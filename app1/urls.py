@@ -1036,6 +1036,10 @@ urlpatterns = [
     path('create_bank',views.create_bank,name='create_bank'),
     path('e_bank/<int:id>',views.e_bank,name='e_bank'),
     path('edit_bank_trans/<int:id>',views.edit_bank_trans,name='edit_bank_trans'),
+    path('bank_to_cash',views.bank_to_cash,name='bank_to_cash'),
+    path('cash_to_bank',views.cash_to_bank,name='cash_to_bank'),
+    path('bank_to_bank',views.bank_to_bank,name='bank_to_bank'),
+    path('bank_adjust',views.bank_adjust,name='bank_adjust'),
     
 
 

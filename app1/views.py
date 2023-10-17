@@ -41207,7 +41207,7 @@ def view_bank(request,id):
     toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
     
 
-    return render(request,'app1/view_bank.html',{"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
+    return render(request,'app1/view_bank.html',{'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
 
 
 
@@ -41288,6 +41288,45 @@ def c_to_b(request):
 
     return redirect('bnnk')
 
+def bank_to_cash(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        bank=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/bank_to_cash.html',{'cmp1':cmp1,'bl':bank})
+
+def cash_to_bank(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        bank=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/cash_to_bank.html',{'cmp1':cmp1,'bl':bank})
+
+def bank_to_bank(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        bank=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/bank_to_bank.html',{'cmp1':cmp1,'bl':bank})
+
+def bank_adjust(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        bank=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/bank_adj.html',{'cmp1':cmp1,'bl':bank})
 
 def b_to_b(request):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -41315,7 +41354,7 @@ def b_to_b(request):
             type='FROM BANK TRANSFER',
             cid=cmp1,
             banking_id=from_bank.id,
-            bank='TO ' + to_bank.bankname
+            bank_type='TO ' + to_bank.bankname
             
         )
         trans_withdrawal.save()
@@ -41334,7 +41373,7 @@ def b_to_b(request):
             type='TO BANK TRANSFER',
             cid=cmp1,
             banking_id=to_bank.id,
-            bank='FROM ' + from_bank.bankname
+            bank_type='FROM ' + from_bank.bankname
 
         )
         trans_deposit.save()
