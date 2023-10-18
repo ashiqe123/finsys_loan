@@ -1040,8 +1040,8 @@ urlpatterns = [
     path('cash_to_bank',views.cash_to_bank,name='cash_to_bank'),
     path('bank_to_bank',views.bank_to_bank,name='bank_to_bank'),
     path('bank_adjust',views.bank_adjust,name='bank_adjust'),
-    
-
+    path('add_cash_adjust',views.add_cash_adjust,name='add_cash_adjust'),
+    path('edit_added_cash/<int:id>',views.edit_added_cash,name='edit_added_cash'),
 
     
     

@@ -2039,7 +2039,7 @@ class bankings_G(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     balance=models.IntegerField(default=0)
     cash_balance=models.IntegerField(default=0)
-    
+    term = models.TextField(max_length=30)
     
 class bank_transactions(models.Model):
     bank_type=models.TextField(max_length=100)

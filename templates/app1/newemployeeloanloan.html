@@ -46,7 +46,7 @@
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Employee</label>
                         <div class="d-flex">
-                            <select name="employee" id="employee" class="form-control" style="width: 95%;" required>
+                            <select name="employee" id="empl_id" class="form-control" style="width: 95%;" required>
                                 <option value="NIL" >Select Employee</option>
                                 {% for cust in employee %}
                                 {% if cust.cid_id == cmp1.cid %}
@@ -906,14 +906,14 @@
 
 
     $(document).ready(function () {
-        $('#employee').on('change', function() {
-            console.log($('#employee').val())
+        $('#empl_id').on('change', function() {
+            console.log($('#empl_id').val())
             $.ajax({
                 type : 'POST',
                 
                 url: "{% url 'listemployee_loan' %}",
                 data: {
-                    id: $('#employee').val(),
+                    id: $('#empl_id').val(),
                     csrfmiddlewaretoken: '{{ csrf_token }}',
                 },
                 

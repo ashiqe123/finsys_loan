@@ -41175,9 +41175,17 @@ def crt_bank(request):
         branch = request.POST.get('branch')
         opening_balance = request.POST.get('Opening')
         date = request.POST.get('date')
+        term = request.POST.get('termof')
         acc_num = request.POST.get('acc_num')
-        bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num)
-        bank.save()
+        if term == 'CREDIT':
+            opening_balance = 0 - int(opening_balance)
+            bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num,term=term)
+            bank.save()
+        else:
+            opening_balance = int(opening_balance)
+            bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num,term=term)
+            bank.save()
+        
         bnk=bank_transactions(
             from_trans=bname,
             amount=opening_balance,
@@ -41690,21 +41698,38 @@ def bnk_statement(request,id):
     }
     return render(request,'app1/bank_statement.html',context)
 
+from django.db.models import Q
 
 def cash_in_hand(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    bnk= bank_transactions.objects.filter(cid=cmp1)
-    loan= loan_transaction.objects.filter(cid=cmp1)
-    getloan=loan_transaction.objects.filter(to_trans='cash')
-    toloan=loan_transaction.objects.filter(from_trans='cash')
-    context={
-        'cmp1':cmp1,
-        'bnk':bnk,
-        'loan':loan,
-        'getloan':getloan,
-        'toloan':toloan ,       
-     }
-    return render(request,'app1/cash_in_hand.html',context)
+    
+    # Update the bnk queryset to exclude specific types
+    bnk = bank_transactions.objects.filter(
+        cid=cmp1
+    ).exclude(
+        Q(type='FROM BANK TRANSFER') | Q(type='TO BANK TRANSFER') | Q(type='OPENING BAL')
+    )
+    
+    loan = loan_transaction.objects.filter(cid=cmp1)
+    getloan = loan_transaction.objects.filter(to_trans='cash')
+    toloan = loan_transaction.objects.filter(from_trans='cash')
+    
+    context = {
+        'cmp1': cmp1,
+        'bnk': bnk,
+        'loan': loan,
+        'getloan': getloan,
+        'toloan': toloan,
+    }
+    
+    return render(request, 'app1/cash_in_hand.html', context)
+
+
+
+def add_cash_adjust(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    return render(request,'app1/add_cash.html')
+
 
 
 def add_cash(request):
@@ -41775,6 +41800,11 @@ def cash_statement(request):
     }
     return render(request,'app1/cash_statement.html',context)
 
+def edit_added_cash(request,id):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    bnk=bank_transactions.objects.get(id=id)
+    return render(request,'app1/edit_cash.html',{'cmp1':cmp1,'a':bnk})
+
 def edit_add_cash(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
     if request.method == 'POST':
@@ -41784,6 +41814,13 @@ def edit_add_cash(request,id):
         desc = request.POST.get('desc')
         
         item = bank_transactions.objects.get(id=id)
+        if cashadj == 'ADD CASH':
+            cmp1.cash -= item.cash_cash
+            cmp1.save()
+        else :
+            cmp1.cash -= item.cash_cash
+            print('done')
+            cmp1.save()
         item.cash_adjust = cashadj
         item.cash_cash = amount
         item.cash_date = date
@@ -41796,7 +41833,7 @@ def edit_add_cash(request,id):
             cmp1.save()
         else :
             cmp1.cash -= int(amount)
-            cmp1.save()
+            
         item.save()
 
     return redirect('cash_in_hand')
@@ -42362,7 +42399,8 @@ def listemployee_loan(request):
         joindate = cust.joindate
         amount = cust.amount
         country = cust.country
-       
+        print('id')
+        print(id)
     return JsonResponse({'email': email,'employeeno': employeeno,'joindate':joindate,'amount': amount},safe=False)
 
 
@@ -44432,12 +44470,14 @@ def create_loan_account(request):
         balance = loan_amount
         recieved_amount = loan_amount -processing
         # Handle lender, received bank, and processing bank options
+        print(lenderbank)
         if lenderbank == 'cash':
             lender_bankname = 'cash'
             cid.cash -= loan_amount
             cid.save()
         else:
             lender = bankings_G.objects.get(bankname=lenderbank)
+            print(lender)
             lender_bankname = lender.bankname
             lender.balance -= loan_amount
             lender.save()
