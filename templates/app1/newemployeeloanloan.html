@@ -87,17 +87,28 @@
                     </div>
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Loan Date</label>
-                        <input type="date" class="form-control" value="{{ tod }}" name="loandate" required><br>
+                        <input type="date" class="form-control" value="{{ tod }}" id="loandate" name="loandate" required><br>
                     </div>
                     <div class="col-md-5 ml-4">
-                        <label class="col-form-label">Loan Amound</label>
-                        <input type="text" class="form-control" id="Loan_Amound" name="Loan_Amound"
+                        <label class="col-form-label">Loan Amount</label>
+                        <input type="text" class="form-control" id="Loan_Amound" name="Loan_Amount"
                             placeholder="Loan Amound" required><br>
+                            
                     </div>
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Expery Date</label>
 
                         <input type="date" class="form-control" id="experydate" name="experydate" required><br>
+                    </div>
+                    <div class="col-md-5 ml-4">
+                        <label class="col-form-label">Loan Duration</label>
+                        <select class="form-control" name="loan_duration" id="loan_duration" onchange="calculateExpiryDate()">
+                            <option value="">Choose duration</option>
+                            <option value="3">3 Month</option>
+                            <option value="6">6 Month</option>
+                            <option value="12">1 Year</option>
+                            <option value="24">2 Year</option>
+                        </select>
                     </div>
 
                    
@@ -105,11 +116,12 @@
                 <div class="row m-4 ml-5 pt-4">   
                     <!-- <div class="col-md-4 m-4 ml-5 pt-4"> -->
                         <label><b>Monthly Cutting :</b></label>&nbsp;&nbsp;
-
+                        
                         <div class="form-check form-check-inline ml-3" >
                             <input class="form-check-input" type="radio" id="no" name="cutingamount"
                                 onchange="show3(this.value)" value="No" required>
                             <label class="form-check-label">In Amount</label>
+                            
                         </div>
                         <div class="form-check form-check-inline ml-3">
                             <input class="form-check-input" type="radio" id="yes" name="cutingamount"
@@ -117,7 +129,7 @@
                             <label class="form-check-label">In Percentage</label>
                         </div>
                     <!-- </div> -->
-
+                    
                 </div>
                     <!-- <div class="row"> -->
                         <div class="desc m-4 ml-5 pt-4" id="cuttingPercentage" style="display: none;">
@@ -140,7 +152,9 @@
                                      <!-- <span >Rs:</span>
                                     <b><span id="cp">Amount</span></b> -->
                                    
-                                    <div class="text-danger m-2" id="effectivefrom"></div>
+                                    
+                                    <div id="messag"></div>
+
                                 </div>
                             </div>        
                         </div>
@@ -157,6 +171,7 @@
                                 <input type="number" oninput="validatecutamount()" class="form-control" id="amount" name="Cutingamount"
                                     placeholder="In Amount" style="background-color: #2f516f; color: white; " min="0" value="0" required><br>
                                 <div class="text-danger m-2" id="effectivefrom"></div>
+                                <div id="message"></div>
                             </div>
                             
                         </div>
@@ -863,24 +878,28 @@
             let per = document.getElementById("cu");
             let pervalue = per.value;
             let salary = document.getElementById("Salary").value;
-            
+            let sal = document.getElementById("Salary")
             const amount =document.getElementById('Loan_Amound');
             
-            const cutamount=Math.floor((per.value/100)*amount.value);
-
+            const cutamount=Math.floor((per.value/100)*sal.value);
+            const messageElement = document.getElementById("messag"); 
+            console.log(pervalue)
+            console.log(salary)
+            console.log(cutamount)
+            
             document.getElementById("cp").value=cutamount;
             
-            if (salary > cutamount){
+            if (cutamount<= salary){
                 document.getElementById("cp").innerText=cutamount;
                 document.getElementById("cp").style.border="4px solid green"
                 document.getElementById("cu").style.border="4px solid green"
-
+                messageElement.innerText = "Amount Eligible for Loan.";
             }
             else {
                 document.getElementById("cp").innerText=cutamount;
                 document.getElementById("cp").style.border="4px solid red"
                 document.getElementById("cu").style.border="4px solid red"
-
+                messageElement.innerText = "Amount cannot exceed the salary.";
             }
             
             
@@ -888,16 +907,64 @@
         
         function validatecutamount(){
             const loamt = document.getElementById("amount").value;   
-            let salary = document.getElementById("Salary").value;    
+            let salary = document.getElementById("Salary").value;   
+            const messageElement = document.getElementById("message"); 
             if (Number(salary) >= loamt){
                 document.getElementById("amount").style.border="4px solid green";
+                messageElement.innerText = "Amount Eligible for Loan.";
             }
             else {
                 document.getElementById("amount").style.border="3px solid red";
+                messageElement.innerText = "Amount cannot exceed the salary.";
             }
 
         }
        
+</script>
+<script>
+    function calculateExpiryDate() {
+        const loanDuration = parseInt(document.getElementById("loan_duration").value);
+        const joinDate = new Date(document.getElementById("loandate").value);
+
+        if (!isNaN(loanDuration) && joinDate instanceof Date && !isNaN(joinDate)) {
+            const expiryDate = new Date(joinDate);
+
+            // Set the month and year based on the selected loan duration
+            if (loanDuration === 3) {
+                expiryDate.setMonth(expiryDate.getMonth() + 3);
+            } else if (loanDuration === 6) {
+                expiryDate.setMonth(expiryDate.getMonth() + 6);
+            } else if (loanDuration === 12) {
+                expiryDate.setMonth(expiryDate.getMonth() + 12);
+            } else if (loanDuration === 24) {
+                expiryDate.setMonth(expiryDate.getMonth() + 24);
+            }
+
+            // Set the day to be the same as the loan date
+            expiryDate.setDate(joinDate.getDate());
+
+            // Adjust for months exceeding 12
+            while (expiryDate.getMonth() !== (joinDate.getMonth() + loanDuration) % 12) {
+                expiryDate.setDate(expiryDate.getDate() - 1);
+            }
+
+            const formattedExpiryDate = formatDate(expiryDate);
+            document.getElementById("experydate").value = formattedExpiryDate;
+        } else {
+            // Handle invalid input or errors
+            document.getElementById("experydate").value = "";
+        }
+    }
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 2).toString().padStart(2, '0');
+        const day = (date.getDate() + 1).toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Initialize expiry date when the page loads
+    calculateExpiryDate();
 </script>
 
 

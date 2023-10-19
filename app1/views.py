@@ -42414,18 +42414,19 @@ def addemployeeloan(request):
     if request.method == 'POST':
         empid = request.POST['employee']
         employee = payrollemployee.objects.get(employeeid=empid)
-        Loan_Amound = request.POST['Loan_Amound'] 
+        Loan_Amound = request.POST['Loan_Amount'] 
         loandate = request.POST['loandate'] 
         experydate = request.POST['experydate']
         cuttingPercentage = request.POST['cuttingPercentage']
         cuttinamount = request.POST['Cutingamount']
+        loan_duration = request.POST['loan_duration']
         try:
             file = request.FILES['file']
         except:
             file = '' 
         Note = request.POST['Note']
 
-        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active')
+        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_duration=loan_duration)
 
         if int(cuttingPercentage)==0 and int(cuttinamount)!=0:
             data.MonthlyCut_Amount=cuttinamount

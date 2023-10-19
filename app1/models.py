@@ -2113,6 +2113,7 @@ class EmployeeLoan(models.Model):
       MonthlyCut_percentage = models.IntegerField(blank=True,null=True)
       MonthlyCut_Amount = models.IntegerField(blank=True,null=True)
       Note = models.TextField(max_length=100)
+      loan_duration=models.CharField(max_length=30)
       File = models.FileField(upload_to='loanfile',default="",blank=True, null=True)
       company = models.ForeignKey(company, on_delete=models.CASCADE)
       status = models.CharField(max_length=20,null=True)
