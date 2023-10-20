@@ -2119,6 +2119,25 @@ class EmployeeLoan(models.Model):
       status = models.CharField(max_length=20,null=True)
       action= models.IntegerField(blank=True,null=True)
       
+
+
+class loan_duration(models.Model):
+    term = models.TextField(max_length=30)
+    term_value = models.IntegerField()
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+
+class employee_loan_tran(models.Model):
+    employee = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    employee = models.ForeignKey(EmployeeLoan, on_delete=models.CASCADE)
+    loan_trans_date = models.DateField()
+    particular = models.CharField(max_length=100)
+    amount = models.IntegerField()
+    intrest = models.IntegerField()
+    total_amount = models.IntegerField()
+    payment_type = models.CharField(max_length=100)
+
+
 ########################recurring bill-reshna-start#############
 
 class recurring_bill(models.Model):

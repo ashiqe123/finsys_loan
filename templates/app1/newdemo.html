@@ -1,0 +1,77 @@
+
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+
+<div class="col-md-5 ml-4">
+    <label class="col-form-label">Loan Duration</label>
+    <div class="d-flex">
+        <select class="form-control term" name="loan_duration" id="loan_duration" onchange="calculateExpiryDate()" required>
+            <option value="">Choose duration</option>
+            {% for i in loan_d %}
+    
+                <option value="{{i.term_value}} {{i.term}}">{{i.term}}</option>
+           
+    
+            {% endfor %}
+        </select>
+                                    <a class="btn btn-outline-secondary ml-1" role="button" data-target="#emplyeeterm"
+                data-toggle="modal">+</a>
+    </div>
+</div>
+
+
+<script>
+    $(document).on("click","#itemSave",function(){
+ 
+             $.ajax({
+             
+             type : 'POST',
+             url:"{% url 'credit_term' %}",
+             
+             data:{
+                 term : $("#term").val(),
+                 term_value : $("#duration").val(),
+                 
+                 csrfmiddlewaretoken: '{{ csrf_token }}',
+                 
+                 },
+             
+                 success: function(response) {
+                     console.log(response)
+                     document.getElementById("modalItem").reset();
+                     reloadItem();
+                 },
+             });        
+             });
+ 
+ 
+         function reloadItem() {
+             $.ajax({
+             url: "{% url 'term_dropdown' %}",
+             type: "GET",
+             dataType: "json",
+             data: $(this).serialize(),
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+ 
+             success: function(data) {
+                 var dropdown = $('.term');
+                 console.log(data)
+                 dropdown.empty();
+                 dropdown.append(`<option selected>Select Item</option>`);
+                 $.each(data, function(key, value) {
+                 
+                     dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                 });
+ 
+             },
+             error: function(xhr, status, error) {
+             console.error(xhr.responseText);
+             }
+             });
+             }
+ 
+ 
+ </script>    
+ 
+{% endblock %}

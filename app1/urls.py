@@ -1168,7 +1168,12 @@ urlpatterns = [
     path('sales_report',views.sales_report,name='sales_report'),
     path('edit_transaction/<int:id>',views.edit_transaction,name='edit_transaction'),
     path('edit_loan_payment/<int:id>',views.edit_loan_payment,name='edit_loan_payment'),
-    path('delete_loan_payment/<int:id>',views.delete_loan_payment,name='delete_loan_payment')
+    path('delete_loan_payment/<int:id>',views.delete_loan_payment,name='delete_loan_payment'),
     
-     
+#  -------------------------
+
+    path('credit_term', views.credit_term, name='credit_term'),
+    path('term_dropdown', views.term_dropdown, name='term_dropdown'),
+    
+    
 ]

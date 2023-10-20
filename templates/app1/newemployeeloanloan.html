@@ -102,13 +102,19 @@
                     </div>
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Loan Duration</label>
-                        <select class="form-control" name="loan_duration" id="loan_duration" onchange="calculateExpiryDate()">
-                            <option value="">Choose duration</option>
-                            <option value="3">3 Month</option>
-                            <option value="6">6 Month</option>
-                            <option value="12">1 Year</option>
-                            <option value="24">2 Year</option>
-                        </select>
+                        <div class="d-flex">
+                            <select class="form-control term" name="loan_duration" id="loan_duration" onchange="calculateExpiryDate()" required>
+                                <option value="">Choose duration</option>
+                                {% for i in loan_d %}
+                        
+                                    <option value="{{i.term}} {{i.term_value}} "> {{i.term_value}} {{i.term}}</option>
+                               
+                        
+                                {% endfor %}
+                            </select>
+                                                        <a class="btn btn-outline-secondary ml-1" role="button" data-target="#emplyeeterm"
+                                    data-toggle="modal">+</a>
+                        </div>
                     </div>
 
                    
@@ -211,6 +217,55 @@
 </form>
 
 <!-- modal -->
+<div class="modal fade" id="emplyeeterm">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="m-3">ADD TERM</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <form action="" method="post"  autocomplete="off" id="modalItem">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-5 p-2">
+                                        <label  for="">Duration</label>
+                                        <input type="number"  id="duration" name="duration" class="form-control" placeholder="Number">
+    
+                                    </div>
+                                    
+                                    <div class="col-md-5 p-2">
+                                        <label for="">Term</label>
+                                        <input type="text" id="term" name="term" class="form-control" placeholder="Year / Month" oninput="this.value = this.value.toUpperCase()">
+    
+                                    </div>
+                                </div>
+                            </div>
+    
+                            
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
+                                          <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="submit" id="itemSave">SUBMIT</button>
+                                    </button>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+    
+                        </div>
+                    </form>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+     
 
 <div class="modal fade" id="employeecreation">
     <div class="modal-dialog modal-xl">
@@ -859,7 +914,63 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+
 <script>
+   $(document).on("click","#itemSave",function(){
+
+            $.ajax({
+            
+            type : 'POST',
+            url:"{% url 'credit_term' %}",
+            
+            data:{
+                term : $("#term").val(),
+                term_value : $("#duration").val(),
+                
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                
+                },
+            
+                success: function(response) {
+                    console.log(response)
+                    document.getElementById("modalItem").reset();
+                    reloadItem();
+                },
+            });        
+            });
+
+
+        function reloadItem() {
+            $.ajax({
+            url: "{% url 'term_dropdown' %}",
+            type: "GET",
+            dataType: "json",
+            data: $(this).serialize(),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+
+            success: function(data) {
+                var dropdown = $('.term');
+                console.log(data)
+                dropdown.empty();
+                dropdown.append(`<option selected>Choose Duration</option>`);
+                $.each(data, function(key, value) {
+                
+                    dropdown.append($('<option></option>').attr('value' ,key).text(value).val(value));
+                });
+
+            },
+            error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            }
+            });
+            }
+
+
+</script>    
+
+<script>
+
+
 //    $(document).on('keyup',function(){
 //             var per = $('#cuttingPercentage').val();
 //             var amount = $('#Loan_Amount').val();
@@ -922,44 +1033,39 @@
        
 </script>
 <script>
-    function calculateExpiryDate() {
-        const loanDuration = parseInt(document.getElementById("loan_duration").value);
-        const joinDate = new Date(document.getElementById("loandate").value);
+   function calculateExpiryDate() {
+    let loanDurationValue = document.getElementById("loan_duration").value;
+    let loanDurationParts = loanDurationValue.split(" ");
+    let loanDuration = parseInt(loanDurationParts[0]);
+    let loanDurationTerm = loanDurationParts[1];
+    const joinDate = new Date(document.getElementById("loandate").value);
+    console.log(loanDurationTerm);
+    console.log(loanDurationValue);
 
-        if (!isNaN(loanDuration) && joinDate instanceof Date && !isNaN(joinDate)) {
-            const expiryDate = new Date(joinDate);
+    if (!isNaN(loanDuration) && joinDate instanceof Date && !isNaN(joinDate)) {
+        const expiryDate = new Date(joinDate);
 
-            // Set the month and year based on the selected loan duration
-            if (loanDuration === 3) {
-                expiryDate.setMonth(expiryDate.getMonth() + 3);
-            } else if (loanDuration === 6) {
-                expiryDate.setMonth(expiryDate.getMonth() + 6);
-            } else if (loanDuration === 12) {
-                expiryDate.setMonth(expiryDate.getMonth() + 12);
-            } else if (loanDuration === 24) {
-                expiryDate.setMonth(expiryDate.getMonth() + 24);
-            }
-
-            // Set the day to be the same as the loan date
-            expiryDate.setDate(joinDate.getDate());
-
-            // Adjust for months exceeding 12
-            while (expiryDate.getMonth() !== (joinDate.getMonth() + loanDuration) % 12) {
-                expiryDate.setDate(expiryDate.getDate() - 1);
-            }
-
-            const formattedExpiryDate = formatDate(expiryDate);
-            document.getElementById("experydate").value = formattedExpiryDate;
-        } else {
-            // Handle invalid input or errors
-            document.getElementById("experydate").value = "";
+        // Determine if the duration term is in "YEAR" and multiply by 12
+        if (loanDurationTerm === "YEAR") {
+            loanDuration *= 12;
         }
+
+        // Calculate the expiry date directly
+        expiryDate.setMonth(expiryDate.getMonth() + loanDuration);
+
+        const formattedExpiryDate = formatDate(expiryDate);
+        document.getElementById("experydate").value = formattedExpiryDate;
+    } else {
+        // Handle invalid input or errors
+        document.getElementById("experydate").value = "";
     }
+}
+    
 
     function formatDate(date) {
         const year = date.getFullYear();
-        const month = (date.getMonth() + 2).toString().padStart(2, '0');
-        const day = (date.getDate() + 1).toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = (date.getDate()+1).toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
@@ -967,8 +1073,11 @@
     calculateExpiryDate();
 </script>
 
-
-
+<script>
+$(document).ready(function () {
+     calculateExpiryDate();
+});
+</script>
 <script>
 
 
@@ -1626,87 +1735,7 @@
 
     // item modal
 
-    $(document).on("click", "#itemSave", function () {
-        var taxref, status1;
 
-        if ($('#inclusive').checked) {
-            tax = $('#inclusive').val();
-        }
-        else if ($('#check').val()) {
-            tax = $('#check').val();
-        }
-        else {
-            console.log("Checkbox is not checked.");
-        }
-
-        console.log(tax);
-        if ($('input[name="status"]:checked').val() == 'Active') {
-
-            status1 = $('#flexRadioDefault1').val();
-        }
-        else {
-            status1 = $('#flexRadioDefault2').val();
-        }
-
-        $.ajax({
-
-            type: 'POST',
-            url: "{% url 'credit_item' %}",
-
-            data: {
-                type: $("#type").val(),
-                name: $("#item_name").val(),
-                unit: $("#unit").val(),
-                hsn: $("#hsn").val(),
-                taxref: tax,
-                sell_price: $("#saleprice").val(),
-                cost_price: $("#purprice").val(),
-                sell_acc: $("#sale_account").val(),
-                cost_acc: $("#pur_account").val(),
-                sell_desc: $("#sale_desc").val(),
-                cost_desc: $("#pur_desc").val(),
-                intra_st: $("#intra_st").val(),
-                inter_st: $("#inter_st").val(),
-                invacc: $("#invacc").val(),
-                stock: $("#stock").val(),
-                status: status1,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-
-            },
-
-            success: function (response) {
-                console.log(response)
-                document.getElementById("modalItem").reset();
-                reloadItem();
-            },
-        });
-    });
-
-
-    function reloadItem() {
-        $.ajax({
-            url: "{% url 'item_dropdown' %}",
-            type: "GET",
-            dataType: "json",
-            data: $(this).serialize(),
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-
-            success: function (data) {
-                var dropdown = $('.product');
-                console.log(data)
-                dropdown.empty();
-                dropdown.append(`<option selected>Select Item</option>`);
-                $.each(data, function (key, value) {
-
-                    dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
-                });
-
-            },
-            error: function (xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
-    }
 </script>
 
 <script>

@@ -42354,7 +42354,14 @@ def employeeloanpage(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     employee=EmployeeLoan.objects.filter(company=request.session["uid"])
     print(employee)
-    return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})
+    if not loan_duration.objects.filter(term = 'YEAR' ,term_value=1).exists():
+        loan_duration.objects.create(term='YEAR' ,term_value=1,cid=cmp1)
+    if not loan_duration.objects.filter(term = 'MONTH' ,term_value=6).exists():
+        loan_duration.objects.create(term='MONTH' ,term_value=6,cid=cmp1)
+    if not loan_duration.objects.filter(term = 'MONTH' ,term_value=3).exists():
+        loan_duration.objects.create(term='MONTH' ,term_value=3,cid=cmp1)
+    
+    return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1,})
 
 def activeloanpage(request):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42404,10 +42411,6 @@ def listemployee_loan(request):
     return JsonResponse({'email': email,'employeeno': employeeno,'joindate':joindate,'amount': amount},safe=False)
 
 
-def newemployeeloan(request):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    employee=payrollemployee.objects.filter(cid_id=request.session["uid"])
-    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1})
 
 def addemployeeloan(request):
     cmpy = company.objects.get(id=request.session["uid"])
@@ -45106,3 +45109,83 @@ def delete_loan_payment(request, id):
     dl_loan.delete()
 
     return redirect('loan')
+
+
+
+#333333333333333333333333333333333333333
+def employeeloanpage(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=EmployeeLoan.objects.filter(company=request.session["uid"])
+    print(employee)
+    if not loan_duration.objects.filter(term = 'YEAR' ,term_value=1).exists():
+        loan_duration.objects.create(term='YEAR' ,term_value=1,cid=cmp1)
+    if not loan_duration.objects.filter(term = 'MONTH' ,term_value=6).exists():
+        loan_duration.objects.create(term='MONTH' ,term_value=6,cid=cmp1)
+    if not loan_duration.objects.filter(term = 'MONTH' ,term_value=3).exists():
+        loan_duration.objects.create(term='MONTH' ,term_value=3,cid=cmp1)
+    
+    return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1,})
+
+def newemployeeloan(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan_d = loan_duration.objects.all()
+    employee=payrollemployee.objects.filter(cid_id=request.session["uid"])
+    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d})
+
+
+def credit_term(request):
+        
+    if request.method == 'POST':
+        cmp1 = company.objects.get(id=request.session['uid'])
+        
+        item = loan_duration(term=term,term_value=term_value,cid=cmp1)
+        item.save()
+        return redirect('addpurchasecredit')
+    return redirect('/')
+
+
+def term_dropdown(request):
+
+    company1 = company.objects.get(id=request.session["uid"])
+
+    options = {}
+    option_objects = loan_duration.objects.all()
+    for option in option_objects:
+        print(options)
+        options[option.id] =  [option.term ]
+
+    return JsonResponse(options)
+
+def credit_term(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        
+        if request.method == 'POST':
+            cmp1 = company.objects.get(id=request.session['uid'])
+            term_value = request.POST.get('term_value')
+            term = request.POST.get('term') 
+            t_v = term_value + term
+            print(term)
+            print(term_value)
+            print("TERM DONE")      
+            item = loan_duration(cid=cmp1,term=term,term_value=term_value)
+            item.save()
+            return redirect('term_dropdown')
+        return redirect('term_dropdown')
+    return redirect('/') 
+
+
+@login_required(login_url='regcomp')
+def term_dropdown(request):
+
+    company1 = company.objects.get(id=request.session["uid"])
+
+    options = {}
+    option_objects = loan_duration.objects.filter(cid=request.session["uid"])
+    for option in option_objects:
+        options[option.id] =   [option.term] + [option.term_value]
+
+    return JsonResponse(options)
