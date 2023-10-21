@@ -7,7 +7,7 @@
        
             <div class="col-md-12">
                <center>
-               <h2>  loan Payment</h2>
+               <h2> Employee loan Due</h2>
             </center>
             </div>
             
@@ -18,7 +18,7 @@
 </div>
 <div class="page-content">
 <div class="card radius-15 p-5 ">
-<form id="bankForm" method="post" action="z">
+<form id="bankForm" method="post" action="">
 
     {% csrf_token %}
     <div class="row">
@@ -55,7 +55,7 @@
     <div class="row">
         <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="">
             <option class="form-control bg-dark text-white" value="cash">CASH</option>
-            {% for i in bank %}
+            {% for i in bnk %}
             <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
             {% endfor %}
         </select>  </div>
@@ -71,7 +71,7 @@
         </div>
         <div class="col-md-2 mt-3">
           <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
-            Save Loan Account
+            Save Transaction
           </button>
         </div>
         <div class="col-md-1"></div>

@@ -1174,6 +1174,8 @@ urlpatterns = [
 
     path('credit_term', views.credit_term, name='credit_term'),
     path('term_dropdown', views.term_dropdown, name='term_dropdown'),
+    path('repayment',views.repayment,name='repayment'),
+    path('loandue',views.loandue,name='loandue'),
     
     
 ]

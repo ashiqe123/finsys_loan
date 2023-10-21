@@ -42416,6 +42416,8 @@ def addemployeeloan(request):
     cmpy = company.objects.get(id=request.session["uid"])
     if request.method == 'POST':
         empid = request.POST['employee']
+        print(empid)
+        print('emploree')
         employee = payrollemployee.objects.get(employeeid=empid)
         Loan_Amound = request.POST['Loan_Amount'] 
         loandate = request.POST['loandate'] 
@@ -42429,8 +42431,8 @@ def addemployeeloan(request):
             file = '' 
         Note = request.POST['Note']
 
-        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_duration=loan_duration)
-
+        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_duration=loan_duration,balance_loan=Loan_Amound)
+        
         if int(cuttingPercentage)==0 and int(cuttinamount)!=0:
             data.MonthlyCut_Amount=cuttinamount
             data.MonthlyCut_percentage=((int(cuttinamount)/int(Loan_Amound))*100)
@@ -42439,9 +42441,11 @@ def addemployeeloan(request):
             data.MonthlyCut_percentage= cuttingPercentage  
             data.MonthlyCut_Amount = ((int(cuttingPercentage)/100)*int(Loan_Amound)) 
             data.action=1
-            
-           
+          
         data.save()
+        d_id = EmployeeLoan.objects.get(id=data.id) 
+        lt = employee_loan_tran(cid=cmpy,emploee_loan=d_id,employee=employee,particular = 'LOAN ISSUED',loan_trans_date=loandate,amount=Loan_Amound,intrest=0,total_amount=Loan_Amound)
+        lt.save()
         
     return redirect('employeeloanpage')
 
@@ -42553,8 +42557,9 @@ def AddEmployeeInloanPage(request):
 def employee_details(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
     employee = EmployeeLoan.objects.get(id=id,company=request.session["uid"])
-   
-    return render(request,'app1/employee_details.html',{'employee': employee,'cmp1': cmp1})
+    loan_trans = employee_loan_tran.objects.filter(emploee_loan=id)
+    print(loan_trans)
+    return render(request,'app1/employee_details.html',{'employee': employee,'cmp1': cmp1,'loan_trans':loan_trans})
 
 
 def active_loan(request,employeeid):
@@ -42580,7 +42585,10 @@ def editloan(request,eid):
     cmp1 = company.objects.get(id=request.session["uid"])
     employee = EmployeeLoan.objects.get(id=eid,company=request.session["uid"])
     loan=EmployeeLoan.objects.get(id=eid)
-    return render(request,'app1/editloan.html',{'loan':loan,'employee': employee,'cmp1': cmp1})              
+    loan_d=loan_duration.objects.all()
+    print(loan.LoanDate)
+    print(loan.ExperyDate)
+    return render(request,'app1/editloan.html',{'loan':loan,'employee': employee,'cmp1': cmp1,'loan_d':loan_d})              
 
 def editloan_action(request,eid):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42627,7 +42635,14 @@ def editloan_action(request,eid):
     
     employee.Note = Note
     
-    employee.save()    
+    employee.save()   
+    d_id = EmployeeLoan.objects.get(id=employee.id) 
+    lt = employee_loan_tran.objects.get(emploee_loan=d_id)
+    lt.loan_trans_date = loandate
+    lt.employee = employee
+    lt.amount = Loan_Amount
+    lt.total_amount = Loan_Amount
+    lt.save() 
     return redirect('employee_details',eid)
 
 def loan_add_file(request,id):
@@ -45117,12 +45132,12 @@ def employeeloanpage(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     employee=EmployeeLoan.objects.filter(company=request.session["uid"])
     print(employee)
-    if not loan_duration.objects.filter(term = 'YEAR' ,term_value=1).exists():
-        loan_duration.objects.create(term='YEAR' ,term_value=1,cid=cmp1)
-    if not loan_duration.objects.filter(term = 'MONTH' ,term_value=6).exists():
-        loan_duration.objects.create(term='MONTH' ,term_value=6,cid=cmp1)
-    if not loan_duration.objects.filter(term = 'MONTH' ,term_value=3).exists():
-        loan_duration.objects.create(term='MONTH' ,term_value=3,cid=cmp1)
+    if not loan_duration.objects.filter(term = '1 YEAR' ,term_value=12).exists():
+        loan_duration.objects.create(term='1 YEAR' ,term_value=12,cid=cmp1)
+    if not loan_duration.objects.filter(term = '6 MONTH' ,term_value=6).exists():
+        loan_duration.objects.create(term='6 MONTH' ,term_value=6,cid=cmp1)
+    if not loan_duration.objects.filter(term = '3 MONTH' ,term_value=3).exists():
+        loan_duration.objects.create(term='3 MONTH' ,term_value=3,cid=cmp1)
     
     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1,})
 
@@ -45133,28 +45148,6 @@ def newemployeeloan(request):
     return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d})
 
 
-def credit_term(request):
-        
-    if request.method == 'POST':
-        cmp1 = company.objects.get(id=request.session['uid'])
-        
-        item = loan_duration(term=term,term_value=term_value,cid=cmp1)
-        item.save()
-        return redirect('addpurchasecredit')
-    return redirect('/')
-
-
-def term_dropdown(request):
-
-    company1 = company.objects.get(id=request.session["uid"])
-
-    options = {}
-    option_objects = loan_duration.objects.all()
-    for option in option_objects:
-        print(options)
-        options[option.id] =  [option.term ]
-
-    return JsonResponse(options)
 
 def credit_term(request):
     if 'uid' in request.session:
@@ -45166,13 +45159,20 @@ def credit_term(request):
         if request.method == 'POST':
             cmp1 = company.objects.get(id=request.session['uid'])
             term_value = request.POST.get('term_value')
+            print
             term = request.POST.get('term') 
-            t_v = term_value + term
-            print(term)
-            print(term_value)
+            t_v = term_value + ' ' + term 
+            if term == 'YEAR':
+                term_value = int(term_value) * 12
+                item = loan_duration(cid=cmp1,term=t_v,term_value=term_value)
+                item.save()
+                print(term)
+                print(term_value)
+            else:
+                item = loan_duration(cid=cmp1,term=t_v,term_value=term_value)
+                item.save()
             print("TERM DONE")      
-            item = loan_duration(cid=cmp1,term=term,term_value=term_value)
-            item.save()
+            
             return redirect('term_dropdown')
         return redirect('term_dropdown')
     return redirect('/') 
@@ -45186,6 +45186,19 @@ def term_dropdown(request):
     options = {}
     option_objects = loan_duration.objects.filter(cid=request.session["uid"])
     for option in option_objects:
-        options[option.id] =   [option.term] + [option.term_value]
+        options[option.id] =    [option.term]
 
     return JsonResponse(options)
+
+
+
+def repayment(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    bnk=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/employee_repayment.html',{'bnk':bnk,'cmp1':cmp1})
+
+
+def loandue(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    bnk=bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/employee_reloan.html',{'bnk':bnk,'cmp1':cmp1})

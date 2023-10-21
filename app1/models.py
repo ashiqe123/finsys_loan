@@ -2118,7 +2118,7 @@ class EmployeeLoan(models.Model):
       company = models.ForeignKey(company, on_delete=models.CASCADE)
       status = models.CharField(max_length=20,null=True)
       action= models.IntegerField(blank=True,null=True)
-      
+      balance_loan = models.IntegerField(blank=True,null=True)
 
 
 class loan_duration(models.Model):
@@ -2129,7 +2129,7 @@ class loan_duration(models.Model):
 class employee_loan_tran(models.Model):
     employee = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
-    employee = models.ForeignKey(EmployeeLoan, on_delete=models.CASCADE)
+    emploee_loan = models.ForeignKey(EmployeeLoan, on_delete=models.CASCADE)
     loan_trans_date = models.DateField()
     particular = models.CharField(max_length=100)
     amount = models.IntegerField()
