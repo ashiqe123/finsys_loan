@@ -42424,14 +42424,22 @@ def addemployeeloan(request):
         experydate = request.POST['experydate']
         cuttingPercentage = request.POST['cuttingPercentage']
         cuttinamount = request.POST['Cutingamount']
-        loan_duration = request.POST['loan_duration']
+        loan_duration= int(request.POST['loan_duration'])
+        print(loan_duration)
+        if loan_duration > 11 :
+            ln = int(loan_duration) / 12
+            loan_term = str(ln) + 'YEAR'
+        else:
+            ln = loan_duration
+            loan_term = str(ln) +'MONTH'
         try:
             file = request.FILES['file']
         except:
             file = '' 
         Note = request.POST['Note']
-
-        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_duration=loan_duration,balance_loan=Loan_Amound)
+        print(loan_duration)
+        print(ln)
+        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_value=loan_duration,balance_loan=Loan_Amound,loan_term =loan_term )
         
         if int(cuttingPercentage)==0 and int(cuttinamount)!=0:
             data.MonthlyCut_Amount=cuttinamount
@@ -42581,69 +42589,6 @@ def inactive_loan(request,employeeid):
     return redirect('employee_details',employeeid)    
 
 
-def editloan(request,eid):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    employee = EmployeeLoan.objects.get(id=eid,company=request.session["uid"])
-    loan=EmployeeLoan.objects.get(id=eid)
-    loan_d=loan_duration.objects.all()
-    print(loan.LoanDate)
-    print(loan.ExperyDate)
-    return render(request,'app1/editloan.html',{'loan':loan,'employee': employee,'cmp1': cmp1,'loan_d':loan_d})              
-
-def editloan_action(request,eid):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    employee = EmployeeLoan.objects.get(id=eid,company=request.session["uid"])
-    Loan_Amount = request.POST['Loan_Amound']
-    loandate = request.POST['loandate'] 
-    experydate = request.POST['experydate']
-    cuttingPercentage = request.POST['cuttingPercentage']
-    print(cuttingPercentage)
-    cuttinamount = request.POST['Cutingamount']
-    print(cuttinamount)
-   
-    
-    Note = request.POST['Note']
-
-    old=employee.File
-    new=request.FILES.get('file')
-    if old!=None and new==None:
-        employee.File=old
-    else:
-        employee.File=new
-
-    oldper=employee.MonthlyCut_percentage  
-    print(oldper)  
-    oldca=int(employee.MonthlyCut_Amount)
-    print(oldca)
-    
-    if int(oldper)!= int(cuttingPercentage):
-        employee.MonthlyCut_percentage = cuttingPercentage
-        employee.MonthlyCut_Amount = ((int(cuttingPercentage)/100)*int(Loan_Amount))
-        employee.action=1
- 
-    else:
-        employee.MonthlyCut_percentage = ((int(cuttinamount)/int(Loan_Amount))*100)
-        employee.MonthlyCut_Amount = cuttinamount
-        employee.action=0
-
-    
-
-
-    employee.LoanAmount = Loan_Amount
-    employee.LoanDate = loandate
-    employee.ExperyDate = experydate
-    
-    employee.Note = Note
-    
-    employee.save()   
-    d_id = EmployeeLoan.objects.get(id=employee.id) 
-    lt = employee_loan_tran.objects.get(emploee_loan=d_id)
-    lt.loan_trans_date = loandate
-    lt.employee = employee
-    lt.amount = Loan_Amount
-    lt.total_amount = Loan_Amount
-    lt.save() 
-    return redirect('employee_details',eid)
 
 def loan_add_file(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
@@ -45191,11 +45136,133 @@ def term_dropdown(request):
     return JsonResponse(options)
 
 
+def editloan(request,eid):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee = EmployeeLoan.objects.get(id=eid,company=request.session["uid"])
+    loan=EmployeeLoan.objects.get(id=eid)
+    loan_d=loan_duration.objects.all()
+    print(loan.LoanDate)
+    print(loan.ExperyDate)
+    return render(request,'app1/editloan.html',{'loan':loan,'employee': employee,'cmp1': cmp1,'loan_d':loan_d})              
+def editloan_action(request, eid):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employ = EmployeeLoan.objects.get(id=eid, company=request.session["uid"])
 
-def repayment(request):
+    if request.method == 'POST':
+        Loan_Amount = request.POST.get('Loan_Amound')
+        loandate = request.POST.get('loandate')
+        experydate = request.POST.get('experydate')
+        cuttingPercentage = request.POST.get('cuttingPercentage')
+        cuttinamount = request.POST.get('Cutingamount')
+        Note = request.POST.get('Note')
+        loan_duration= int(request.POST['loan_duration'])
+        # Update the loan details
+        employ.LoanAmount = Loan_Amount
+        employ.LoanDate = loandate
+        employ.ExperyDate = experydate
+        employ.Note = Note
+        print(cuttingPercentage)
+        print(cuttinamount)
+        if loan_duration > 11 :
+            ln = int(loan_duration) / 12
+            employ.loan_term = str(ln) + 'YEAR'
+            employ.loan_value = int(ln) * 12
+        else:
+            employ.loan_value = loan_duration
+            employ.loan_term = str(loan_duration) +'MONTH'
+
+        # Handle Monthly Cutting options
+        if int(cuttingPercentage) == 0 and int(cuttinamount) != 0:
+            employ.MonthlyCut_Amount = cuttinamount
+            employ.MonthlyCut_percentage = (int(cuttinamount) / int(Loan_Amount)) * 100
+            employ.action = 0
+        else:
+            employ.MonthlyCut_percentage = cuttingPercentage
+            employ.MonthlyCut_Amount = (int(cuttingPercentage) / 100) * int(Loan_Amount)
+            employ.action = 1
+
+        employ.save()
+
+        # Update the loan transaction
+        lt = employee_loan_tran.objects.get(emploee_loan=employ)
+        lt.loan_trans_date = loandate
+        lt.amount = Loan_Amount
+        lt.total_amount = Loan_Amount
+        lt.save()
+
+    return redirect('employee_details', eid)
+
+
+def repayment(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
     bnk=bankings_G.objects.filter(cid=cmp1)
-    return render(request,'app1/employee_repayment.html',{'bnk':bnk,'cmp1':cmp1})
+    employ = EmployeeLoan.objects.get(id=id)
+    return render(request,'app1/employee_repayment.html',{'bnk':bnk,'cmp1':cmp1,'employ':employ})
+
+
+def crt_emp_loan_trans(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+    
+    if request.method == 'POST':
+        principal = int(request.POST.get('principal'))
+        date = request.POST.get('date')
+        intrest = request.POST.get('interest')
+        employ = request.POST.get('emp')
+        total = int(request.POST.get('total'))
+        received_from = request.POST.get('recieved')
+        employee = payrollemployee.objects.get(employeeid=employ)
+        print(id)
+        # Fetch the loan account
+        loan = EmployeeLoan.objects.get(id=id)
+        # Deduct payment based on source (cash or bank)
+        if received_from == 'cash':
+            # Deduct from company's cash balance
+            cid.cash += principal
+            cid.save()
+            transaction = employee_loan_tran(
+            employee=employee,
+            cid=cid,
+            emploee_loan=loan,
+            loan_trans_date=date,
+            particular= 'EMI PAID ',
+            amount= principal,
+            intrest = intrest,
+            total_amount = total,
+            payment_type = 'CASH',
+            balance_loan= loan.balance_loan - principal
+
+            )
+            transaction.save()
+        else:
+            # Deduct from the selected bank's balance
+            received_bank = bankings_G.objects.get(bankname=received_from)
+            received_bank.balance += principal
+            received_bank.save()
+            transaction = employee_loan_tran(
+            employee=employee,
+            cid=cid,
+            emploee_loan=loan,
+            loan_trans_date=date,
+            particular= 'EMI PAID ',
+            amount= principal,
+            intrest = intrest,
+            total_amount = total,
+            payment_type = received_bank.bankname,
+            balance_loan= loan.balance_loan - principal
+        )
+        transaction.save()
+            # Add the payment amount to the lender bank (if not cash)
+        loan.balance_loan -= total
+        loan.save()
+                
+       
+        # Update the loan account balance
+        # Create a transaction record
+        
+
+    return redirect('employee_details',id)
+
+
 
 
 def loandue(request):

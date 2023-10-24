@@ -107,7 +107,7 @@
                                 <option value="">Choose duration</option>
                                 {% for i in loan_d %}
                         
-                                    <option value="{{i.term_value}} ">{{i.term}}</option>
+                                    <option value="{{i.term_value}}">{{i.term}}</option>
                                
                         
                                 {% endfor %}
@@ -940,30 +940,32 @@
             });
 
 
-        function reloadItem() {
-            $.ajax({
-            url: "{% url 'term_dropdown' %}",
-            type: "GET",
-            dataType: "json",
-            data: $(this).serialize(),
-            csrfmiddlewaretoken: '{{ csrf_token }}',
+            function reloadItem() {
+    $.ajax({
+        url: "{% url 'term_dropdown' %}",
+        type: "GET",
+        dataType: "json",
+        data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+        success: function(data) {
+            var dropdown = $('.term');
+            console.log(data);
 
-            success: function(data) {
-                var dropdown = $('.term');
-                console.log(data)
-                dropdown.empty();
-                dropdown.append(`<option selected>Choose Duration</option>`);
-                $.each(data, function(key, value) {
-                
-                    dropdown.append($('<option></option>').attr('value' ,key).text(value).val(value));
-                });
+            // Clear existing options
+            dropdown.empty();
 
-            },
-            error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            }
+            // Add the default "Choose Duration" option
+            dropdown.append('<option value="">Choose duration</option>');
+
+            // Add the new options from the data received
+            $.each(data, function(id, value) {
+                dropdown.append($('<option></option>').attr('value', value).text(value));
             });
-            }
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+}
 
 
 </script>    

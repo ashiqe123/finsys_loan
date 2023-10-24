@@ -2104,21 +2104,6 @@ class recinvoice_item(models.Model):
     hsn = models.CharField(max_length=100)
     items = models.CharField(max_length=100,null=True)
     
-    
-class EmployeeLoan(models.Model):  
-      employee = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
-      LoanAmount = models.IntegerField(blank=True,null=True)
-      LoanDate = models.CharField(max_length=100)
-      ExperyDate = models.CharField(max_length=100)
-      MonthlyCut_percentage = models.IntegerField(blank=True,null=True)
-      MonthlyCut_Amount = models.IntegerField(blank=True,null=True)
-      Note = models.TextField(max_length=100)
-      loan_duration=models.CharField(max_length=30)
-      File = models.FileField(upload_to='loanfile',default="",blank=True, null=True)
-      company = models.ForeignKey(company, on_delete=models.CASCADE)
-      status = models.CharField(max_length=20,null=True)
-      action= models.IntegerField(blank=True,null=True)
-      balance_loan = models.IntegerField(blank=True,null=True)
 
 
 class loan_duration(models.Model):
@@ -2126,8 +2111,27 @@ class loan_duration(models.Model):
     term_value = models.IntegerField()
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
 
-class employee_loan_tran(models.Model):
+
+class EmployeeLoan(models.Model):  
     employee = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
+    LoanAmount = models.IntegerField(blank=True,null=True)
+    LoanDate = models.CharField(max_length=100)
+    ExperyDate = models.CharField(max_length=100)
+    MonthlyCut_percentage = models.IntegerField(blank=True,null=True)
+    MonthlyCut_Amount = models.IntegerField(blank=True,null=True)
+    Note = models.TextField(max_length=100)
+    loan_term = models.CharField(max_length=100)
+    loan_value = models.IntegerField(blank=True,null=True)
+    File = models.FileField(upload_to='loanfile',default="",blank=True, null=True)
+    company = models.ForeignKey(company, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20,null=True)
+    action= models.IntegerField(blank=True,null=True)
+    balance_loan = models.IntegerField(blank=True,null=True)
+    
+
+
+class employee_loan_tran(models.Model):
+    employee = models.ForeignKey(payrollemployee, on_delete=models.CASCADE,blank=True,null=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     emploee_loan = models.ForeignKey(EmployeeLoan, on_delete=models.CASCADE)
     loan_trans_date = models.DateField()
@@ -2136,7 +2140,7 @@ class employee_loan_tran(models.Model):
     intrest = models.IntegerField()
     total_amount = models.IntegerField()
     payment_type = models.CharField(max_length=100)
-
+    balance_loan = models.IntegerField(blank=True,null=True)
 
 ########################recurring bill-reshna-start#############
 

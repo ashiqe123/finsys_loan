@@ -86,13 +86,13 @@
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Expery Date</label>
 
-                        <input type="date" class="form-control" id="experydate" name="experydate" value="{{loan.ExperyDate | date:'Y-m-d'}}" required><br>
+                        <input type="date" class="form-control" id="experydat" name="experydate" value="{{loan.ExperyDate}}" required><br>
                     </div>
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Loan Duration</label>
                         <div class="d-flex">
                             <select class="form-control term" name="loan_duration" id="loan_duration" onchange="calculateExpiryDate()" required>
-                                <option value="">Choose duration</option>
+                                <option value="{{loan.loan_value}}" selected>{{loan.loan_term}}</option>
                                 {% for i in loan_d %}
                         
                                     <option value="{{i.term_value}} ">{{i.term}}</option>
@@ -299,52 +299,51 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
 
-<script>
+
+ 
+ <script>
     function calculateExpiryDate() {
-    let loanDurationValue = document.getElementById("loan_duration").value;
-    let experydate = document.getElementById("experydate").value;
-    console.log(experydate)
-    // Split the selected duration value into duration and term
-    let loanDurationParts = loanDurationValue.split(" ");
-    let loanDuration = parseInt(loanDurationParts[0]);
-    let loanDurationTerm = loanDurationParts[1];
-
-    let loanDate = new Date(document.getElementById("loandate").value);
-    console.log('loandate')
-    console.log(loanDate)
-    console.log(loanDuration)
-    console.log(loanDurationTerm)
-    if (!isNaN(loanDuration) && loanDate instanceof Date && !isNaN(loanDate)) {
-        const expiryDate = new Date(loanDate);
-
-        // Determine if the duration term is in "YEAR" and multiply by 12
-        if (loanDurationTerm === "YEAR") {
-            loanDuration *= 12;
-        }
-
-        // Calculate the expiry date directly
-        expiryDate.setMonth(expiryDate.getMonth() + loanDuration);
-
-        const formattedExpiryDate = formatDate(expiryDate);
-        document.getElementById("experydate").value = formattedExpiryDate;
-    } else {
-        // Handle invalid input or errors
-        // document.getElementById("experydate").value = "";
-    }
-}
-
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-// Initialize expiry date when the page loads
-calculateExpiryDate();
-
+     let loanDurationValue = document.getElementById("loan_duration").value;
+     let loanDurationParts = loanDurationValue.split(" ");
+     let loanDuration = parseInt(loanDurationParts[0]);
+     let loanDurationTerm = loanDurationParts[1];
+     const joinDate = new Date(document.getElementById("loandate").value);
+     console.log(loanDurationTerm);
+     console.log(loanDurationValue);
+ 
+     if (!isNaN(loanDuration) && joinDate instanceof Date && !isNaN(joinDate)) {
+         const expiryDate = new Date(joinDate);
+ 
+         // Determine if the duration term is in "YEAR" and multiply by 12
+         if (loanDurationTerm === "YEAR") {
+             loanDuration *= 12;
+         }
+ 
+         // Calculate the expiry date directly
+         expiryDate.setMonth(expiryDate.getMonth() + loanDuration);
+ 
+         const formattedExpiryDate = formatDate(expiryDate);
+         document.getElementById("experydat").value = formattedExpiryDate;
+     } else {
+         // Handle invalid input or errors
+         document.getElementById("experydat").value = "";
+     }
+ }
+     
+ 
+     function formatDate(date) {
+         const year = date.getFullYear();
+         const month = (date.getMonth() + 1).toString().padStart(2, '0');
+         const day = (date.getDate()+1).toString().padStart(2, '0');
+         return `${year}-${month}-${day}`;
+     }
+ 
+     // Initialize expiry date when the page loads
+     calculateExpiryDate();
  </script>
  
+
+
 <script>
     function poppins1() {
         var chkbtn = document.getElementById('okay');

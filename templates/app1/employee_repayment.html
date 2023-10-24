@@ -18,49 +18,61 @@
 </div>
 <div class="page-content">
 <div class="card radius-15 p-5 ">
-<form id="bankForm" method="post" action="">
+<form id="bankForm" method="post" action="{% url 'crt_emp_loan_trans' employ.id %}">
 
     {% csrf_token %}
     <div class="row">
-        <div class="col-md-5 p-2">PRINCIPAL AMOUNT</div>
+        <div class="col-md-5 p-2">EMPLOYEE NAME</div>
+        
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2">DATE</div>
+        <div class="col-md-5 p-2">PRINCIPAL AMOUNT</div>
+        
     </div>
 
     <div class="row">
-        <div class="col-md-5 p-2"> <input class="form-control bg-grey" type="text" name="principal" id="principal" value="">
-        </div>
+        <div class="col-md-5 p-2"> 
+
+        <select name="emp" class="form-control" autocomplete="off" id="">
+            <option value="{{ employ.employee.employeeid }}">{{ employ.employee.title }}. {{ employ.employee.firstname }} {{employ.employee.lastname }}</option> 
+
+        </select>
+                </div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control"></div>
+        <div class="col-md-5 p-2">
+            <input class="form-control bg-grey" type="text" name="principal" id="principal" value="">
+            </div>
     </div>
 
     <div class="row">
         <div class="col-md-5 p-2">INTREST AMOUNT</div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2">TOTAL AMOUNT</div>
+        <div class="col-md-5 p-2">DATE</div>
+       
     </div>
 
     <div class="row">
-        <div class="col-md-5 p-2"> <input class="form-control" type="text" name="interest" id="interest" value=""></div>
+        <div class="col-md-5 p-2"> <input class="form-control" type="text" name="interest" id="interest" value="0"></div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2"><input class="form-control" type="number" name="total" id="total" readonly></div>
+        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control"></div>
     </div>
 
     <div class="row">
         <div class="col-md-5 p-2">PAID FROM</div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2"></div>
+        <div class="col-md-5 p-2">TOTAL AMOUNT</div>
     </div>
 
     <div class="row">
         <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="">
             <option class="form-control bg-dark text-white" value="cash">CASH</option>
+            <option class="form-control bg-dark text-white" value="">UPI ID</option>
             {% for i in bnk %}
             <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
             {% endfor %}
         </select>  </div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" autocomplete="off" type="number" name="total" id="total" readonly></div>
+
     </div>
 
     <div class="row mb-5">
