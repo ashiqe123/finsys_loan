@@ -1175,8 +1175,15 @@ urlpatterns = [
     path('credit_term', views.credit_term, name='credit_term'),
     path('term_dropdown', views.term_dropdown, name='term_dropdown'),
     path('repayment/<int:id>',views.repayment,name='repayment'),
-    path('loandue',views.loandue,name='loandue'),
-    path('crt_emp_loan_trans/<int:id>',views.crt_emp_loan_trans,name='crt_emp_loan_trans')
+    path('loandue/<int:id>',views.loandue,name='loandue'),
+    path('crt_emp_loan_trans/<int:id>',views.crt_emp_loan_trans,name='crt_emp_loan_trans'),
+    
+    path('render_pdfstatment_view/<int:id>', views.render_pdfstatment_view, name='render_pdfstatment_view'),
+    path('additional_loan/<int:id>',views.additional_loan,name='additional_loan'),
+    path('edit_repayment/<int:id>',views.edit_repayment,name='edit_repayment'),
+    path('make_edit_pay/<int:id>',views.make_edit_pay,name='make_edit_pay'),
+    path('dlt_loan_trans/<int:id>',views.dlt_loan_trans,name='dlt_loan_trans'),
+
     
     
 ]

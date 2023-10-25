@@ -15,20 +15,35 @@
 <div class="page-content">
     <div class="card radius-15 h-20 p-3">
         <div class="row">
-           
-                <div class="col-md-9">
-                    <h5>BANK : <span style="font-size: x-large;">{{bank.bankname}}</span></h5>
-                    <h5>O P : <span style="font-size: x-large;">{{bank.openingbalance}}</span></h5>
-                </div>
-                <div class="col-md-3 mt-4">
-                    <h5 class="mt-1">BALANCE : <span style="font-size: x-large;">{{bank.balance}}</span></h5>
-                </div>
-                
-                <hr style="width:95%">
+            <div class="col-md-9">
+                <h5>BANK: <span style="font-size: x-large;">{{bank.bankname}}</span></h5>
+                <h5>O P: <span style="font-size: x-large;">{{bank.openingbalance}}</span></h5>
+            </div>
+            <div class="col-md-3 mt-4">
+                <h5 class="mt-1">BALANCE: <span style="font-size: x-large;">{{bank.balance}}</span></h5>
+            </div>
             
+            <hr style="width: 95%">
+    
+            <div class="right text-right ml-auto"> <!-- Use text-right class for right alignment -->
+                <center>
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'e_bank' bank.id %}"><b>Edit Bank</b></a>
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'delete' bank.id %}"><b>Delete</b></a>
+                    
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" class=" dropdown-toggle" data-toggle="dropdown"><b>Transaction</b></a>
+                    <div class="dropdown-menu" class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="background-color: black;">
+                        <a class="dropdown-item" id="b2c" href="{% url 'bank_to_cash' %}" style="height: 40px; font-size: 15px; color: white;">Bank To Cash Transfer</a>
+                        <a class "dropdown-item" href="{% url 'cash_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Cash To Bank Transfer</a>
+                        <a class="dropdown-item" href="{% url 'bank_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Bank To Bank Transfer</a>
+                        <a class="dropdown-item" href="{% url 'bank_adjust' %}" style="height: 40px; font-size: 15px; color: white;">Adjust Bank Balance</a>
+                    </div>
+                    
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'bnk_statement' bank.id %}"><b>Statement</b></a>
+                </center>
+            </div>
         </div>
     </div>
-   
+    
    
 <div class="card radius-15">
     <div class="card-body">
@@ -65,21 +80,7 @@
             
       </div>
       <div class="row justify-content-end">
-        <div class="col-auto">
-            <a style="border: 1px solid rgb(1, 100, 139);border-radius: 20px;padding: 10px;" href="{% url 'e_bank' bank.id  %}"><b>Edit Bank</b></a>
-            <a style="border: 1px solid rgb(1, 100, 139);border-radius: 20px;padding: 10px;" href="{% url 'delete' bank.id  %}"><b>Delete</b></a>
-           
-                <a style="border: 1px solid rgb(1, 100, 139);border-radius: 20px;padding: 10px;" class=" dropdown-toggle" data-toggle="dropdown"><b>Transaction</b></a>
-                <div class="dropdown-menu" style="background-color: black;">
-                    <a class="dropdown-item" id="b2c" href="{% url 'bank_to_cash' %}" style="height: 40px; font-size: 15px; color: white;">Bank To Cash Transfer</a>
-                    <a class="dropdown-item" href="{% url 'cash_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Cash To Bank Transfer</a>
-                    <a class="dropdown-item" href="{% url 'bank_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Bank To Bank Transfer</a>
-                    <a class="dropdown-item" href="{% url 'bank_adjust' %}" style="height: 40px; font-size: 15px; color: white;">Adjust Bank Balance</a>
-                </div>
-           
-            <a style="border: 1px solid rgb(1, 100, 139);border-radius: 20px;padding: 10px;" href="{% url 'bnk_statement' bank.id  %}"><b>Statement</b></a>
-
-        </div>
+       
        
         
     </div>

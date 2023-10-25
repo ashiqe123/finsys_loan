@@ -18,7 +18,7 @@
 </div>
 <div class="page-content">
 <div class="card radius-15 p-5 ">
-<form id="bankForm" method="post" action="{% url 'crt_emp_loan_trans' employ.id %}">
+<form id="bankForm" method="post" action="{% url 'make_edit_pay' employ.id %}">
 
     {% csrf_token %}
     <div class="row">
@@ -39,7 +39,7 @@
                 </div>
         <div class="col-md-2"></div>
         <div class="col-md-5 p-2">
-            <input class="form-control bg-grey" type="text" name="principal" id="principal" value="{{employ.MonthlyCut_Amount}}">
+            <input class="form-control bg-grey" type="text" name="principal" id="principal" value="{{employ.amount}}">
             </div>
     </div>
 
@@ -51,9 +51,9 @@
     </div>
 
     <div class="row">
-        <div class="col-md-5 p-2"> <input class="form-control" type="text" name="interest" id="interest" value="0"></div>
+        <div class="col-md-5 p-2"> <input class="form-control" type="text"  name="interest" id="interest" value="{{employ.intrest}}"></div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control"></div>
+        <div class="col-md-5 p-2"><input type="date" name="date" value="{{employ.loan_trans_date}}" class="form-control"></div>
     </div>
 
     <div class="row">
@@ -64,7 +64,8 @@
 
     <div class="row">
         <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="">
-            <option class="form-control bg-dark text-white" value="cash">CASH</option>
+            <option class="form-control bg-dark text-white" value="{{employ.payment_type}}" selected>{{employ.payment_type}}</option>
+            <option class="form-control bg-dark text-white" value="CASH">CASH</option>
             <option class="form-control bg-dark text-white" value="">UPI ID</option>
             {% for i in bnk %}
             <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
@@ -78,12 +79,12 @@
     <div class="row mb-5">
         <div class="col-md-8 mt-3"></div>
         <div class="col-md-2 mt-3">
-            <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'loan' %}">Close</a>
+            <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'employeeloanpage' %}">Close</a>
 
         </div>
         <div class="col-md-2 mt-3">
           <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
-            Save Transaction
+            Update Transaction
           </button>
         </div>
         <div class="col-md-1"></div>

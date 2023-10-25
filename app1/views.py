@@ -41213,9 +41213,9 @@ def view_bank(request,id):
     print(bank)
     getloan=loan_transaction.objects.filter(to_trans=bank.bankname)
     toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
-    
+    emp_loan = employee_loan_tran.objects.filter(payment_type=bank.bankname)
 
-    return render(request,'app1/view_bank.html',{'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
+    return render(request,'app1/view_bank.html',{'emp_loan':emp_loan,'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
 
 
 
@@ -42439,7 +42439,7 @@ def addemployeeloan(request):
         Note = request.POST['Note']
         print(loan_duration)
         print(ln)
-        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_value=loan_duration,balance_loan=Loan_Amound,loan_term =loan_term )
+        data=EmployeeLoan(employee=employee,LoanAmount=Loan_Amound,LoanDate=loandate,ExperyDate=experydate,Note=Note,File=file,company=cmpy,status='Active',loan_value=loan_duration,balance_loan=Loan_Amound,loan_term =loan_term)
         
         if int(cuttingPercentage)==0 and int(cuttinamount)!=0:
             data.MonthlyCut_Amount=cuttinamount
@@ -42452,7 +42452,7 @@ def addemployeeloan(request):
           
         data.save()
         d_id = EmployeeLoan.objects.get(id=data.id) 
-        lt = employee_loan_tran(cid=cmpy,emploee_loan=d_id,employee=employee,particular = 'LOAN ISSUED',loan_trans_date=loandate,amount=Loan_Amound,intrest=0,total_amount=Loan_Amound)
+        lt = employee_loan_tran(cid=cmpy,emploee_loan=d_id,employee=employee,particular = 'LOAN ISSUED',loan_trans_date=loandate,amount=Loan_Amound,intrest=0,total_amount=Loan_Amound,balance_loan=Loan_Amound)
         lt.save()
         
     return redirect('employeeloanpage')
@@ -45265,7 +45265,164 @@ def crt_emp_loan_trans(request, id):
 
 
 
-def loandue(request):
+def loandue(request,id):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    employ = EmployeeLoan.objects.get(id=id)
+    return render(request,'app1/employee_reloan.html',{'employ':employ,'cmp1':cmp1})
+
+
+def additional_loan(request , id):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employ = EmployeeLoan.objects.get(id=id)
+    print(employ)
+    em_id = employ.employee.employeeid
+    employee = payrollemployee.objects.get(employeeid=em_id)
+    print(employee)
+    if request.method == 'POST':
+        principal = int(request.POST.get('remain_loan'))
+        date = request.POST.get('adjdate')
+        new_loan = request.POST.get('new')
+        total = request.POST.get('amount')
+        lt=employee_loan_tran(cid=cmp1,employee=employee,emploee_loan=employ,particular='ADDITIONAL LOAN ISSUED',amount=new_loan,total_amount=new_loan,
+        balance_loan = total,loan_trans_date=date,intrest=0 )
+        lt.save()
+        employ.balance_loan = total
+        employ.LoanAmount = total
+        employ.save()
+    return redirect('employee_details',id)
+
+def render_pdfstatment_view(request,id):
+    
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee = EmployeeLoan.objects.get(id=id,company=request.session["uid"])
+    loan_trans = employee_loan_tran.objects.filter(emploee_loan=id)
+    
+    
+
+   
+    
+    template_path = 'app1/emploanpdf.html'
+    context ={
+        'employee':employee,
+        'cmp1':cmp1,
+        'loan_trans':loan_trans,
+        
+    }
+    fname=employee.employee.employeeno
+   
+    # Create a Django response object, and specify content_type as pdftemp_creditnote
+    response = HttpResponse(content_type='application/pdf')
+    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    response['Content-Disposition'] =f'attachment; filename= {fname}.pdf'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    
+
+
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+
+
+def edit_repayment(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
     bnk=bankings_G.objects.filter(cid=cmp1)
-    return render(request,'app1/employee_reloan.html',{'bnk':bnk,'cmp1':cmp1})
+    employ = employee_loan_tran.objects.get(id=id)
+    return render(request,'app1/edit_repayment.html',{'cmp1':cmp1,'bnk':bnk,'employ':employ})
+
+
+
+from django.shortcuts import get_object_or_404
+
+def make_edit_pay(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+
+    if request.method == 'POST':
+        principal = int(request.POST.get('principal'))
+        date = request.POST.get('date')
+        interest = int(request.POST.get('interest'))
+        employ = request.POST.get('emp')
+        received_from = request.POST.get('recieved')
+        total=request.POST.get('total')
+        print(received_from)
+        pay_employee = get_object_or_404(payrollemployee, employeeid=employ)
+        loan_transaction = get_object_or_404(employee_loan_tran, id=id)
+        limit = loan_transaction.amount
+        print('0000000000000')
+        print(limit)
+        print(total)
+        print(principal)
+        print('00000000000')
+        # Adjust balance_loan
+        loan_transaction.balance_loan += loan_transaction.amount
+        
+        loan_transaction.emploee_loan.balance_loan += loan_transaction.amount
+        print('plus')
+        loan_transaction.save()
+        if received_from == 'CASH':
+            cid.cash -= limit
+            cid.save()
+            
+        else:
+            received_bank = bankings_G.objects.get(bankname=received_from)
+            received_bank.balance -= limit
+            received_bank.save()
+            
+
+        if received_from == 'CASH':
+            cid.cash += int(total)
+            cid.save()
+            payment_type = 'CASH'
+        else:
+            received_bank = bankings_G.objects.get(bankname=received_from)
+            received_bank.balance += int(total)
+            received_bank.save()
+            payment_type = received_from
+
+        # Update the loan transaction
+        loan_transaction.employee = pay_employee
+        loan_transaction.cid = cid
+        loan_transaction.loan_trans_date = date
+        loan_transaction.particular = 'EMI PAID'
+        loan_transaction.amount = principal
+        loan_transaction.intrest = interest
+        loan_transaction.total_amount = int(total)
+        loan_transaction.payment_type = payment_type
+        loan_transaction.balance_loan -= principal
+        loan_transaction.emploee_loan.balance_loan -= principal
+        print('done')
+        loan_transaction.save()
+        
+
+    return redirect('employeeloanpage')
+
+
+
+def dlt_loan_trans(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+    loan_transaction = get_object_or_404(employee_loan_tran, id=id)
+    la = loan_transaction.amount
+    lt = loan_transaction.total_amount
+    li = loan_transaction.intrest
+    
+    loan_transaction.emploee_loan.balance_loan +=la
+    loan_transaction.save()
+    
+    if loan_transaction.payment_type == 'CASH':
+        cid.cash -= lt
+        cid.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=loan_transaction.payment_type)
+        received_bank.balance -= lt
+        received_bank.save()
+    loan_transaction.delete()
+
+    return redirect('employeeloanpage')
