@@ -1183,6 +1183,9 @@ urlpatterns = [
     path('edit_repayment/<int:id>',views.edit_repayment,name='edit_repayment'),
     path('make_edit_pay/<int:id>',views.make_edit_pay,name='make_edit_pay'),
     path('dlt_loan_trans/<int:id>',views.dlt_loan_trans,name='dlt_loan_trans'),
+    path('edit_add_loan/<int:id>',views.edit_add_loan,name='edit_add_loan'),
+    path('edit_additional_loan/<int:id>',views.edit_additional_loan,name='edit_additional_loan'),
+    path('delet_add_loan/<int:id>',views.delet_add_loan,name='delet_add_loan'),
 
     
     

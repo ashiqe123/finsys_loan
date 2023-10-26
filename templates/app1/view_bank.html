@@ -33,7 +33,7 @@
                     <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" class=" dropdown-toggle" data-toggle="dropdown"><b>Transaction</b></a>
                     <div class="dropdown-menu" class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="background-color: black;">
                         <a class="dropdown-item" id="b2c" href="{% url 'bank_to_cash' %}" style="height: 40px; font-size: 15px; color: white;">Bank To Cash Transfer</a>
-                        <a class "dropdown-item" href="{% url 'cash_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Cash To Bank Transfer</a>
+                        <a class="dropdown-item" href="{% url 'cash_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Cash To Bank Transfer</a>
                         <a class="dropdown-item" href="{% url 'bank_to_bank' %}" style="height: 40px; font-size: 15px; color: white;">Bank To Bank Transfer</a>
                         <a class="dropdown-item" href="{% url 'bank_adjust' %}" style="height: 40px; font-size: 15px; color: white;">Adjust Bank Balance</a>
                     </div>
@@ -146,6 +146,25 @@
                     </tr>
                     </thead>
                     <tbody>
+                        {% for i in emp_loan %}
+                        <tr>
+                            <td>{{i.loan_trans_date}}</td>
+                            <td>{{i.particular}}</td>
+                            <td>{{i.payment_type}}</td>
+                           
+                            <td>{{i.amount}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                        <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
                         {% for i in toloan %}
                         <tr>
                             <td>{{i.loan_date}}</td>
@@ -235,6 +254,92 @@
         </div>
     </div>
 </div>
+                            {% endfor %}
+
+                            {% for p in pbill %}
+                            <tr>
+                                <td>{{ p.date | date:'d-m-Y' }}</td>
+                                <td>{{ p.bill_no }}</a></td>
+                                <td>{{ p.vendor_name }}</td>
+                                
+                               
+                               
+                                {% if p.balance_amount > 0 %}
+                                <td>{{ p.balance_amount }}</td>
+                                {% else %}
+                                <td>0.0</td>
+                                {% endif %}
+                                <td>
+                                    <div class="dropdown">
+                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                            <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr> 
+                        {% endfor %}
+                        {% for p in pordr %}
+                        <tr>
+                            <td>{{ p.date| date:'d-m-Y' }}</td>
+                            <td>PO - {{ p.puchaseorder_no }}</a></td>
+                            <th>{{ p.vendor_name }}</th>
+                            
+                           
+                            <td>{{ p.grand_total }}</td>
+                           
+                            <td>
+                                <div class="dropdown">
+                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                        <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                            
+
+                        </tr>
+                        {% endfor %}
+                        {% for p in py %}
+                                <tr>
+                                    <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
+                                    <td>{{ p.reference }}</td>
+                                    
+                                    <td>{{ p.vendor }}</td>
+                                    <td>{{ p.paymentamount }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                                <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            {% for r in rbill %}
+                            <!-- <tr> -->
+                                <tr >
+                                    <th>{{ r.start_date | date:'d-m-Y' }}</th>
+                                    <td>{{ r.billno }}</a></td>
+                                    <td>{{ r.vendor_name }}</td>
+                                   
+                                    <td>{{ r.grand_total}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
+                                                <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr> 
                             {% endfor %}
                            
                     

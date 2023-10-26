@@ -593,19 +593,14 @@ footer p {
                                             data-toggle="dropdown"> Sort by
                                     </button>
                                     <div class="dropdown-menu " style="background-color: black;">
-                                        <a class="dropdown-item	" href=""
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" > All
-                                        <!-- <icon class=" fas fa-arrow-down"></icon> -->
-                                   </a>
-                                    <a class="dropdown-item	" href=""
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" > Employee Name
-                                        <!-- <icon class=" fas fa-arrow-down"></icon> -->
-                                   </a>
+                                        
+                                   <a id="sort-particular-asc" class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')" style="height: 40px; font-size: 15px; color: white; text-align: center;">Particular</a>
+
                                      <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
                                         style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fas fa-arrow-up"></icon></a> -->
     
-                                    <a class="dropdown-item " href=""
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center; " >Loan Amount</a>
+                                        <a id="sort-loan-amount-asc" class="dropdown-item"href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white; text-align: center;">Loan Amount</a>
+
                                     <!-- <a class="dropdown-item " href="{% url 'est_date_desc' %}"
                                         style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
     
@@ -670,11 +665,30 @@ footer p {
                                             <div class="dropdown">
                                                 <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item edit-item" href="javascript:void(0);" onclick="showAlertedit()">Edit</a>
-                                                    <a class="dropdown-item delete-item" href="javascript:void(0);" onclick="showAlertdelet()">Delete</a>
+                                                    <a class="dropdown-item edit-item" href="{% url 'edit_add_loan' i.id %}" >Edit</a>
+                                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModa{{ i.id }}">Delete</a>
                                                 </div>
                                             </div>
                                         </td>
+                                        <div class="modal fade" id="deleteModa{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class "modal-body">
+                                                        Are you sure you want to delete this item?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                        <a href="{% url 'delet_add_loan' i.id %}" class="btn btn-danger">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         {% else %}
                                         <td>
                                             <div class="dropdown">
@@ -722,7 +736,55 @@ footer p {
 
 
 
+   
+<script>
+        function sortTableBySalary(order) {
+        const table = document.getElementById('tbl_exporttable_to_xls');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+    
+        rows.shift(); // Remove the table header row from sorting
+    
+        rows.sort(function(a, b) {
+            const salaryA = parseFloat(a.querySelector('td:nth-child(5)').textContent);
+            const salaryB = parseFloat(b.querySelector('td:nth-child(5)').textContent);
+    
+            if (order === 'asc') {
+                return salaryA - salaryB;
+            } else if (order === 'desc') {
+                return salaryB - salaryA;
+            }
+        });
+    
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
 
+
+    function sortTable(order) {
+        const table = document.getElementById('tbl_exporttable_to_xls');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+
+        rows.shift(); // Remove the table header row from sorting
+
+        rows.sort(function(a, b) {
+            const bankNameA = a.querySelector('td:nth-child(2)').textContent;
+            const bankNameB = b.querySelector('td:nth-child(2)').textContent;
+
+            if (order === 'asc') {
+                return bankNameA.localeCompare(bankNameB);
+            } else if (order === 'desc') {
+                return bankNameB.localeCompare(bankNameA);
+            }
+        });
+
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
+</script>
+
+            
 
             <script>
                 function showAlertdelet() {

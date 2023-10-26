@@ -33948,7 +33948,14 @@ def createpurchaseorder(request):
 
             if len(request.FILES) != 0:
                 porder.file=request.FILES['file'] 
-
+            if payment_type == 'CASH':
+                cmp1.cash -= balance_amount
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=payment_type)
+                received_bank.balance -= balance_amount
+                received_bank.save()
             porder.save()
             porder.puchaseorder_no = int(porder.puchaseorder_no) + porder.porderid
             porder.save()
@@ -34525,6 +34532,7 @@ def createbill(request):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
+        cid = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
             vname = request.POST['vendor_name']
             vendor_mail=request.POST['email']
@@ -34558,7 +34566,6 @@ def createbill(request):
             payment_type=request.POST['paytype']  
             balance_amount=int(grand_total)-int(paid_amount)
             
-
             
 
             billed = purchasebill(vendor_name=vname,vendor_mail=vendor_mail,billing_address=baddress,
@@ -34578,7 +34585,15 @@ def createbill(request):
             billed.save()
             billed.bill_no = int(billed.bill_no) + billed.billid
             billed.save()
-
+            if payment_type == 'CASH':
+                cid.cash -= balance_amount
+                cid.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=payment_type)
+                received_bank.balance -= balance_amount
+                received_bank.save()
+            
             statment2=vendor_statment()
             statment2.vendor = billed.vendor_name
             statment2.cid = cmp1
@@ -35627,7 +35642,8 @@ def addpurchasepymnt(request):
         pymt = paymentmethod.objects.filter(cid=cmp1)
         acc = accounts1.objects.filter(cid=cmp1,acctype='Cash')
         acc1 = accounts1.objects.filter(cid=cmp1,acctype='Bank')
-        context = {'cmp1':cmp1,'vndr':vndr,'pymt':pymt,'acc':acc,'acc1':acc1}
+        bank = bankings_G.objects.filter(cid=cmp1)
+        context = {'cmp1':cmp1,'bank':bank,'vndr':vndr,'pymt':pymt,'acc':acc,'acc1':acc1}
         return render(request,'app1/addpurchasepymnt.html',context)
     return redirect('/')
 
@@ -35639,6 +35655,9 @@ def createpurchasepymnt(request):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
+            paymentmethod=request.POST['paymentmethod']
+            paymentamount=request.POST['paymentamount']
+            print(paymentmethod)
             pymnt1 = purchasepayment(vendor = request.POST['vendor'],
                                     paymentdate = request.POST['paymentdate'],
                                     paymentmethod=request.POST['paymentmethod'],
@@ -35649,8 +35668,18 @@ def createpurchasepymnt(request):
                                     amtcredit=request.POST['amtcredit'],
                                     cid=cmp1)
 
+            
+            
             pymnt1.save()
-
+            print(paymentmethod)
+            if paymentmethod == 'CASH':
+                cmp1.cash -= int(paymentamount)
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=paymentmethod)
+                received_bank.balance -= int(paymentamount)
+                received_bank.save()
             statment2=vendor_statment()
             statment2.vendor = pymnt1.vendor
             statment2.cid = cmp1
@@ -41214,8 +41243,14 @@ def view_bank(request,id):
     getloan=loan_transaction.objects.filter(to_trans=bank.bankname)
     toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
     emp_loan = employee_loan_tran.objects.filter(payment_type=bank.bankname)
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pbill = purchasebill.objects.filter(payment_type=bank.bankname)
+    pordr = purchaseorder.objects.filter(payment_type=bank.bankname)
+    py = purchasepayment.objects.filter(paymentmethod=bank.bankname)
+    rbill= recurring_bill.objects.filter(payment_method=bank.bankname)
 
-    return render(request,'app1/view_bank.html',{'emp_loan':emp_loan,'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
+
+    return render(request,'app1/view_bank.html',{'py':py,'pordr':pordr,'pbill':pbill,'emp_loan':emp_loan,'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
 
 
 
@@ -43686,6 +43721,14 @@ def createrecurringbill(request):
             bill.save()
             # bill.bill_no = int(bill.bill_no) + bill.billid
             # bill.save()
+            if payment_method == 'CASH':
+                cmp1.cash -= int(grand_total)
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=payment_method)
+                received_bank.balance -= int(grand_total)
+                received_bank.save()
             item = request.POST.getlist("item[]")
             hsn  = request.POST.getlist("hsn[]")
             qty = request.POST.getlist("qty[]")
@@ -45426,3 +45469,71 @@ def dlt_loan_trans(request, id):
     loan_transaction.delete()
 
     return redirect('employeeloanpage')
+
+
+
+
+def edit_add_loan(request,id):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    bnk=bankings_G.objects.filter(cid=cmp1)
+    employ = employee_loan_tran.objects.get(id=id)
+    remain = employ.balance_loan - employ.amount
+    return render(request,'app1/edit_add_loan.html',{'cmp1':cmp1,'bnk':bnk,'employ':employ,'remain':remain})
+
+
+def edit_additional_loan(request, id):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employ = employee_loan_tran.objects.get(id=id)
+    employ_ln = employ.emploee_loan.id
+    print(employ_ln)
+    employ_ln= EmployeeLoan.objects.get(id=employ_ln)
+    em_id = employ.employee.employeeid
+    employee = payrollemployee.objects.get(employeeid=em_id)
+    reset_amount = employ_ln.LoanAmount - employ.amount
+    print(reset_amount)
+    employ_ln.LoanAmount = reset_amount
+    employ_ln.balance_loan = reset_amount
+    employ_ln.save()
+    print('done')
+
+    employ.save()
+    if request.method == 'POST':
+        principal = request.POST.get('new')
+        date = request.POST.get('adjdate')
+        total = request.POST.get('amount')
+        employ.amount = principal
+        employ.intrest = 0
+        employ.loan_trans_date = date
+        employ.total_amount = principal
+        employ.balance_loan = total
+        print(total)
+        print(employ.emploee_loan.LoanAmount)
+        print('goback')
+        employ.save()
+    employ_ln.balance_loan = total
+    employ_ln.LoanAmount = total
+    employ_ln.save()
+    return redirect('employeeloanpage')
+
+
+def delet_add_loan(request,id):
+    cid = company.objects.get(id=request.session["uid"])
+    
+    employ = employee_loan_tran.objects.get(id=id)
+    la = employ.amount
+    lt = employ.total_amount
+    li = employ.intrest
+    
+    
+    employ_ln = employ.emploee_loan.id
+    print(employ_ln)
+    employ_ln= EmployeeLoan.objects.get(id=employ_ln)
+    reset_amount = employ_ln.LoanAmount - employ.amount
+    
+    employ_ln.balance_loan = reset_amount
+    employ_ln.LoanAmount = reset_amount 
+    employ_ln.save()
+    employ.delete()
+    return redirect('employeeloanpage')
+
+
