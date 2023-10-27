@@ -563,10 +563,11 @@ footer p {
                                     data-toggle="dropdown"> MAKE PAYMENT
                             </button>
                                 <div class="dropdown-menu" style="background-color: black;">
-                                    <a class="dropdown-item" href="{% url 'repayment' employee.id %}"
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >REPAYMENT DUE</a>
-                                    <a class="dropdown-item" href="{% url 'loandue'  employee.id %}"
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >ISSUE NEW LOAN</a>
+                                   
+                                   <a class="dropdown-item" href="{% url 'repayment' employee.id %}"
+                                   style="height: 40px; font-size: 15px; color: white; text-align: center;" >REPAYMENT DUE</a>
+                               <a class="dropdown-item" href="{% url 'loandue'  employee.id %}"
+                                   style="height: 40px; font-size: 15px; color: white; text-align: center;" >ISSUE NEW LOAN</a>
                                    
                                 </div> 
                         </div>           
@@ -588,26 +589,7 @@ footer p {
         
                             </div> 
                             <div class="col-md-2" style="width: 40%; margin-top: 9px;">
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-sort text-grey"
-                                            data-toggle="dropdown"> Sort by
-                                    </button>
-                                    <div class="dropdown-menu " style="background-color: black;">
-                                        
-                                   <a id="sort-particular-asc" class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')" style="height: 40px; font-size: 15px; color: white; text-align: center;">Particular</a>
-
-                                     <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fas fa-arrow-up"></icon></a> -->
-    
-                                        <a id="sort-loan-amount-asc" class="dropdown-item"href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white; text-align: center;">Loan Amount</a>
-
-                                    <!-- <a class="dropdown-item " href="{% url 'est_date_desc' %}"
-                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
-    
-                                    
-                                            
-                                    </div> 
-                                </div>
+                                
                             </div>
                             <div class="col-md-3"></div>
     
@@ -1003,6 +985,17 @@ footer p {
                                     </div>
                                     <hr>
                                     {% endif %}
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Terms</b> </h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ employee.loan_term }}</b></label>
+
+                                        </div>
+                                    </div>
                                 </div>
 
 
@@ -1244,17 +1237,17 @@ footer p {
                 <div class="my-5 page" size="A4" >
                     <div class="p-5">
                         <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                            <div class="ribbon-inner ribbon-open">{{employee.status}}<!----></div></div>
+                            <div style=" text-transform: uppercase;color: #000000;" class="ribbon-inner ribbon-open">{{employee.status}}<!----></div></div>
                         <section class="top-content bb d-flex justify-content-between">
                             <div class="logo">
                                 <!-- <img src="logo.png" alt="" class="img-fluid"> -->
                             </div>
                             <div class="top-left">
                                 <div class="graphic-path">
-                                    <p>STATEMENT</p>
+                                    <p style="text-transform: uppercase;color: #000000;">STATEMENT</p>
                                 </div>
                                 <div class="position-relative">
-                                    <p>Employee ID. <span>{{employee.employee.employeeno }}</span></p>
+                                    <p style=" text-transform: uppercase;color: #000000;">Employee ID. <span>{{employee.employee.employeeno }}</span></p>
                                 </div>
                             </div>
                         </section>
@@ -1263,9 +1256,9 @@ footer p {
                             <div class="col-12">
                                 <div class="row bb pb-3">
                                     <div class="col-7">
-                                        <p>FROM,</p>
-                                        <h5>{{cmp1.cname }}</h5>
-                                        <p > {{cmp1.caddress}}<br>
+                                        <p style=" text-transform: uppercase;color: #000000;">FROM,</p>
+                                        <h5 style=" text-transform: uppercase;color: #000000;">{{cmp1.cname }}</h5>
+                                        <p style=" text-transform: uppercase;color: #000000;" > {{cmp1.caddress}}<br>
                                             {{cmp1.city}},
                                             {{cmp1.state}}<br>
                                             {{cmp1.pincode}}<br>
@@ -1273,7 +1266,7 @@ footer p {
                                         
                                     </div>
                                     <div class="col-5">
-                                        <p >
+                                        <p style="text-align: center; color: #000000;" >
                                             To,<br>{{employee.employee.firstname}}
                                             {{employee.employee.lastname}}<br>
                                             {{employee.employee.street}},{{employee.employee.city}}<br>
@@ -1290,16 +1283,16 @@ footer p {
                         </section>
             
                         <section class="product-area mt-4">
-                            <table class="table table-hover">
+                            <table class="table table-hover" style="width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th style="text-align: center; text-transform: uppercase;">Loan Date</th>
+                                        <th style="text-align: center; text-transform: uppercase;color: #000000;">Loan Date</th>
                          
-                                        <th style="text-align: center; text-transform: uppercase;">Particular</th>
-                                        <th style="text-align: center; text-transform: uppercase;">Amount</th>
-                                        <th style="text-align: center; text-transform: uppercase;">Intrest</th>
-                                        <th style="text-align: center; text-transform: uppercase;">Total Amount</th>
-                                        <th style="text-align: center; text-transform: uppercase;">Balance</th>
+                                        <th style="text-align: center; text-transform: uppercase;color: #000000;">Particular</th>
+                                        <th style="text-align: center; text-transform: uppercase;color: #000000;">Amount</th>
+                                        <th style="text-align: center; text-transform: uppercase;color: #000000;">Intrest</th>
+                                        <th style="text-align: center; text-transform: uppercase;color: #000000;">Total Amount</th>
+                                        <th style="text-align: center; text-transform: uppercase;color: #000000;">Balance</th>
                                
                                     </tr>
                                 </thead>

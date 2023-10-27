@@ -34106,6 +34106,15 @@ def editpurchaseorder(request,id):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
+        pordr=purchaseorder.objects.get(porderid=id)
+    if  pordr.payment_type == 'CASH':
+        cmp1.cash += pordr.grand_total
+        cmp1.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=pordr.payment_type)
+        received_bank.balance += int(pordr.grand_total)
+        received_bank.save()
         if request.method == 'POST':
             pordr=purchaseorder.objects.get(porderid=id)
             pordr.vendor_name = request.POST['vendor_name']
@@ -34147,7 +34156,14 @@ def editpurchaseorder(request,id):
 
             # Now you have the balance amount as an integer
             pordr.balance_amount = balance_amount
-
+            if pordr.payment_type == 'CASH':
+                cmp1.cash -= int(pordr.grand_total)
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=pordr.payment_type)
+                received_bank.balance -= int(pordr.grand_total)
+                received_bank.save()
             if len(request.FILES) != 0:
                 if len(pordr.file) > 0  :
                     os.remove(pordr.file.path)    
@@ -34942,6 +34958,17 @@ def editpurchasebill(request,id):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
+    pbill=purchasebill.objects.get(billid=id)
+    if  pbill.payment_type == 'CASH':
+        cmp1.cash += pbill.grand_total
+        cmp1.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=pbill.payment_type)
+        received_bank.balance += int(pbill.grand_total)
+        received_bank.save()
+
+
         if request.method == 'POST':
             pbill=purchasebill.objects.get(billid=id)
             pbill.vendor_name = request.POST['vendor_name']
@@ -34985,7 +35012,14 @@ def editpurchasebill(request,id):
             # Now you have the balance amount as an integer
             pbill.balance_amount = balance_amount
 
-           
+            if  pbill.payment_type == 'CASH':
+                cmp1.cash -= pbill.grand_total
+                cmp1.save()
+                    
+            else:
+                received_bank = bankings_G.objects.get(bankname=pbill.payment_type)
+                received_bank.balance -= int(pbill.grand_total)
+                received_bank.save()
 
             if len(request.FILES) != 0:
                 if len(pbill.file) > 0  :
@@ -35876,7 +35910,18 @@ def editpurchasepymnt(request,id):
             uid = request.session['uid']
         else:
             return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
+    cmp1 = company.objects.get(id=request.session['uid'])
+    paymt=purchasepayment.objects.get(pymntid=id)
+    if  paymt.paymentmethod == 'CASH':
+        cmp1.cash += paymt.amtreceived
+        cmp1.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=paymt.paymentmethod)
+        received_bank.balance += int(paymt.amtreceived)
+        received_bank.save()
+
+
         if request.method == 'POST':
             paymt=purchasepayment.objects.get(pymntid=id)
             paymt.vendor = request.POST['vendor']
@@ -35887,6 +35932,14 @@ def editpurchasepymnt(request,id):
             paymt.amtreceived=request.POST['amtreceived']
             paymt.paymentamount=request.POST['paymentamount']
             paymt.amtcredit=request.POST['amtcredit']
+            if  paymt.paymentmethod == 'CASH':
+                cmp1.cash -= paymt.amtreceived
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=paymt.paymentmethod)
+                received_bank.balance -= int(paymt.amtreceived)
+                received_bank.save()
 
             paymt.save()
 
@@ -41250,7 +41303,7 @@ def view_bank(request,id):
     rbill= recurring_bill.objects.filter(payment_method=bank.bankname)
 
 
-    return render(request,'app1/view_bank.html',{'py':py,'pordr':pordr,'pbill':pbill,'emp_loan':emp_loan,'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
+    return render(request,'app1/view_bank.html',{'rbill':rbill,'py':py,'pordr':pordr,'pbill':pbill,'emp_loan':emp_loan,'cmp1':cmp1,"bank":bank,'bl':bank_list,'trans':trans,'getloan':getloan,'toloan':toloan})
 
 
 
@@ -41504,6 +41557,11 @@ def edit_bank(request,id):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session["uid"])
+    bnk=bankings_G.objects.get(id=id)
+    res = bnk.balance - bnk.openingbalance
+    print(res)
+    bnk.balance = res
+    bnk.save()
     if request.method == 'POST':
         bname = request.POST.get('bname')
         ifsc = request.POST.get('ifsc')
@@ -41511,6 +41569,8 @@ def edit_bank(request,id):
         opening_balance = request.POST.get('Opening')
         date = request.POST.get('date')
         acc_num= request.POST.get('acc_num')
+        term = request.POST.get('termof')
+        
         bnk=bankings_G.objects.get(id=id)
         bnk.bankname=bname
         bnk.ifsccode=ifsc
@@ -41518,6 +41578,13 @@ def edit_bank(request,id):
         bnk.openingbalance=opening_balance
         bnk.date=date
         bnk.account_number = acc_num
+        res = bnk.balance + int(bnk.openingbalance)
+        bnk.balance =res
+        bnk.term = term
+        if term == 'CREDIT':
+             bnk.openingbalance = 0 - int(opening_balance)
+        else :
+            bnk.openingbalance =  int(opening_balance)
         bnk.save()
     return redirect('bnnk')
 
@@ -44184,6 +44251,7 @@ def edit_recurringbill(request,id):
             uid = request.session['uid']
         else:
             return redirect('/')
+    
         cmp1 = company.objects.get(id=request.session['uid'])
         vndr = vendor.objects.filter(cid=cmp1)
         itm = itemtable.objects.filter(cid=cmp1)
@@ -44234,7 +44302,18 @@ def update_recurringbill(request,id):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
+    rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
             # rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
+    if  rbl.payment_method == 'CASH':
+        cmp1.cash += rbl.grand_total
+        cmp1.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
+        received_bank.balance += int(rbl.grand_total)
+        received_bank.save()
+
+
         if request.method == 'POST':
             rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
             rbl.vendor_name= " ".join(request.POST.get('vendor_name').split(" ")[1:])
@@ -44266,6 +44345,15 @@ def update_recurringbill(request,id):
             rbl.paid_amount = paid_amount
             rbl.grand_total = grand_total
             rbl.balance = round(float(grand_total - paid_amount), 3)
+            if  rbl.payment_method == 'CASH':
+                cmp1.cash -= rbl.grand_total
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
+                received_bank.balance -= int(rbl.grand_total)
+                received_bank.save()
+
             rbl.save()
             if len(request.FILES) != 0:
                 # if len(rbl.file) > 0  :
@@ -45187,6 +45275,7 @@ def editloan(request,eid):
     print(loan.LoanDate)
     print(loan.ExperyDate)
     return render(request,'app1/editloan.html',{'loan':loan,'employee': employee,'cmp1': cmp1,'loan_d':loan_d})              
+
 def editloan_action(request, eid):
     cmp1 = company.objects.get(id=request.session["uid"])
     employ = EmployeeLoan.objects.get(id=eid, company=request.session["uid"])
@@ -45258,6 +45347,8 @@ def crt_emp_loan_trans(request, id):
         # Fetch the loan account
         loan = EmployeeLoan.objects.get(id=id)
         # Deduct payment based on source (cash or bank)
+        print(loan.balance_loan)
+
         if received_from == 'cash':
             # Deduct from company's cash balance
             cid.cash += principal
@@ -45275,6 +45366,11 @@ def crt_emp_loan_trans(request, id):
             balance_loan= loan.balance_loan - principal
 
             )
+            print(loan.balance_loan)
+            print('bal')
+            if loan.balance_loan < 0:
+                messages.error(request, 'Principal amount must be greater than 0.')
+                return redirect('employee_details', id)
             transaction.save()
         else:
             # Deduct from the selected bank's balance
@@ -45293,9 +45389,14 @@ def crt_emp_loan_trans(request, id):
             payment_type = received_bank.bankname,
             balance_loan= loan.balance_loan - principal
         )
+            print(loan.balance_loan)
+            print('bal')
+            if loan.balance_loan <= 0:
+                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan) )
+                return redirect('employee_details', id)
         transaction.save()
             # Add the payment amount to the lender bank (if not cash)
-        loan.balance_loan -= total
+        loan.balance_loan -= principal
         loan.save()
                 
        
@@ -45444,7 +45545,7 @@ def make_edit_pay(request, id):
         loan_transaction.save()
         
 
-    return redirect('employeeloanpage')
+    return redirect('employee_details',id)
 
 
 

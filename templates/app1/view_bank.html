@@ -25,8 +25,10 @@
             
             <hr style="width: 95%">
     
-            <div class="right text-right ml-auto"> <!-- Use text-right class for right alignment -->
+            <div class="right text-right ml-auto"> 
                 <center>
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+
                     <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'e_bank' bank.id %}"><b>Edit Bank</b></a>
                     <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'delete' bank.id %}"><b>Delete</b></a>
                     
@@ -63,14 +65,14 @@
                 <div class="input-group-append">
                     <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
                 </div>
-               
                 <div class="dropdown">
                     <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" data-toggle="dropdown">Sort</button>
                     <div class="dropdown-menu" style="background-color: black;">
                         <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')" style="height: 40px; font-size: 15px; color: white;">Type </a>
-                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white;">Salary </a>
+                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white;">Amount </a>
                     </div>
                 </div>
+               
                     </div>
                 </div>
                
@@ -100,35 +102,9 @@
                             </div>
                         </th> 
                         <th>
-                            <div class="dropdown">
-                                <h6 class=" dropdown-toggle text-grey" data-toggle="dropdown"><b>TYPE</b></h6>
-                                <div class="dropdown-menu mt-5" style="background-color: black;z-index: 1;">
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">SALE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">PURCHASE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">EXPENSE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">OPENING BALANCE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">CASH DEPOSIT</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">CASH WITHDRAW</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">BANK ADJ INCREASE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">BANK ADJ REDUCE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">BANK TO BANK</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">CREDIT NOTE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">DEBIT NOTE</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">SALES ORDER</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">PURCHASE ORDER</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">OTHER INCOME</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">PAYMENT IN</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">PAYMENT OUT</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">OPENING LOAN </a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">LOAN ADJUSTMENT</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">CHARGES ON LOAN</a>
-                                    <a class="dropdown-item" href="#"><input class="mr-1" type="checkbox" name="" id="">EMI PAID</a>
-
-
-
-                                    <!-- Add more options as needed -->
-                                </div>
-                            </div>
+                            
+                                <h6 class="  text-grey" ><b>TYPE</b></h6>
+                      
                         </th>
                         <!-- Inside the <thead> section of your table -->
             <th>
@@ -146,6 +122,62 @@
                     </tr>
                     </thead>
                     <tbody>
+                        {% for a in trans %}
+                        <tr >
+                                        <td >{{ a.adj_date }}</td>
+                                        <td >{{ a.type }}</td>
+                                        <td >{{ a.bank_type }}</td>
+                                        {% if a.type == 'CASH WITHDRAW' %}
+                                        <td style="font-size: medium;">-{{ a.amount }}</td>
+                                        {% elif a.type == 'BANK ADJ INCREASE' %}
+                                        <td  style="font-size: medium;">{{ a.amount }}</td>
+                                        {% elif a.type == 'BANK ADJ REDUCE' %}
+                                        <td  style="font-size: medium;">-{{ a.amount }}</td>
+                                        {% elif a.type ==  'TO BANK TRANSFER' %}
+                                        <td  style="font-size: medium;">{{ a.amount }}</td>
+                                        {% elif a.type ==  'FROM BANK TRANSFER' %}
+                                        <td style="font-size: medium;">-{{ a.amount }}</td>
+        
+                                        {% else %}
+                                        <td  style="font-size: medium;">{{ a.amount }}</td>
+                                        {% endif %}
+                                        </td></a>
+                                        <td>
+                                            <div class="dropdown">
+                                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item edit-item" href="{% url 'edit_bank_trans' a.id %}">Edit</a>
+                                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+        
+        
+                 
+                                    
+                                <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <a href="{% url 'delet_bank' a.id %}" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+                                    {% endfor %}
+
                         {% for i in emp_loan %}
                         <tr>
                             <td>{{i.loan_trans_date}}</td>
@@ -201,60 +233,7 @@
                             </td>
                         </tr>
                         {% endfor %}
-                  {% for a in trans %}
-                <tr >
-                                <td >{{ a.adj_date }}</td>
-                                <td >{{ a.type }}</td>
-                                <td >{{ a.bank_type }}</td>
-                                {% if a.type == 'CASH WITHDRAW' %}
-                                <td style="font-size: medium;">-{{ a.amount }}</td>
-                                {% elif a.type == 'BANK ADJ INCREASE' %}
-                                <td  style="font-size: medium;">{{ a.amount }}</td>
-                                {% elif a.type == 'BANK ADJ REDUCE' %}
-                                <td  style="font-size: medium;">-{{ a.amount }}</td>
-                                {% elif a.type ==  'TO BANK TRANSFER' %}
-                                <td  style="font-size: medium;">{{ a.amount }}</td>
-                                {% elif a.type ==  'FROM BANK TRANSFER' %}
-                                <td style="font-size: medium;">-{{ a.amount }}</td>
-
-                                {% else %}
-                                <td  style="font-size: medium;">{{ a.amount }}</td>
-                                {% endif %}
-                                </td></a>
-                                <td>
-                                    <div class="dropdown">
-                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item edit-item" href="{% url 'edit_bank_trans' a.id %}">Edit</a>
-                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-
-
-                           
-                        <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this item?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a href="{% url 'delet_bank' a.id %}" class="btn btn-danger">Delete</a>
-            </div>
-        </div>
-    </div>
-</div>
-                            {% endfor %}
+                  
 
                             {% for p in pbill %}
                             <tr>
@@ -369,7 +348,17 @@
 
 </div>
 
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
+        <script type="text/javascript">function ExportToExcel(type, fn, dl) {
+                var elt = document.getElementById('tabletobe');
+                var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+                return dl ?
+                    XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                    XLSX.writeFile(wb, fn || ('Employees.' + (type || 'xlsx')));
+            }
+            
+        </script>
     
 <script>
     jQuery(document).ready(function($) {
@@ -379,7 +368,54 @@
     });
 </script>
 
+<script>
+    function sortTableBySalary(order) {
+        const table = document.getElementById('tabletobe');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+    
+        rows.shift(); // Remove the table header row from sorting
+    
+        rows.sort(function(a, b) {
+            const salaryA = parseFloat(a.querySelector('td:nth-child(6)').textContent);
+            const salaryB = parseFloat(b.querySelector('td:nth-child(6)').textContent);
+    
+            if (order === 'asc') {
+                return salaryA - salaryB;
+            } else if (order === 'desc') {
+                return salaryB - salaryA;
+            }
+        });
+    
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
+    </script>
+    
 
+<script>
+    function sortTable(order) {
+        const table = document.getElementById('tabletobe');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+
+        rows.shift(); // Remove the table header row from sorting
+
+        rows.sort(function(a, b) {
+            const bankNameA = a.querySelector('td:first-child').textContent;
+            const bankNameB = b.querySelector('td:first-child').textContent;
+
+            if (order === 'asc') {
+                return bankNameA.localeCompare(bankNameB);
+            } else if (order === 'desc') {
+                return bankNameB.localeCompare(bankNameA);
+            }
+        });
+
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
+</script>
 <!-- Edit Modal -->
 <script>
     function sortTableBySalary(order) {

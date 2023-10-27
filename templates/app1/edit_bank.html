@@ -75,20 +75,28 @@
     </div>
 </div>
 
-
 <div class="row">
-    <div class="col-md-5 p-2">
+    <div class="col-md-5 form-inline p-2">
        
         <input class="form-control" type="text" name="Opening" value="{{a.openingbalance}}" >
-
+        <select class="form-control" name="termof" id="">
+            <option  value="{{a.term}}">{{a.term}}</option>
+            <option  value="CREDIT">CREDIT</option>
+            <option value="DEBIT">DEBIT</option>
+        
+        </select>
     </div>
-    <div class="col-md-2"></div>
+    <div class="col-md-2">
+       
+    </div>
 
     <div class="col-md-5 p-2">
         <input class="form-control" type="date" name="date" value="{{a.date | date:'Y-m-d' }}" >
 
     </div>
 </div>
+
+
 
 
             

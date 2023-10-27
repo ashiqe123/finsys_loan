@@ -65,7 +65,9 @@
     <div class="row">
         <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="">
             <option class="form-control bg-dark text-white" value="cash">CASH</option>
-            <option class="form-control bg-dark text-white" value="">UPI ID</option>
+            <option class="form-control bg-dark text-white" value="upi">UPI ID</option>
+            <option class="form-control bg-dark text-white" value="Cheque">CHEQUE</option>
+
             {% for i in bnk %}
             <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
             {% endfor %}
