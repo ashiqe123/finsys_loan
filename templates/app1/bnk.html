@@ -9,6 +9,9 @@
                 <center><h2 class="mt-3">BANKING</h2></center>
                 
                 <hr style="width:95%">
+                <div class="btn-group col-md-2" style="float: right;">
+                    <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+                </div>
             </div>
         </div>
     </div>
@@ -44,8 +47,23 @@
                       <div class="col"></div>
                  
                     
-                      <div class="col-auto">
-                          
+                      <div class="col-auto ml-5">
+
+                            <div class="dropdown">
+                                <button type="button" style="height: 37px;" class=" fa fa-filter btn btn-outline-info text-grey p-2 pt-1 pb-1"
+                                        data-toggle="dropdown"> <a href="">filter by</a>
+                                </button>
+                                    <div class="dropdown-menu" style="background-color: black;">
+                                        <a class="dropdown-item" href="{% url 'bnnk' %}"
+                                            style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                                        <a class="dropdown-item" href="{% url 'activebankpage' %}"
+                                            style="height: 40px; font-size: 15px; color: white; text-align: center;" >Active</a>
+                                        <a class="dropdown-item" href="{% url 'inactivebankpage' %}"
+                                            style="height: 40px; font-size: 15px; color: white; text-align: center;">Inactive</a>
+                                       
+                                    </div> 
+                            </div>
+
                       </div>
                      
                       
@@ -70,6 +88,7 @@
                         <th>IFSCE CODE</th>
                         <th>BRANCH NAME</th>
                         <th>OPENING BALANCE</th>
+                        <th>STATUS</th>
                         <th>BALANCE</th>
                     </tr>
                     </thead>
@@ -81,6 +100,7 @@
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{ a.ifsccode }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.branchname }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.openingbalance }}</td>
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.bank_status }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{a.balance}}</td>
                                
                                 
@@ -123,6 +143,17 @@
     </div>
 </div>
 <!-- Edit Modal -->
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<script type="text/javascript">function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tabletobe');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Bank.' + (type || 'xlsx')));
+    }
+    
+</script>
 <script>
     function sortTableBySalary(order) {
         const table = document.getElementById('tabletobe');

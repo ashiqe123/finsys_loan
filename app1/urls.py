@@ -1068,7 +1068,7 @@ urlpatterns = [
     path('listemployee_loan',views.listemployee_loan,name='listemployee_loan'),
     path('addemployeeloan',views.addemployeeloan,name='addemployeeloan'),
     path('AddEmployeeInloanPage',views.AddEmployeeInloanPage,name='AddEmployeeInloanPage'),
-    path('employee_details<int:id>',views.employee_details,name='employee_details'),
+    path('employee_details/<int:id>',views.employee_details,name='employee_details'),
     path('active_loan/<str:employeeid>', views.active_loan, name='active_loan'),
     path('inactive_loan/<str:employeeid>', views.inactive_loan, name='inactive_loan'),
     path('editloan/<int:eid>', views.editloan, name='editloan'),
@@ -1180,7 +1180,7 @@ urlpatterns = [
     
     path('render_pdfstatment_view/<int:id>', views.render_pdfstatment_view, name='render_pdfstatment_view'),
     path('additional_loan/<int:id>',views.additional_loan,name='additional_loan'),
-    path('edit_repayment/<int:id>',views.edit_repayment,name='edit_repayment'),
+    path('edit_repayment/<int:pk>',views.edit_repayment,name='edit_repayment'),
     path('make_edit_pay/<int:id>',views.make_edit_pay,name='make_edit_pay'),
     path('dlt_loan_trans/<int:id>',views.dlt_loan_trans,name='dlt_loan_trans'),
     path('edit_add_loan/<int:id>',views.edit_add_loan,name='edit_add_loan'),
@@ -1188,5 +1188,13 @@ urlpatterns = [
     path('delet_add_loan/<int:id>',views.delet_add_loan,name='delet_add_loan'),
 
     
+
+
+    path('employee_details/<int:id>',views.employee_details,name='employee_details'),
+    path('activebankpage', views.activebankpage, name='activebankpage'),
+    path('inactivebankpage', views.inactivebankpage, name='inactivebankpage'),
+    path('status_change/<int:id>',views.status_change,name='status_change'),
+    path('status_change_inactive/<int:id>',views.status_change_inactive,name='status_change_inactive'),
+    path('render_pdfstatment_view_bank/<int:id>',views.render_pdfstatment_view_bank,name='render_pdfstatment_view_bank')
     
 ]

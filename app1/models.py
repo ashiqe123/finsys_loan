@@ -2040,6 +2040,7 @@ class bankings_G(models.Model):
     balance=models.IntegerField(default=0)
     cash_balance=models.IntegerField(default=0)
     term = models.TextField(max_length=30)
+    bank_status = models.TextField(max_length=30)
     
 class bank_transactions(models.Model):
     bank_type=models.TextField(max_length=100)

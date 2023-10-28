@@ -41259,13 +41259,14 @@ def crt_bank(request):
         date = request.POST.get('date')
         term = request.POST.get('termof')
         acc_num = request.POST.get('acc_num')
+        
         if term == 'CREDIT':
             opening_balance = 0 - int(opening_balance)
-            bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num,term=term)
+            bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num,term=term,bank_status = 'Active')
             bank.save()
         else:
             opening_balance = int(opening_balance)
-            bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num,term=term)
+            bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance,account_number=acc_num,term=term,bank_status = 'Active')
             bank.save()
         
         bnk=bank_transactions(
@@ -41347,7 +41348,7 @@ def b_to_c(request):
         )
         trans.save()
         
-    return redirect('bnnk')
+    return redirect('view_bank',bank.id)
 
 
 def c_to_b(request):
@@ -41382,7 +41383,7 @@ def c_to_b(request):
         )
         trans.save()
 
-    return redirect('bnnk')
+    return redirect('view_bank',bank.id)
 
 def bank_to_cash(request):
     if 'uid' in request.session:
@@ -41474,7 +41475,7 @@ def b_to_b(request):
         )
         trans_deposit.save()
 
-    return redirect('bnnk')
+    return redirect('view_bank',from_bank.id)
 
 
 def b_adj(request):
@@ -41538,7 +41539,7 @@ def b_adj(request):
             cmp1.cash += amount  # Add to cmp1.cash
             cmp1.save()
 
-    return redirect('bnnk')
+    return redirect('view_bank',bank.id)
 
 def e_bank(request,id):
     if 'uid' in request.session:
@@ -41637,7 +41638,7 @@ def edit_b_to_c(request,id):
         record.banking.save()
         cmp1.cash+=amount
         cmp1.save()
-        return redirect('bnnk')  # Redirect to a success page
+        return redirect('view_bank',bank.id)  # Redirect to a success page
 
 
 
@@ -41683,7 +41684,7 @@ def edit_account_adjustment(request, id):
                 cmp1.cash = increase_records.aggregate(Sum('cash_cash'))['cash_cash__sum']
                 cmp1.save()
             record.save()  
-        return redirect('bnnk') 
+        return redirect('view_bank',bnk_id.id) 
 
 
 
@@ -41722,7 +41723,7 @@ def update_bank_transfer(request, transfer_id):
         fbank.save()
         tbank.save()
 
-        return redirect('bnnk')  # Replace with the appropriate URL
+        return redirect('view_bank',fbank.id)  # Replace with the appropriate URL
 
 
 def update_cash_to_bank_transfer(request,id):
@@ -41756,7 +41757,7 @@ def update_cash_to_bank_transfer(request,id):
         cmp1.cash-=diff_amount
         cmp1.save()
 
-        return redirect('bnnk')  # Redirect to a success page
+        return redirect('view_bank',bank.id)  # Redirect to a success page
 
 def delet_bank(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -41779,7 +41780,7 @@ def delet_bank(request,id):
     
     bk.delete()
     
-    return redirect('bnnk')
+    return redirect('view_bank',bnk.id)
 
 
 def bnk_statement(request,id):
@@ -41789,13 +41790,23 @@ def bnk_statement(request,id):
     bnk=bank_transactions.objects.filter(banking=bank.id)
     getloan=loan_transaction.objects.filter(to_trans=bank.bankname)
     toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
+    pbill = purchasebill.objects.filter(payment_type=bank.bankname)
+    pordr = purchaseorder.objects.filter(payment_type=bank.bankname)
+    py = purchasepayment.objects.filter(paymentmethod=bank.bankname)
+    rbill= recurring_bill.objects.filter(payment_method=bank.bankname)
+
     print(getloan)
     context={
         'cmp1':cmp1,
         'bank':bank,
         'bnk':bnk,
         'getloan':getloan,
-        'toloan':toloan
+        'toloan':toloan,
+        'pbill':pbill,
+        'pordr':pordr,
+        'py':py,
+        'rbill':rbill,
+
 
     }
     return render(request,'app1/bank_statement.html',context)
@@ -42666,8 +42677,9 @@ def AddEmployeeInloanPage(request):
 
 def employee_details(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
-    employee = EmployeeLoan.objects.get(id=id,company=request.session["uid"])
     loan_trans = employee_loan_tran.objects.filter(emploee_loan=id)
+    employee = EmployeeLoan.objects.get(id=id,company=request.session["uid"])
+    
     print(loan_trans)
     return render(request,'app1/employee_details.html',{'employee': employee,'cmp1': cmp1,'loan_trans':loan_trans})
 
@@ -45475,17 +45487,16 @@ def render_pdfstatment_view(request,id):
 
 
 
-def edit_repayment(request,id):
+def edit_repayment(request,pk):
     cmp1 = company.objects.get(id=request.session['uid'])
     bnk=bankings_G.objects.filter(cid=cmp1)
-    employ = employee_loan_tran.objects.get(id=id)
+    employ = employee_loan_tran.objects.get(id=pk)
     return render(request,'app1/edit_repayment.html',{'cmp1':cmp1,'bnk':bnk,'employ':employ})
 
 
 
-from django.shortcuts import get_object_or_404
 
-def make_edit_pay(request, id):
+def make_edit_pay(request,id):
     cid = company.objects.get(id=request.session["uid"])
 
     if request.method == 'POST':
@@ -45498,6 +45509,8 @@ def make_edit_pay(request, id):
         print(received_from)
         pay_employee = get_object_or_404(payrollemployee, employeeid=employ)
         loan_transaction = get_object_or_404(employee_loan_tran, id=id)
+        employee_id = EmployeeLoan.objects.get(id=loan_transaction.emploee_loan.id)
+
         limit = loan_transaction.amount
         print('0000000000000')
         print(limit)
@@ -45507,9 +45520,11 @@ def make_edit_pay(request, id):
         # Adjust balance_loan
         loan_transaction.balance_loan += loan_transaction.amount
         
-        loan_transaction.emploee_loan.balance_loan += loan_transaction.amount
+        
         print('plus')
         loan_transaction.save()
+        employee_id.balance_loan += loan_transaction.amount
+        employee_id.save()
         if received_from == 'CASH':
             cid.cash -= limit
             cid.save()
@@ -45540,12 +45555,14 @@ def make_edit_pay(request, id):
         loan_transaction.total_amount = int(total)
         loan_transaction.payment_type = payment_type
         loan_transaction.balance_loan -= principal
-        loan_transaction.emploee_loan.balance_loan -= principal
+        
         print('done')
         loan_transaction.save()
-        
+        employee_id.balance_loan -= principal
+        employee_id.save()
 
-    return redirect('employee_details',id)
+    return redirect('employee_details',employee_id.id)
+
 
 
 
@@ -45555,10 +45572,12 @@ def dlt_loan_trans(request, id):
     la = loan_transaction.amount
     lt = loan_transaction.total_amount
     li = loan_transaction.intrest
-    
-    loan_transaction.emploee_loan.balance_loan +=la
+    loan_acc =EmployeeLoan.objects.get(id=loan_transaction.emploee_loan.id)
+    print(loan_acc)
+   
     loan_transaction.save()
-    
+    loan_acc.balance_loan += la
+    loan_acc.save()
     if loan_transaction.payment_type == 'CASH':
         cid.cash -= lt
         cid.save()
@@ -45569,8 +45588,7 @@ def dlt_loan_trans(request, id):
         received_bank.save()
     loan_transaction.delete()
 
-    return redirect('employeeloanpage')
-
+    return redirect('employee_details',loan_acc.id)
 
 
 
@@ -45614,7 +45632,7 @@ def edit_additional_loan(request, id):
     employ_ln.balance_loan = total
     employ_ln.LoanAmount = total
     employ_ln.save()
-    return redirect('employeeloanpage')
+    return redirect('employee_details',employ_ln.id)
 
 
 def delet_add_loan(request,id):
@@ -45635,6 +45653,99 @@ def delet_add_loan(request,id):
     employ_ln.LoanAmount = reset_amount 
     employ_ln.save()
     employ.delete()
-    return redirect('employeeloanpage')
+    return redirect('employee_details',employ_ln.id)
 
+
+
+def activebankpage(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    bank=bankings_G.objects.filter(bank_status='Active')
+    print(employee)
+    return render(request,'app1/bnk.html',{'bank':bank,'cmp1':cmp1})       
+
+def inactivebankpage(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    bank=bankings_G.objects.filter(bank_status='In-Active')
+    print(employee)
+    return render(request,'app1/bnk.html',{'bank':bank,'cmp1':cmp1})     
+
+
+def status_change(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+    bank=bankings_G.objects.get(id=id)
+    bank.bank_status = 'Active'
+    bank.save()
+    return redirect('view_bank',id)
+
+def status_change_inactive(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+    bank=bankings_G.objects.get(id=id)
+    bank.bank_status = 'In-Active'
+    bank.save()
+    return redirect('view_bank',id)
+
+
+
+
+
+
+def render_pdfstatment_view_bank(request,id):
+    
+    cmp1 = company.objects.get(id=request.session["uid"])
+    bank=bankings_G.objects.get(id=id)
+    print(bank)
+    bnk=bank_transactions.objects.filter(banking=bank.id)
+    getloan=loan_transaction.objects.filter(to_trans=bank.bankname)
+    toloan=loan_transaction.objects.filter(from_trans=bank.bankname)
+    print(getloan)
+    pbill = purchasebill.objects.filter(payment_type=bank.bankname)
+    pordr = purchaseorder.objects.filter(payment_type=bank.bankname)
+    py = purchasepayment.objects.filter(paymentmethod=bank.bankname)
+    rbill= recurring_bill.objects.filter(payment_method=bank.bankname)
+
+   
+    
+    template_path = 'app1/bank_statement_pdf.html'
+    context={
+        'cmp1':cmp1,
+        'bank':bank,
+        'bnk':bnk,
+        'getloan':getloan,
+        'toloan':toloan,
+        'pbill':pbill,
+        'pordr':pordr,
+        'py':py,
+        'rbill':rbill,
+
+    }
+    fname=bank.bankname
+   
+    # Create a Django response object, and specify content_type as pdftemp_creditnote
+    response = HttpResponse(content_type='application/pdf')
+    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    response['Content-Disposition'] =f'attachment; filename= {fname}.pdf'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    
+
+
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
 

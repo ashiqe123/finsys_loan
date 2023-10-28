@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-md-9">
                 <h5>BANK: <span style="font-size: x-large;">{{bank.bankname}}</span></h5>
-                <h5>O P: <span style="font-size: x-large;">{{bank.openingbalance}}</span></h5>
+                <h5>Opening Balance: <span style="font-size: x-large;">{{bank.openingbalance}}</span></h5>
             </div>
             <div class="col-md-3 mt-4">
                 <h5 class="mt-1">BALANCE: <span style="font-size: x-large;">{{bank.balance}}</span></h5>
@@ -27,6 +27,11 @@
     
             <div class="right text-right ml-auto"> 
                 <center>
+                    {% if bank.bank_status == 'In-Active' %}
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'status_change' bank.id  %}" >Active</a>
+                    {% else %}
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'status_change_inactive' bank.id  %}" >In Active</a>
+{% endif %}
                     <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" onclick="ExportToExcel('xlsx')">Export To Excel</a>
 
                     <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'e_bank' bank.id %}"><b>Edit Bank</b></a>
@@ -65,13 +70,7 @@
                 <div class="input-group-append">
                     <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
                 </div>
-                <div class="dropdown">
-                    <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" data-toggle="dropdown">Sort</button>
-                    <div class="dropdown-menu" style="background-color: black;">
-                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')" style="height: 40px; font-size: 15px; color: white;">Type </a>
-                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white;">Amount </a>
-                    </div>
-                </div>
+               
                
                     </div>
                 </div>
@@ -238,13 +237,13 @@
                             {% for p in pbill %}
                             <tr>
                                 <td>{{ p.date | date:'d-m-Y' }}</td>
-                                <td>{{ p.bill_no }}</a></td>
+                                <td>PURCHASE BILL</a></td>
                                 <td>{{ p.vendor_name }}</td>
                                 
                                
                                
                                 {% if p.balance_amount > 0 %}
-                                <td>{{ p.balance_amount }}</td>
+                                <td>{{ p.paid_amount }}</td>
                                 {% else %}
                                 <td>0.0</td>
                                 {% endif %}
@@ -263,11 +262,11 @@
                         {% for p in pordr %}
                         <tr>
                             <td>{{ p.date| date:'d-m-Y' }}</td>
-                            <td>PO - {{ p.puchaseorder_no }}</a></td>
+                            <td>PURCHASE ORDER</a></td>
                             <th>{{ p.vendor_name }}</th>
                             
                            
-                            <td>{{ p.grand_total }}</td>
+                            <td>{{ p.paid_amount }}</td>
                            
                             <td>
                                 <div class="dropdown">
@@ -285,10 +284,10 @@
                         {% for p in py %}
                                 <tr>
                                     <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
-                                    <td>{{ p.reference }}</td>
+                                    <td>PURCHASE PAYMENT</td>
                                     
                                     <td>{{ p.vendor }}</td>
-                                    <td>{{ p.paymentamount }}</td>
+                                    <td>{{ p.amtreceived }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -305,10 +304,10 @@
                             <!-- <tr> -->
                                 <tr >
                                     <th>{{ r.start_date | date:'d-m-Y' }}</th>
-                                    <td>{{ r.billno }}</a></td>
+                                    <td>RECURRING BILL</a></td>
                                     <td>{{ r.vendor_name }}</td>
                                    
-                                    <td>{{ r.grand_total}}</td>
+                                    <td>{{ r.paid_amount}}</td>
                                     <td>
                                         <div class="dropdown">
                                             <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -355,7 +354,7 @@
                 var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
                 return dl ?
                     XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-                    XLSX.writeFile(wb, fn || ('Employees.' + (type || 'xlsx')));
+                    XLSX.writeFile(wb, fn || ('Transaction.' + (type || 'xlsx')));
             }
             
         </script>
