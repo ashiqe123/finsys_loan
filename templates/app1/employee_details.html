@@ -833,11 +833,11 @@ footer p {
                                 {% if employee.status == "Active" %}
                                 <a href="{% url 'inactive_loan' employee.id  %}"
                                     class="fa fa-check  btn btn-outline-info  text-grey mt-3 " style="padding: 10px; cursor: pointer;"
-                                    role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
+                                    role="button">Active</a> &nbsp;&nbsp;&nbsp;
                                 {% else %}
                                 <a href="{% url 'active_loan' employee.id  %}"
                                     class=" fa fa-exclamation-triangle  btn btn-outline-info  text-grey mt-3 " style="padding: 10px; cursor: pointer;"
-                                    role="button">Activate</a> &nbsp;&nbsp;&nbsp;
+                                    role="button">in-Active</a> &nbsp;&nbsp;&nbsp;
                                 {% endif %}
 
                                 <a href="{% url 'deleteloan' employee.id %}"

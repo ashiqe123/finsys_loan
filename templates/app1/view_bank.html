@@ -28,9 +28,9 @@
             <div class="right text-right ml-auto"> 
                 <center>
                     {% if bank.bank_status == 'In-Active' %}
-                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'status_change' bank.id  %}" >Active</a>
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'status_change' bank.id  %}" >In Active</a>
                     {% else %}
-                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'status_change_inactive' bank.id  %}" >In Active</a>
+                    <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" href="{% url 'status_change_inactive' bank.id  %}" >Active</a>
 {% endif %}
                     <a class="btn btn-outline-info dropdown-toggle   text-grey mt-3 " style="border: 1px solid rgb(1, 100, 139);padding: 10px;" onclick="ExportToExcel('xlsx')">Export To Excel</a>
 

@@ -81,8 +81,11 @@
         <input class="form-control" type="text" name="Opening" value="{{a.openingbalance}}" >
         <select class="form-control" name="termof" id="">
             <option  value="{{a.term}}">{{a.term}}</option>
+            {% if a.term == 'DEBIT' %}
             <option  value="CREDIT">CREDIT</option>
+            {% else %}
             <option value="DEBIT">DEBIT</option>
+            {% endif %}
         
         </select>
     </div>

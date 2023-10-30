@@ -344,7 +344,6 @@
 
                                         <td  style="color: #000;font-weight: 500;">Type</td>
                                         <td  style="color: #000;font-weight: 500;">Name</td>
-                                        <td  style="color: #000;font-weight: 500;">Transaction</td>
 
                                         <td  style="color: #000;font-weight: 500;">Amount</td>
                                         
@@ -357,7 +356,6 @@
                                         <td >{{ a.adj_date }}</td>
                                         <td >{{ a.type }}</td>
                                         <td >{{ a.bank_type }}</td>
-                                        <td></td>
                                         {% if a.type == 'CASH WITHDRAW' %}
                                         <td style="font-size: medium;">-{{ a.amount }}</td>
                                         {% elif a.type == 'BANK ADJ INCREASE' %}
@@ -372,6 +370,7 @@
                                         {% else %}
                                         <td  style="font-size: medium;">{{ a.amount }}</td>
                                         {% endif %}
+                                        </tr>
                        {% endfor %}
                                        
                                     {% for i in toloan %}
@@ -379,7 +378,6 @@
                                         <td  >{{i.loan_date}}</td>
                                         <td  >{{i.type}}</td>
                                         <td  >{{i.bank_type}}</td>
-                                        <td >{{i.from_trans}}</td>
                                         
                                         <td >{{i.loan_amount}}</td>
                                         
@@ -390,7 +388,6 @@
                                         <td  >{{i.loan_date}}</td>
                                         <td  >{{i.type}}</td>
                                         <td  >{{i.bank_type}}</td>
-                                        <td  >{{i.from_trans}}</td>
                                         
                                         <td >{{i.loan_amount}}</td>
                                         
@@ -403,7 +400,6 @@
                                         <td>{{ p.vendor_name }}</td>
                                         
                                        
-                                       <td></td>
                                         {% if p.balance_amount > 0 %}
                                         <td>{{ p.paid_amount }}</td>
                                         {% else %}
@@ -419,7 +415,6 @@
                                     <td>PURCHASE ORDER</a></td>
                                     <th>{{ p.vendor_name }}</th>
                                     
-                                   <td></td>
                                     <td>{{ p.paid_amount }}</td>
                                    
                                    
@@ -433,7 +428,6 @@
                                             <td>PURCHASE PAYMENT</td>
                                             
                                             <td>{{ p.vendor }}</td>
-                                            <td></td>
                                             <td>{{ p.amtreceived }}</td>
                                             
                                         </tr>
@@ -445,7 +439,6 @@
                                             <th>{{ r.start_date | date:'d-m-Y' }}</th>
                                             <td>RECURRING BILL</a></td>
                                             <td>{{ r.vendor_name }}</td>
-                                           <td></td>
                                             <td>{{ r.paid_amount}}</td>
                                            
                                         </tr> 

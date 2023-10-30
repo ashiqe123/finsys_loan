@@ -35,8 +35,10 @@
                         <div class="dropdown">
                             <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" data-toggle="dropdown">Sort</button>
                             <div class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item" href="{% url 'bnnk' %}" style="height: 40px; font-size: 15px; color: white;">All </a>
+
                                 <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')" style="height: 40px; font-size: 15px; color: white;">Name </a>
-                                <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white;">Salary </a>
+                                <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white;">Amount </a>
                             </div>
                         </div>
                 
@@ -162,8 +164,8 @@
         rows.shift(); // Remove the table header row from sorting
     
         rows.sort(function(a, b) {
-            const salaryA = parseFloat(a.querySelector('td:nth-child(6)').textContent);
-            const salaryB = parseFloat(b.querySelector('td:nth-child(6)').textContent);
+            const salaryA = parseFloat(a.querySelector('td:nth-child(5)').textContent);
+            const salaryB = parseFloat(b.querySelector('td:nth-child(5)').textContent);
     
             if (order === 'asc') {
                 return salaryA - salaryB;
