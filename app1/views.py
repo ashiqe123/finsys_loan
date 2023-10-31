@@ -45380,8 +45380,8 @@ def crt_emp_loan_trans(request, id):
             )
             print(loan.balance_loan)
             print('bal')
-            if loan.balance_loan < 0:
-                messages.error(request, 'Principal amount must be greater than 0.')
+            if loan.balance_loan :
+                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
                 return redirect('employee_details', id)
             transaction.save()
         else:
@@ -45443,7 +45443,12 @@ def additional_loan(request , id):
         balance_loan = total,loan_trans_date=date,intrest=0 )
         lt.save()
         employ.balance_loan = total
-        employ.LoanAmount = total
+        print(employ.LoanAmount)
+        res = employ.LoanAmount + int(new_loan)
+        employ.LoanAmount = res
+        print(total)
+        print(principal)
+        print(res)
         employ.save()
     return redirect('employee_details',id)
 
@@ -45642,14 +45647,15 @@ def delet_add_loan(request,id):
     la = employ.amount
     lt = employ.total_amount
     li = employ.intrest
-    
+    print(la)
     
     employ_ln = employ.emploee_loan.id
     print(employ_ln)
     employ_ln= EmployeeLoan.objects.get(id=employ_ln)
     reset_amount = employ_ln.LoanAmount - employ.amount
-    
-    employ_ln.balance_loan = reset_amount
+    balance_amount = employ_ln.balance_loan - employ.amount
+    print(reset_amount)
+    employ_ln.balance_loan = balance_amount
     employ_ln.LoanAmount = reset_amount 
     employ_ln.save()
     employ.delete()

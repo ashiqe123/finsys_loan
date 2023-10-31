@@ -476,7 +476,7 @@
 <script>
     // Get the input element and table rows
     const searchInput = document.getElementById('searchInput');
-    const tableRows = document.querySelectorAll('#tabletobe tbody tr ');
+    const tableRows = document.querySelectorAll('#tabletobe tbody tr');
 
     // Add an event listener to the search input
     searchInput.addEventListener('input', function () {
@@ -484,9 +484,18 @@
 
         // Loop through each table row and hide/show based on search text
         tableRows.forEach(row => {
-            const nameCell = row.querySelector('td:nth-child(2)');
-            const name = nameCell.textContent.toLowerCase();
-            if (name.includes(searchText)) {
+            let foundMatch = false;
+            const cells = row.querySelectorAll('td'); // Select all <td> elements within the row
+
+            cells.forEach(cell => {
+                const cellText = cell.textContent.toLowerCase();
+                if (cellText.includes(searchText)) {
+                    foundMatch = true;
+                }
+            });
+
+            // Show or hide the row based on whether a match was found
+            if (foundMatch) {
                 row.style.display = 'table-row';
             } else {
                 row.style.display = 'none';
@@ -494,6 +503,7 @@
         });
     });
 </script>
+
 
 
 
