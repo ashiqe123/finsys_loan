@@ -18,7 +18,7 @@
 </div>
 <div class="page-content">
 <div class="card radius-15 p-5 ">
-<form id="bankForm" method="post" action="z">
+<form id="bankForm" method="post" action="{% url 'crt_loan_trans' loan_id_global %}">
 
     {% csrf_token %}
     <div class="row">

@@ -148,12 +148,10 @@
                   <li><a href="{% url 'cash_in_hand' %}">Cash In Hand</a></li>
                   <li><a href="{% url 'bnnk' %}">Offline Banking</a></li>
                   <li><a href="{% url 'loan' %}">Loan Account</a>
-                    <li><a href="{% url 'sales_report' %}">Sales</a>
-                  </li>
-                  <li><a href="{% url 'listpayrollemployee' %}">Employee</a>
-                  </li>
-                  <li><a href="{% url 'employeeloanpage' %}">Employee Loan</a>
-                  </li>
+                    <li><a href="{% url 'sales_report' %}">Sales</a></li>                   
+                  <li><a href="{% url 'listpayrollemployee' %}">Employee</a></li>
+                  <li><a href="{% url 'employeeloanpage' %}">Employee Loan</a></li>
+
                 </ul>
               </div>
 
@@ -187,7 +185,7 @@
                       style="display: block; padding: 8px 16px; text-decoration: none">Customize Form Style</a></li>
                   <li><a href="{% url 'gocoa' %}" style="display: block; padding: 8px 16px; text-decoration: none">Chart
                       of Accounts</a></li>
-                  <li><a href="" style="display: block; padding: 8px 16px; text-decoration: none">
+                  <li><a href="{% url 'module_settings'%}" style="display: block; padding: 8px 16px; text-decoration: none">
                         Module Settings</a></li>
                 </ul>
               </div>
@@ -421,7 +419,7 @@
               </li>
               <li id="recurringbill"><a href="{% url 'recurringbill_home' %}"><i class="bx bx-right-arrow-alt"></i>Recurring Bill</a>
               </li>
-              <li><a href=""><i class="bx bx-right-arrow-alt"></i>E-Way Bill</a>
+              <li><a href="{% url 'go_ewaybill' %}"><i class="bx bx-right-arrow-alt"></i>E-Way Bill</a>
               </li>
             </ul>
           </li>
@@ -481,8 +479,8 @@
                   <li><a href="{% url 'sales_report' %}"><i class="bx bx-right-arrow-alt"></i>Sales</a></li>
 
                     <ul class="px-4">
-                      <li><a href=""><i class="bx bx-right-arrow-alt"></i>Sales by Customer</a></li>
-                      <li><a href=""><i class="bx bx-right-arrow-alt"></i>Sales By Item</a></li>
+                      <li><a href="{% url 'sales_by_customer' %}"><i class="bx bx-right-arrow-alt"></i>Sales by Customer</a></li>
+                      <li><a href="{% url 'sales_by_item' %}"><i class="bx bx-right-arrow-alt"></i>Sales By Item</a></li>
                     </ul>
                   </li>
                   <li><a href="{% url 'purchase' %}"><i class="bx bx-right-arrow-alt"></i>Purchase
@@ -520,14 +518,12 @@
               <li id="trialbalance"><a href="{% url 'trial_balance' %}"><i class="bx bx-right-arrow-alt"></i>Trial Balance</a></li>
               <li id="accountsreceivables"><a href="{% url 'accreceivables' %}"><i class="bx bx-right-arrow-alt"></i>Accounts Receivables</a>
               </li>
-                            <li><a href=""><i class="bx bx-right-arrow-alt"></i>Debitnote Report</a></li>
+                            <li><a href="{% url 'debitnotereport' %}"><i class="bx bx-right-arrow-alt"></i>Debitnote Report</a></li>
               <li id="accountspayables"><a href="{% url 'accpayables' %}"><i class="bx bx-right-arrow-alt"></i>Accounts Payables</a></li>
 
               <li id="stocksummary"><a href="{% url 'stocksummary' %}"><i class="bx bx-right-arrow-alt"></i>Stock Summary </a></li>
               <li id="stockvaluation"><a href="{% url 'stockvaluation' %}"><i class="bx bx-right-arrow-alt"></i>Stock Valuation</a></li>
-              <li id="salessummaryreport"><a href=""><i class="bx bx-right-arrow-alt"></i>Sales Summary Report</a></li>
-              <li><a href="{% url 'sales_report' %}"><i class="bx bx-right-arrow-alt"></i>Sales</a>
-              </li>
+              <li id="salessummaryreport"><a href="{% url 'salessummaryreport' %}"><i class="bx bx-right-arrow-alt"></i>Sales Summary Report</a></li>
             </ul>
           </li>
           <!-- <li>
@@ -579,8 +575,8 @@
             <ul class="submenu">
               <li id="employee"><a href="{% url 'listpayrollemployee' %}"><i class="bx bx-right-arrow-alt"></i>Employee</a> </li>
               <li id="employeeloan"><a href="{% url 'employeeloanpage' %}"><i class="bx bx-right-arrow-alt"></i>Employee Loan</a> </li>
-              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Holidays</a> </li>
-              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Attendance</a> </li>
+              <li><a href="{% url 'holidayss' %}"><i class="bx bx-right-arrow-alt"></i>Holidays</a> </li>
+              <li><a href="{% url 'attendancepagee' %}"><i class="bx bx-right-arrow-alt"></i>Attendance</a> </li>
             </ul>
           </li>
           </ul>

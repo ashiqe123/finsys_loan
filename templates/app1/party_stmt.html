@@ -83,8 +83,8 @@
             </div>
         </div>
     </div>
-    <div class="card radius-15 print-only" id="pdf-card">
-        <div class="card-body">
+    <div class="card radius-15 print-only">
+        <div class="card-body" id="pdf-card">
             <div class="container-fluid">
 
                 <table class="table table-responsive-md mt-4 table-hover table-bordered"
@@ -183,7 +183,7 @@
                         {% endfor %}
                         {% for i in chln %}
                         <tr class="text-center">
-                            <td class="hidden">{{i.customer}}</td>
+                            <td class="hidden">{{i.customer.firstname}} {{i.customer.lastname}}</td>
                             <td>{{i.challan_date | date:'Y-m-d'}}</td>
                             <td>delivery challan</td>
                             <td>{{i.chal_no}}</td>
@@ -224,7 +224,7 @@
                         <tr class="text-center">
                             <td class="hidden">{{i.vendor_name}}</td>
                             <td>{{i.date | date:'Y-m-d'}}</td>
-                            <td>purchase bill</td>
+                            <td>bill</td>
                             <td>{{i.bill_no}}</td>
                             <td>cash</td>
                             <td>{{i.grand_total}}</td>
@@ -237,7 +237,7 @@
                         <tr class="text-center">
                             <td class="hidden">{{i.vendor}}</td>
                             <td>{{i.date | date:'Y-m-d'}}</td>
-                            <td>purchase expense</td>
+                            <td>expense</td>
                             <td>{{i.expense_no}}</td>
                             <td>cash</td>
                             <td>{{i.amount}}</td>
@@ -250,7 +250,7 @@
                         <tr class="text-center">
                             <td class="hidden">{{i.vendor}}</td>
                             <td>{{i.paymentdate | date:'Y-m-d'}}</td>
-                            <td>purchase payment</td>
+                            <td>payment</td>
                             <td>{{i.pymntid}}</td>
                             <td>{{i.paymentmethod}}</td>
                             <td>{{i.paymentamount}}</td>
@@ -263,7 +263,7 @@
                         <tr class="text-center">
                             <td class="hidden">{{i.vendor}}</td>
                             <td>{{i.debitdate | date:'Y-m-d'}}</td>
-                            <td>purchase debit</td>
+                            <td>debit note</td>
                             <td>{{i.debit_no}}</td>
                             <td>cash</td>
                             <td>{{i.grandtotal}}</td>
@@ -321,13 +321,16 @@
                     <div class="row mb-2">
                         <div class="col-4 ">Total Sale: <p class="d-inline-block" id="sales">₹{{sale}}</p>
                         </div>
-                        <div class="col-4">Total Purchase: <p class="d-inline-block" id="purchase">₹{{purchase}}</p></div>
-                        <div class="col-4">Total Expense: <p class="d-inline-block" id="expense">₹{{exp}}</p></div>
+                        <div class="col-4">Total Purchase: <p class="d-inline-block" id="purchase">₹{{purchase}}</p>
+                        </div>
+                        <div class="col-4">Total Expense: <p class="d-inline-block" id="expense">₹{{exp}}</p>
+                        </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-4">Total Money-In: <p class="d-inline-block" id="moneyin"> ₹{{totalpayr}}</p>
                         </div>
-                        <div class="col-4">Total Money-Out:<p class="d-inline-block" id="moneyout">₹{{totalpay}}</p> </div>
+                        <div class="col-4">Total Money-Out:<p class="d-inline-block" id="moneyout">₹{{totalpay}}</p>
+                        </div>
                         <div class="col-4" id="totalAmount"></div>
                     </div>
                 </div>
@@ -426,7 +429,7 @@
             var name = document.getElementById("headline").innerHTML;
             var div2 = document.getElementById("div2");
             var element = document.getElementById('pdf-card');
-            element.style.color = 'white';
+            element.style.color = 'black';
             element.style.backgroundColor = '#243e54';
             var opt =
             {
@@ -450,7 +453,7 @@
 
 
             if (document.getElementById("in1").value == '' && document.getElementById("in2").value == '') {
-                for (var i = 1; i < rows.length-1; i++) { // Start from 1 to skip the table header row
+                for (var i = 1; i < rows.length - 1; i++) { // Start from 1 to skip the table header row
 
                     var firstColumnValue = rows[i].getElementsByTagName("td")[0].textContent.toLowerCase();
 
@@ -467,7 +470,7 @@
             else {
                 var startDate = new Date(document.getElementById("in1").value);
                 var endDate = new Date(document.getElementById("in2").value);
-                for (var i = 1; i < rows.length-1; i++) {
+                for (var i = 1; i < rows.length - 1; i++) {
                     var firstColumnValue = rows[i].getElementsByTagName("td")[0].textContent.toLowerCase();
                     var row = rows[i];
                     var dateCell = row.cells[1];
@@ -487,29 +490,29 @@
         });
     }
     selectParty();
-    
+
 
 
     // Get the input element
     const inputElement = $('input[name="party"]');
-    
-    
+
+
     // Event handler for input change
     inputElement.on('input', function () {
         const inputValue = $(this).val();
 
-        let total =0;
+        let total = 0;
         let totalMoneyin = 0;
         let totalMoneyout = 0;
         let totalexpense = 0;
         let totalsales = 0;
         let salesreturn = 0;
-        let sales=0;
+        let sales = 0;
         let totalpurchase = 0;
         let purchasereturn = 0;
-        let purchase=0;
+        let purchase = 0;
 
-        
+
 
 
         // Iterate through the table rows
@@ -520,45 +523,60 @@
 
             // Check if the 'type' is 'invoice' and matches the input value
             if (type === 'payment recieved' && name === inputValue) {
-                // Add the 'amount' to the total sum
                 totalMoneyin += amount;
+                console.log(totalMoneyin);
             }
-            if (type === 'purchase payment' && name === inputValue) {
-                // Add the 'amount' to the total sum
+            if (type === 'payment' && name === inputValue) {
                 totalMoneyout += amount;
+                console.log(totalMoneyout);
             }
-            if ((type === 'purchase expense' || type === 'manual journal' ) && name === inputValue) {
-                // Add the 'amount' to the total sum
+            if ((type === 'expense' || type === 'manual journal') && name === inputValue) {
                 totalexpense += amount;
+                console.log(totalexpense);
             }
             if ((type === 'invoice' || type === 'sales order' || type === 'reccuring invoice' || type === 'delivery challan' || type === 'retainer invoice' || type === 'estimate' || type === 'payment recieved') && name === inputValue) {
                 // Add the 'amount' to the total sum
                 totalsales += amount;
+                console.log(totalsales);
             }
             if (type === 'credit note' && name === inputValue) {
                 // Add the 'amount' to the total sum
                 salesreturn += amount;
+                console.log(salesreturn);
             }
-            if ((type === 'purchase order' || type === 'purchase bill' || type === 'purchase expense' || type === 'purchase payment') && name === inputValue) {
+            if ((type === 'purchase order' || type === 'bill' || type === 'payment') && name === inputValue) {
                 // Add the 'amount' to the total sum
                 totalpurchase += amount;
+                console.log(totalpurchase);
             }
-            if (type === 'purchase debit' && name === inputValue) {
-                // Add the 'amount' to the total sum
+            if (type === 'debit note' && name === inputValue) {
+
                 purchasereturn += amount;
+                console.log(purchasereturn);
             }
             if (name === inputValue) {
-                // Add the 'amount' to the total sum
                 total += amount;
+                console.log('amount is' + amount);
             }
 
 
-            sales = totalsales-salesreturn
-            purchase = totalpurchase-purchasereturn
+            sales = totalsales - salesreturn
+            sales= sales.toFixed(2)
+            purchase = totalpurchase - purchasereturn
+            purchase= purchase.toFixed(2)
+            totalexpense= totalexpense.toFixed(2)
+            totalMoneyin= totalMoneyin.toFixed(2)
+            totalMoneyout= totalMoneyout.toFixed(2)
+            if (sales < 0) {
+                sales = Math.abs(sales); // Convert to positive value
+            }
+            if (purchase < 0) {
+                purchase = Math.abs(purchase); // Convert to positive value
+            }
         });
-        
+
         if (inputValue != '') {
-           
+
             // Display the total sum
             $('#moneyin').text('₹' + totalMoneyin);
             $('#moneyout').text('₹' + totalMoneyout);
@@ -568,19 +586,20 @@
             $("#totvalue").text('₹' + total.toFixed(2));
             $("#tot").text('₹' + total.toFixed(2));
             $("#balance").text('₹' + total.toFixed(2));
-        } else if (inputValue == '' || inputValue.length == 1){
+        } else if (inputValue == '' || inputValue.length == 1) {
             location.reload();
         }
-        if(inputValue === '' || inputValue.length== 1){
+        if (inputValue === '' || inputValue.length == 1) {
             head = 'PARTY STATEMENT'
         }
-        else{
+        else {
             console.log(inputValue);
             head = inputValue + ' Statement';
+            head = head.toUpperCase();
         }
         $('#headline').text(head);
 
-    
+
 
     });
 
