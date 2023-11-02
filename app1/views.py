@@ -44410,10 +44410,15 @@ def get_customerdet(request):
         cust = customer.objects.get(customerid=customer_id,cid = request.session['uid'])
 
         email = cust.email
-        gstin = cust.gstin
+        street = cust.street
+        city = cust.city
+        state = cust.state
+        pincode = cust.pincode
+        country = cust.country
         gsttype = cust.gsttype
-
-        return JsonResponse({'email' : email, 'gstin' : gstin, 'gsttype': gsttype}, safe=False)
+        gstno = cust.gstin
+        shipstate = cust.shipstate
+        return JsonResponse({'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstn' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
 
 @login_required(login_url='regcomp')
 def createvendor_rbill(request):
@@ -44492,10 +44497,17 @@ def get_vendordet(request):
         vdr = vendor.objects.get(vendorid=vendor_id,cid = request.session['uid'])
 
         email = vdr.email
-        gstin = vdr.gstin
+        street = vdr.street
+        city = vdr.city
+        state = vdr.state
+        pincode = vdr.pincode
+        country = vdr.country
         gsttype = vdr.gsttype
+        gstno = vdr.gstin
+        shipstate = vdr.shipstate
+        print(shipstate)
 
-        return JsonResponse({'email' : email, 'gstin' : gstin, 'gsttype': gsttype}, safe=False)
+        return JsonResponse({'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstno' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
 
 
 

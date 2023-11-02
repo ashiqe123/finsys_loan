@@ -38,11 +38,14 @@
                     
                     {% if user.is_authenticated %} -->
 
+
+                    
+
                         <div class="row">
-                            <div class="col-md-4 mt-2">
+                            <div class="col-md-4 mt-2 ml-3 ">
                                 <label for="validationCustom01">Select Vendor</label>
                                 <div class="d-flex">
-                                    <select name="vendor_name" id="vendor" class="custom-select">
+                                    <select name="vendor_name" id="vendor_det" class="custom-select">
                                         <option selected disabled>Select Vendor</option>
                                         {% for v in vndr %}
                                         <option value="{{v.vendorid}} {{ v.firstname }} {{ v.lastname }}">{{ v.title }} {{ v.firstname }} {{ v.lastname }}</option>
@@ -54,34 +57,42 @@
                                     </a>
                                     <div class="valid-feedback">Looks good!</div> 
                                 </div>
+                                <div class="d-none mt-5" id="gst_trt_row">
+                                    <div class=" d-flex mt-3">
+                                      <label for="gst_trt_inp">GST Treatment</label>
+                                      <input type="text" class="form-control" id="gst_trt_inp" name="gst_trt_inp">
+                                    </div>
+                                  </div>
                             </div>
+                           <div class="col-md-4 mt-2">
+                                
+                                <div class="d-none" id="email_row">
+                                   <div>
+                                    <label for="email_inp">Vendor Email</label>
+                                      <input type="text" class="form-control" id="email_inp" name="email_inp">
+                                  </div>
+                                 
+                            </div> <br>
+                            
+                                <div id="gstin_row" style="display: none;" class="" >
+                                    <label class="col-form-label">GSTIN</label>
+                                    <input type="text" class="form-control" id="gstno" name="gstno" style="background-color: #43596c;" readonly>
+                                </div>
+                              </div>
+                           </div>
+                           <div class="col-md-4 d-none mt-2" id="addres_row">
+                            <label class="col-form-label">Billing Address</label>
+                            <textarea class="form-control" rows="6" id="addres" name="billingaddress" style="background-color: #43596c; margin-bottom: 10px;"  readonly></textarea>
+    
+                           
                         </div>
-                       
-                        <div class="row d-none" id="email_row">
-                            <div class="col-md-3 mt-2">
-                              <label for="email_inp">Vendor Email</label>
-                              <input type="text" class="form-control" id="email_inp" name="email_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gst_trt_row">
-                            <div class="col-md-3  mt-2">
-                              <label for="gst_trt_inp">GST Treatment</label>
-                              <input type="text" class="form-control" id="gst_trt_inp" name="gst_trt_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gstin_row">
-                            <div class="col-md-3  mt-2">
-                            <label for="gstin_inp">GST Number</label>
-                             <input type="text" class="form-control"  id="gstin_inp" name="gstin_inp">
-                            </div>
-                          </div>
-                          <hr>
-                          <br><br>
+                        
+                   
+               <hr>
+                          <br>
                           <div class="row">
-                              <div class="col-md-3 mt-2"><h5>Bill Details</h5></div>
-                              <div class="col-md-3 mt-2"></div>
+                              <div class="col-md-3 "><h5>Bill Details</h5></div>
+                              <div class="col-md-3"></div>
                               <!-- <div class="col-md-3 mt-2">
                                   <label>Bill Number</label>
                                   <div class="d-flex">
@@ -94,7 +105,8 @@
                           <div class="row">
                               <div class="col-md-3 mt-2">
                                   <label for="">Source of Supply</label>
-                                  <select name="sourceof_supply" id="plosur" class="form-control">
+                                  <select type="text" name="sourceof_supply" id="plosur" class="form-control">
+                                    <option value="" selected hidden> Select Source of Supply</option>
                                     <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
                                     <option value="Andhra Predhesh">Andhra Predhesh</option>
                                     <option value="Arunachal Predesh">Arunachal Predesh</option>
@@ -112,7 +124,7 @@
                                     <option value="Jammu and Kashmir">Jammu and Kashmir</option>
                                     <option value="Jharkhand">Jharkhand</option>
                                     <option value="Karnataka">Karnataka</option>
-                                    <option value="Kerala" selected>Kerala</option>
+                                    <option value="Kerala">Kerala</option>
                                     <option value="Ladakh">Ladakh</option>
                                     <option value="Lakshadweep">Lakshadweep</option>
                                     <option value="Madhya Predesh">Madhya Predesh</option>
@@ -172,6 +184,9 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        
                           <hr>
                           <div class="row">
                               <div class="col-md-3 mt-2"><h5>Customer Details</h5></div>
@@ -179,45 +194,96 @@
                              
                           </div>
                           <hr>
-                          <div class="row">
-                            <div class="col-md-4 mt-2">
-                                <label for="validationCustom01">Select Customer</label>
+                          <div class="row mt-3">
+                            <div class="col-md-4">
+            
+        
+                                <label class="col-form-label mt-2">Customer</label>
                                 <div class="d-flex">
-                                    <select name="customer_name" id="customer" class="custom-select">
-                                        <option selected disabled>Select Customer</option>
+                                    <select name="customer" id="customer" class="form-control" style="width: 95%;">
+                                        <option value="NIL" selected hidden>Select Customer</option>
                                         {% for c in cust %}
-                                        <option value="{{c.customerid}} {{ c.firstname }} {{ c.lastname }}">{{ c.title }} {{ c.firstname }} {{ c.lastname }}</option>
+                                                <option value="{{ c.customerid }} {{c.firstname }} {{ c.lastname }}">{{ c.title }} {{ c.firstname }} {{ c.lastname }}</option>
                                         {% endfor %}
                                     </select>
-                                    <a>
-                                        <button type="button" class="btn btn-outline-secondary ml-1" 
-                                        data-target="#newcustomer" data-toggle="modal">+</button>
-                                    </a>
-                                    <div class="valid-feedback">Looks good!</div> 
+                                    <a class="btn btn-outline-secondary ml-1" role="button" data-target="#customercreation" data-toggle="modal">+</a>
+                                </div><br>
+        
+
+                                <label class="col-form-label mt-2">GST Type</label>
+                                <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" readonly>
+        
+        
+                            </div>
+        
+                            <div class="col-md-4">
+                                <label class="col-form-label mt-2">Email</label>
+                                <input type="text" class="form-control" id="cust_email" name="cemail" placeholder="Email" style="background-color: #43596c;" readonly ><br>
+                                <div id="gstnodiv" style="display: none;" class="mt-2">
+                                    <label class="col-form-label">GSTIN</label>
+                                    <input type="text" class="form-control" id="gstn" name="gstin_inp" style="background-color: #43596c;" readonly>
                                 </div>
+                               
                             </div>
-                            
-                        </div>
-                        <div class="row d-none" id="email_row1">
-                            <div class="col-md-3 mt-2">
-                              <label for="email_inp">Customer Email</label>
-                              <input type="text" class="form-control" id="email_inp1" name="email_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gst_trt_row1">
-                            <div class="col-md-3  mt-2">
-                              <label for="gst_trt_inp">GST Treatment</label>
-                              <input type="text" class="form-control" id="gst_trt_inp1" name="gst_trt_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gstin_row1">
-                            <div class="col-md-3  mt-2">
-                            <label for="gstin_inp">GST Number</label>
-                             <input type="text" class="form-control"  id="gstin_inp1" name="gstin_inp">
-                            </div>
-                          </div>
+                                              
+                    <div class="col-md-4">
+                        <label class="col-form-label">Billing Address</label>
+                        <label for="billingaddress"></label>
+                        <textarea class="form-control" rows="6" id="bname" name="billingaddress" style="background-color: #43596c; margin-bottom: 10px;"  readonly></textarea>
+
+                       
+                    </div>
+                    <div class="col-md-4">
+                        
+                        <label class="col-form-label mt-2">Place of supply</label>
+                        <select type="text" class="form-control" id="plosu" name="placosupply" style="background-color: #43596c; color: white;" >
+                          <!-- <option value="{{ cmp1.state }}" selected> {{ cmp1.state }}</option> -->
+                          <option value="" selected hidden> Select Place of Supply</option>
+                          <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                          <option value="Andhra Predhesh">Andhra Predhesh</option>
+                          <option value="Arunachal Predesh">Arunachal Predesh</option>
+                          <option value="Assam">Assam</option>
+                          <option value="Bihar">Bihar</option>
+                          <option value="Chandigarh">Chandigarh</option>
+                          <option value="Chhattisgarh">Chhattisgarh</option>
+                          <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                          <option value="Damn anad Diu">Damn anad Diu</option>
+                          <option value="Delhi">Delhi</option>
+                          <option value="Goa">Goa</option>
+                          <option value="Gujarat">Gujarat</option>
+                          <option value="Haryana">Haryana</option>
+                          <option value="Himachal Predesh">Himachal Predesh</option>
+                          <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                          <option value="Jharkhand">Jharkhand</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Kerala">Kerala</option>
+                          <option value="Ladakh">Ladakh</option>
+                          <option value="Lakshadweep">Lakshadweep</option>
+                          <option value="Madhya Predesh">Madhya Predesh</option>
+                          <option value="Maharashtra">Maharashtra</option>
+                          <option value="Manipur">Manipur</option>
+                          <option value="Meghalaya">Meghalaya</option>
+                          <option value="Mizoram">Mizoram</option>
+                          <option value="Nagaland">Nagaland</option>
+                          <option value="Odisha">Odisha</option>
+                          <option value="Puducherry">Puducherry</option>
+                          <option value="Punjab">Punjab</option>
+                          <option value="Rajasthan">Rajasthan</option>
+                          <option value="Sikkim">Sikkim</option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                          <option value="Telangana">Telangana</option>
+                          <option value="Tripura">Tripura</option>
+                          <option value="Uttar Predesh">Uttar Predesh</option>
+                          <option value="Uttarakhand">Uttarakhand</option>
+                          <option value="West Bengal">West Bengal</option>
+                          <option value="Other Territory">Other Territory</option>
+                        </select>
+                       
+                    </div>
+                    <!-- <div class="col-md-3"></div>
+                    <div class="col-md-3"></div> -->
+                </div>
+                       
 
                           <hr>
                           <div class="row">
@@ -496,7 +562,7 @@
                 </form>
 
           
-
+            </div>
                 <!-- < <div class="modal fade" id="newvendor">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content" style="background-color: #213b52;">
@@ -1841,7 +1907,7 @@ function reloadVendor() {
         csrfmiddlewaretoken: '{{ csrf_token }}',
 
         success: function(data) {
-            var dropdown = $('#vendor');
+            var dropdown = $('#vendor_det');
             dropdown.empty();
             dropdown.append(`<option selected>Select Vendor</option>`);
             $.each(data, function(key, value) {
@@ -1869,22 +1935,12 @@ function reloadVendor() {
         }
     });
 
-}
-$(document).ready(function() {
-    $('#vendor').change(function() {
-        // var selectedValue = $("#vendor").val();
-        // // var values = selectedValue.split(' '); // Split by space
-        // var vendorid = values[0];
-        // // The rest of the values will be the name (firstname and lastname)
-        // var name = values.slice(1).join(' ');
-
-        // Send the vendorid to the server
+}$(document).ready(function() {
+    $('#vendor_det').change(function() {
         $.ajax({
             url: "{% url 'get_vendordet' %}", 
             data: { 
-                // id: vendorid,  // Pass the vendorid to the server
-                // csrfmiddlewaretoken: '{{ csrf_token }}' 
-                id: $('#vendor').val(),
+                id: $('#vendor_det').val(),
                 csrfmiddlewaretoken: '{{ csrf_token }}',
             },
             type : 'POST',
@@ -1892,17 +1948,30 @@ $(document).ready(function() {
                 // Update your UI with the data
                 $("#email_row").removeClass('d-none');
                 $("#email_row").addClass('d-flex');
-                $("#gstin_row").removeClass('d-none');
-                $("#gstin_row").addClass('d-flex');
                 $("#gst_trt_row").removeClass('d-none');
                 $("#gst_trt_row").addClass('d-flex');
+                $("#addres_row").removeClass('d-none');
+                $("#addres_row").addClass('d-flex');
                 $('#email_inp').val(" " + data.email);
-                $('#gstin_inp').val(" " + data.gstin);
                 $('#gst_trt_inp').val(" " + data.gsttype);
+                $('#addres').val(" " +  data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode) ;
+                $('#plosur').val(" " + data.shipstate);
+                document.getElementById('plosur').value = data.shipstate
+                console.log(data.shipstate)
+                var gstinRow = document.getElementById('gstin_row');
+                var gstNoInput = document.getElementById('gstno');
+                if(data.gstno) {
+                    gstinRow.style.display = 'block'; // Show GSTIN field
+                    gstNoInput.value = data.gstno; // Set GST number
+                } else {
+                    gstinRow.style.display = 'none'; // Hide GSTIN field
+                    gstNoInput.value = ''; // Clear GST number
+                }
             }
         });
     });
 });
+
 </script>
     <script>
     
@@ -2055,21 +2124,35 @@ $(document).on("click", "#customerSave", function(){
                 csrfmiddlewaretoken: '{{ csrf_token }}',
             },
             type : 'POST',
-            success: function(data) {
-              
-                $("#email_row1").removeClass('d-none');
-                $("#email_row1").addClass('d-flex');
-                $("#gstin_row1").removeClass('d-none');
-                $("#gstin_row1").addClass('d-flex');
-                $("#gst_trt_row1").removeClass('d-none');
-                $("#gst_trt_row1").addClass('d-flex');
-                $('#email_inp1').val(" " + data.email);
-                $('#gstin_inp1').val(" " + data.gstin);
-                $('#gst_trt_inp1').val(" " + data.gsttype);
-            }
-        });
-    });
-});
+            success: function(data){
+                            // console.log(data.email);
+                            document.getElementById('cust_email').value = data.email;
+                            document.getElementById('plosu').value = data.shipstate;
+                            document.getElementById('gsttype').value = data.gsttype;
+                            document.getElementById('bname').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
+                            if(data.gstn){
+                                document.getElementById('gstnodiv').style.display = 'block';
+                                document.getElementById('gstn').value = data.gstn;
+                            }else{
+                                document.getElementById('gstnodiv').style.display = 'none';
+                                document.getElementById('gstn').value = '';
+                            }
+                            var compstate = document.getElementById("cmpstate").value;
+                            if (data.shipstate == compstate ) {
+                                document.getElementById('cgst1').style.display = 'flex';
+                                document.getElementById('sgst1').style.display = 'flex';
+                                document.getElementById('igst1').style.display = 'none'; 
+
+                            } else {
+                                document.getElementById('cgst1').style.display = 'none';
+                                document.getElementById('sgst1').style.display = 'none';
+                                document.getElementById('igst1').style.display = 'flex';
+
+                            }
+                        }
+                    });
+                });
+            });
 
 $(document).on("click","#savecredit",function(){
 
