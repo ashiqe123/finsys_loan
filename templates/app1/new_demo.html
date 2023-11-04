@@ -1,0 +1,45 @@
+<form action="{% url 'createrecurringbill' %}" method="post" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 mt-2">
+            <label for="">Recurring Bill Code and Number</label>
+            <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" placeholder="e.g., rec-1" required>
+        </div>
+        <!-- Other form fields -->
+        <input type="submit">
+    </div>
+</form>
+<script>
+    // Get a reference to the input field
+    const billCodeNumberInput = document.getElementById('bill_code_number');
+
+    // Function to update the bill code and number
+    function updateBillCodeNumber() {
+        const inputText = billCodeNumberInput.value;
+        const parts = inputText.split('-');
+        let code = parts[0] || '';
+        let number = parseInt(parts[1]) || 1;
+
+        // Ensure the code is always lowercase
+        code = code.toLowerCase();
+
+        // Increment the number
+        number++;
+
+        // Update the input value
+        billCodeNumberInput.value = `${code}-${number}`;
+    }
+
+    // Call the updateBillCodeNumber function when the page loads
+    updateBillCodeNumber();
+
+    // Event listener for form submission
+    document.querySelector('form').addEventListener('submit', function (event) {
+        // Split the code and number
+        const parts = billCodeNumberInput.value.split('-');
+        if (parts.length !== 2 || isNaN(parseInt(parts[1]))) {
+            event.preventDefault(); // Prevent form submission
+            alert('Invalid code and number format. Please enter a valid value (e.g., rec-1).');
+        }
+    });
+</script>

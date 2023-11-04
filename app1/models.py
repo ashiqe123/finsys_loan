@@ -2168,7 +2168,7 @@ class recurring_bill(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     rbillid = models.AutoField(('rid'), primary_key=True)
     # bill_no = models.IntegerField(default=1000)
-    billno =  models.CharField(max_length=100,null=True,blank=True)
+    billno =  models.CharField(max_length=100,null=True,blank=True,unique=True)
     profile_name = models.CharField(max_length=100,null=True,blank=True)
     source_supply = models.CharField(max_length=100,null=True,blank=True)
     vendor_name = models.CharField(max_length=100,null=True,blank=True)###vendor table

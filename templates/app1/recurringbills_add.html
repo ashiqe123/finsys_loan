@@ -165,12 +165,12 @@
 
       
                               <div class="col-md-3 mt-2">
-                                  <label for="">Recurring Bill No.</label>
-                                  <input type="text" class="form-control" id="" name="billno" placeholder="1000">
-                              </div>
+                                  <label for="">Recurring Bill No.</label><span class="text-danger mt-1 ml-3" id="dangerdiv" style="display: none;"><span class="text-white"> (</span>This Id Should be Continous <span class="text-white">)</span></span>
+                                  <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" value="" placeholder="{{ord_no}}" required>
+                                </div>
                               <div class="col-md-3 mt-2">
                                   <label for="">Profile Name </label>
-                                  <input type="text" class="form-control" id="" name="profile_name" placeholder="">   
+                                  <input type="text" class="form-control" id="" name="profile_name" value="{{ref_no}}">   
                               </div>
                               <div class="col-md-3 mt-2">
                                 <label for="">Purchase Order No.</label>
@@ -216,7 +216,7 @@
         
                                 <label class="col-form-label mt-2">Customer</label>
                                 <div class="d-flex">
-                                    <select name="customer" id="customer" class="form-control" style="width: 95%;">
+                                    <select name="customer_name" id="customer" class="form-control" style="width: 95%;">
                                         <option value="NIL" selected hidden>Select Customer</option>
                                         {% for c in cust %}
                                                 <option value="{{ c.customerid }} {{c.firstname }} {{ c.lastname }}">{{ c.title }} {{ c.firstname }} {{ c.lastname }}</option>
@@ -337,7 +337,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="col-form-label">Payment Type</label>
-                                <select class="form-control my-select" id="pay_method" name="method" style="background-color: #43596c;">
+                                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;">
                                     <option value="" selected hidden>Select Payment Method</option>
                                     <option value="cash">Cash</option>
                                     <option value="cheque">Cheque</option>
@@ -1865,6 +1865,38 @@
   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script type="text/javascript">
+    $(document).on('change','#bill_code_number', function() {
+        ord = '{{ord_no}}'
+        sale_ord = "{{sale_list}}"
+        ord_value = $('#bill_code_number').val();
+        if(sale_ord === '' ){
+            document.getElementById('dangerdiv').style.display = 'none';
+
+        }
+        else{
+            if(ord_value != ord){
+                alert('The Next Number is '+ ord)
+                document.getElementById('bill_code_number').value = ord;
+            }else{
+                document.getElementById('dangerdiv').style.display = 'none';
+            }
+        }
+        var sale_list = "{{sale_list}}";
+        salelist = sale_list.split(",");
+        for(let i=0; i<salelist.length; i++){
+            if (ord_value == salelist[i]){
+                alert('Sale Order Number already in use.')
+                document.getElementById('dangerdiv').style.display = 'none';
+                document.getElementById('bill_code_number').value = ''
+            }
+        }
+    })
+</script>
+
     <script>
         // Get references to the relevant HTML elements
         const grandTotalInput = document.getElementById("grandtotal");
