@@ -44188,6 +44188,10 @@ def view_rbill(request, id):
         vendor_email = Vendor.email
         vendor_gstin=Vendor.gstin
         vendor_gsttype=Vendor.gsttype
+        vendor_street = Vendor.street
+        vendor_city = Vendor.city
+        vendor_state = Vendor.state
+        vendor_pincode = Vendor.pincode
         customer_full_name = rbill.customer_name
         first_name, last_name = customer_full_name.split(' ')
         Customer = customer.objects.get(firstname=first_name, lastname=last_name, cid=cmp1)
@@ -44195,7 +44199,8 @@ def view_rbill(request, id):
         customer_gstin=Customer.gstin
         customer_gsttype=Customer.gsttype
         context = {'rbill': rbill, 'cmp1': cmp1,'ritem':ritem,'vendor_email':vendor_email,'vendor_gstin': vendor_gstin,'customer_gsttype':customer_gsttype,
-        'vendor_gsttype':vendor_gsttype ,'customer_email':customer_email,'customer_gstin':customer_gstin}
+        'vendor_gsttype':vendor_gsttype ,'customer_email':customer_email,'customer_gstin':customer_gstin,'vendor_pincode':vendor_pincode,
+        'vendor_state':vendor_state,'vendor_city':vendor_city,'vendor_street':vendor_street}
         return render(request, 'app1/recurringbill_view.html', context)
     except:
         return redirect('view_rbill')
@@ -49082,6 +49087,8 @@ def createrecurringbill(request):
 
 
 def demo_v(request):
-    return render(request,'app1/new_demo.html')
+    cmp1 = company.objects.get(id=request.session["uid"])
+
+    return render(request,'app1/new_demo.html',{'cmp1':cmp1})
 
 
