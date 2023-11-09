@@ -98,7 +98,7 @@
                              
                             
                            </div> <br>
-                           <dic class="row">
+                           <div class="row">
                             <div class="col-md-3 mt-2">
                                 <label for="">Source of Supply</label>
                                 <select type="text" name="sourceof_supply" id="plosur" class="form-control">
@@ -144,7 +144,7 @@
                                 </select>
                             </div>
                            
-                           </dic>
+                           </div>
                           
                    
                <hr>
@@ -2117,7 +2117,9 @@ function reloadVendor() {
         }
     });
 
-}$(document).ready(function() {
+}
+
+$(document).ready(function() {
     $('#vendor_det').change(function() {
         $.ajax({
             url: "{% url 'get_vendordet' %}", 
@@ -2312,12 +2314,12 @@ $(document).on("click", "#customerSave", function(){
                             document.getElementById('plosu').value = data.shipstate;
                             document.getElementById('gsttype').value = data.gsttype;
                             document.getElementById('bname').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
-                            if(data.gstn){
+                            if(data.gstno){
                                 document.getElementById('gstnodiv').style.display = 'block';
-                                document.getElementById('gstn').value = data.gstn;
+                                document.getElementById('gstno').value = data.gstno;
                             }else{
                                 document.getElementById('gstnodiv').style.display = 'none';
-                                document.getElementById('gstn').value = '';
+                                document.getElementById('gstno').value = '';
                             }
                             var compstate = document.getElementById("cmpstate").value;
                             if (data.shipstate == compstate ) {

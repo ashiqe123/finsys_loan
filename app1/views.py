@@ -44304,6 +44304,8 @@ def createrecurringbill(request):
             billno = request.POST.get('bill_code_number')
             profile_name=request.POST.get('profile_name')
             payment_method=request.POST.get('payment_method')
+            cheque_no=request.POST.get("cheque_id"),
+            upi_no=request.POST.get("upi_id"),
             payment_terms=request.POST.get('payment_terms')
             sourceofsupply=request.POST.get('sourceof_supply')
             repeat_every=request.POST.get('repeat_every')
@@ -44331,7 +44333,8 @@ def createrecurringbill(request):
                                     source_supply=sourceofsupply,sub_total=sub_total,sgst=sgst,adjustment=adjustment,balance=balance,note= note,
                                     shipping_charge=shipping_charge, payment_terms= payment_terms,
                                     cgst=cgst,igst=igst,tax_amount=tax_amount,
-                                    grand_total=grand_total,cid=cmp1,billno=billno)
+                                    grand_total=grand_total,cid=cmp1,billno=billno,cheque_no=cheque_no,
+                        upi_no=upi_no)
 
             if len(request.FILES) != 0:
                 bill.file=request.FILES['file'] 
@@ -44617,57 +44620,6 @@ def deleterbill(request, id):
         return redirect('recurringbill_home')
     return redirect('recurringbill_home')
 
-
-@login_required(login_url='regcomp')
-def edit_recurringbill(request,id):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-        vndr = vendor.objects.filter(cid=cmp1)
-        itm = itemtable.objects.filter(cid=cmp1)
-        unit = unittable.objects.filter(cid=cmp1)
-        cust = customer.objects.filter(cid=cmp1)
-        cpd = creditperiod.objects.filter(cid=cmp1)
-        re = repeatevery.objects.filter(cid=cmp1)
-        bank=bankings_G.objects.filter(cid=cmp1)
-        acc2 = accounts1.objects.filter(cid=cmp1,acctype='Sales')
-        acc1 = accounts1.objects.filter(cid=cmp1,acctype='Cost of Goods Sold')
-        rbill=recurring_bill.objects.get(rbillid=id)
-        ritem = recurringbill_item.objects.all().filter(bill=id)
-        # vendor_name_parts = rbill.vendor_name.split(" ")
-        # if len(vendor_name_parts) == 2:
-        #     first_name, last_name = vendor_name_parts
-        #     v = vendor.objects.filter(cid=cmp1, first_name=first_name, last_name=last_name).first()
-        # else:
-        #     v = None
-        v = vendor.objects.filter(cid=cmp1).get(firstname = rbill.vendor_name.split(" ")[0], lastname = rbill.vendor_name.split(" ")[1])
-        c = customer.objects.filter(cid=cmp1).get(firstname = rbill.customer_name.split(" ")[0], lastname = rbill.customer_name.split(" ")[1])
-        toda = date.today()
-        tod = toda.strftime("%Y-%m-%d")
-
-        context = {
-                    'cmp1': cmp1,
-                    'vndr':vndr,
-                    'item':itm ,
-                    'unit':unit,
-                    'cust':cust,  
-                    'cpd':cpd,
-                    're':re,
-                    'bank':bank,
-                    'acc2':acc2,
-                    'acc1':acc1,
-                    'tod':tod,
-                    'rbill':rbill,
-                    'v':v,
-                    'c':c,
-                    'ritem':ritem
-        }
-        return render(request,'app1/recurringbill_edit.html',context)
-    return redirect('view_rbill')
-
 def update_recurringbill(request,id):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -44696,6 +44648,9 @@ def update_recurringbill(request,id):
             rbl.billno = request.POST.get('billno')
             rbl.profile_name=request.POST.get('profile_name')
             rbl.payment_method=request.POST.get('payment_method')
+            rbl.cheque_no=request.POST.get("cheque_id"),
+            rbl.upi_no=request.POST.get("upi_id"),
+            
             rbl.payment_terms=request.POST.get('payment_terms')
             rbl.sourceofsupply=request.POST.get('sourceof_supply')
             rbl.repeat_every=request.POST.get('repeat_every')
@@ -48797,7 +48752,7 @@ def get_vendordet(request):
         comp = company.objects.get(id=request.session["uid"])
 
         vendor_id = request.POST.get('id').split(" ")[0]
-     
+        print(vendor_id)
         # Query the vendor using the correct vendor_id
         vdr = vendor.objects.get(vendorid=vendor_id,cid = request.session['uid'])
 
@@ -48913,7 +48868,8 @@ def get_customerdet(request):
         gsttype = cust.gsttype
         gstno = cust.gstin
         shipstate = cust.shipstate
-        return JsonResponse({'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstn' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
+        print(gstno)
+        return JsonResponse({'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstno' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
 
 
 @login_required(login_url='regcomp')
@@ -49035,6 +48991,7 @@ def createrecurringbill(request):
             paid_amount=request.POST.get('paid_amount')
             paid_amount = float(paid_amount)
             grand_total = float(grand_total)
+
             # balance = float(grand_total - paid_amount)
             balance = round(float(grand_total - paid_amount), 3)
             bill = recurring_bill(vendor_name=vname,customer_name =cname,repeat_every=repeat_every,profile_name=profile_name,
@@ -49084,6 +49041,223 @@ def createrecurringbill(request):
             return redirect('recurringbill_home')
         return render(request,'app1/recurringbills_add.html',{'cmp1': cmp1})
     return redirect('/')
+
+
+
+@login_required(login_url='regcomp')
+def edit_recurringbill(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        vndr = vendor.objects.filter(cid=cmp1)
+        itm = itemtable.objects.filter(cid=cmp1)
+        unit = unittable.objects.filter(cid=cmp1)
+        cust = customer.objects.filter(cid=cmp1)
+        cpd = creditperiod.objects.filter(cid=cmp1)
+        re = repeatevery.objects.filter(cid=cmp1)
+        bank=bankings_G.objects.filter(cid=cmp1)
+        acc2 = accounts1.objects.filter(cid=cmp1,acctype='Sales')
+        acc1 = accounts1.objects.filter(cid=cmp1,acctype='Cost of Goods Sold')
+        rbill=recurring_bill.objects.get(rbillid=id)
+        ritem = recurringbill_item.objects.all().filter(bill=id)
+        paylist = ['cash','cheque','upi']
+        if rbill.payment_method not in paylist:
+            bank_no = bankings_G.objects.get(bankname=rbill.payment_method,cid=cmp1)
+            acc_no = bank_no.account_number
+        else:
+            acc_no = ''
+        # vendor_name_parts = rbill.vendor_name.split(" ")
+        # if len(vendor_name_parts) == 2:
+        #     first_name, last_name = vendor_name_parts
+        #     v = vendor.objects.filter(cid=cmp1, first_name=first_name, last_name=last_name).first()
+        # else:
+        #     v = None
+        sale_list = ''
+        sale_ord = recurring_bill.objects.all()
+        for s in sale_ord:
+            sale_list =str(s.billno )+ ',' + sale_list
+        v = vendor.objects.filter(cid=cmp1).get(firstname = rbill.vendor_name.split(" ")[0], lastname = rbill.vendor_name.split(" ")[1])
+        c = customer.objects.filter(cid=cmp1).get(firstname = rbill.customer_name.split(" ")[0], lastname = rbill.customer_name.split(" ")[1])
+        toda = date.today()
+        tod = toda.strftime("%Y-%m-%d")
+
+        context = {
+                    'cmp1': cmp1,
+                    'vndr':vndr,
+                    'item':itm ,
+                    'unit':unit,
+                    'cust':cust,  
+                    'cpd':cpd,
+                    're':re,
+                    'bank':bank,
+                    'acc2':acc2,
+                    'acc1':acc1,
+                    'tod':tod,
+                    'rbill':rbill,
+                    'v':v,
+                    'c':c,
+                    'ritem':ritem,
+                    'acc_no':acc_no,
+                    'sale_list':sale_list,
+        }
+        return render(request,'app1/recurringbill_edit.html',context)
+    return redirect('view_rbill')
+
+
+def update_recurringbill(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+    rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
+    print(rbl)
+            # rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
+    if  rbl.payment_method == 'cash':
+        cmp1.cash += rbl.grand_total
+        cmp1.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
+        received_bank.balance += int(rbl.grand_total)
+        received_bank.save()
+
+
+    if request.method == 'POST':
+        rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
+        rbl.vendor_name= " ".join(request.POST.get('vendor_name').split(" ")[1:])
+        rbl.customer_name= " ".join(request.POST.get('customer_name').split(" ")[1:])
+          
+            # bill_no= '1000'
+        rbl.billno = request.POST.get('billno')
+        rbl.profile_name=request.POST.get('profile_name')
+        rbl.payment_method=request.POST.get('payment_method')
+        rbl.cheque_no=request.POST.get("cheque_id"),
+        rbl.upi_no=request.POST.get("upi_id"),
+            
+        rbl.payment_terms=request.POST.get('payment_terms')
+        rbl.sourceofsupply=request.POST.get('sourceof_supply')
+        rbl.repeat_every=request.POST.get('repeat_every')
+        rbl.start_date=request.POST.get('start_date')
+        rbl.sub_total=request.POST.get('sub_total')
+        rbl.shipping_charge=request.POST.get('shipping_charge')
+        rbl.adjustment=request.POST.get('adjustment')
+        rbl.sgst=request.POST.get('sgst')
+        rbl.cgst=request.POST.get('cgst')
+        rbl.igst=request.POST.get('igst')
+        rbl.tax_amount=request.POST.get('tax_amount')
+        grand_total=request.POST.get('grand_total')
+            # balance=request.POST.get('balance')
+        rbl.adjustment=request.POST.get('adjustment')
+        rbl.note=request.POST.get('note')
+        rbl.start_date=request.POST.get('start_date')
+        rbl.end_date=request.POST.get('end_date')
+        paid_amount = float(request.POST.get('paid_amount'))
+        grand_total = float(request.POST.get('grand_total'))
+        rbl.paid_amount = paid_amount
+        rbl.grand_total = grand_total
+        print( rbl.paid_amount)
+        print('----')
+        print( rbl.balance)
+
+        rbl.balance = round(float(grand_total - paid_amount), 3)
+        print(rbl.payment_method)
+        print('doe')
+        if  rbl.payment_method == 'cash':
+            cmp1.cash -= rbl.grand_total
+            cmp1.save()
+            
+        else:
+            received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
+            received_bank.balance -= int(rbl.grand_total)
+            received_bank.save()
+
+        rbl.save()
+        if len(request.FILES) != 0:
+                # if len(rbl.file) > 0  :
+                #     os.remove(rbl.file.path)
+                    
+            rbl.file = request.FILES.get('file')
+            print('rbl_save')
+        rbl.save()
+        item = request.POST.getlist("item[]")
+        hsn  = request.POST.getlist("hsn[]")
+        qty = request.POST.getlist("qty[]")
+        price = request.POST.getlist("price[]")
+        discount = request.POST.getlist("discount[]")
+        if request.POST.get('sourceof_supply') == cmp1.state:
+            print("Place of supply matches cmp1.state")
+            print("sourceof_supply:", request.POST.get('sourceof_supply'))
+            tax = request.POST.getlist("tax1[]")
+        else:
+            tax = request.POST.getlist("tax2[]")
+
+
+        total = request.POST.getlist("total[]")
+
+        ritemid = request.POST.getlist("id[]")
+
+        item_ids = [int(id) for id in ritemid]
+
+            # est= estimate.objects.get(estimateid=upd.estimateid)
+
+            # est_item = estimate_item.objects.filter(estimate=est)
+        rbil= recurring_bill.objects.get(rbillid=rbl.rbillid)
+
+        rbil_item = recurringbill_item.objects.filter(bill=rbil)
+            
+        object_ids = [obj.id for obj in rbil_item]
+
+        ids_to_delete = [obj_id for obj_id in object_ids if obj_id not in item_ids]
+        print(item_ids)
+        print(object_ids)
+        print(ids_to_delete)
+        recurringbill_item.objects.filter(id__in=ids_to_delete).delete()
+            
+            
+        count = recurringbill_item.objects.filter(bill=rbil.rbillid,cid=cmp1).count()
+        if len(item)==len(hsn)==len(qty)==len(price)==len(tax)==len(discount)==len(total):
+            try:
+                mapped=zip(item,hsn,qty,price,tax,discount,total,item_ids)
+                mapped=list(mapped)
+                print(mapped)
+                        
+                for ele in mapped:
+                            
+                    if int(len(item))>int(count):
+                        if ele[7] == 0:
+                            print('added')
+
+                            itemAdd= recurringbill_item.objects.create(item = ele[0],hsn=ele[1],
+                            qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,bill_id=id,cid=cmp1)
+
+                        else:
+                            itemAdd = recurringbill_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],qty=ele[2],price=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
+                    else:
+                        itemAdd = recurringbill_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],qty=ele[2],price=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
+
+                        
+            except:
+                    mapped=zip(item,hsn,qty,price,tax,discount,total,item_ids)
+                    mapped=list(mapped)
+                            
+                    for ele in mapped:
+                        print('cnhh')
+                                # dbs=estimate_item.objects.get(id=ele[7] ,cid=cmp1.cid)
+                                
+                        created =recurringbill_item.objects.filter(id=ele[7] ,cid=cmp1).update(item = ele[0],hsn=ele[1],qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
+
+
+        return redirect('view_rbill',id)
+    else:
+        return redirect('view_rbill',id)
+            
+
+
 
 
 def demo_v(request):

@@ -2170,11 +2170,14 @@ class recurring_bill(models.Model):
     # bill_no = models.IntegerField(default=1000)
     billno =  models.CharField(max_length=100,null=True,blank=True,unique=True)
     profile_name = models.CharField(max_length=100,null=True,blank=True)
+    purchase_order = models.CharField(max_length=100,null=True,blank=True)
     source_supply = models.CharField(max_length=100,null=True,blank=True)
     vendor_name = models.CharField(max_length=100,null=True,blank=True)###vendor table
     customer_name = models.CharField(max_length=100,null=True,blank=True)###customer table
     repeat_every = models.CharField(max_length=100,null=True,blank=True)#####newtab
     payment_method= models.CharField(max_length=100,null=True,blank=True)###use banktable
+    cheque_no=models.CharField(null=True,blank=True,max_length=255)
+    upi_no=models.CharField(null=True,blank=True,max_length=255)
     start_date=models.DateField(null=True,blank=True)##use this as date
     end_date=models.CharField(max_length=100,null=True,blank=True)
     payment_terms = models.CharField(max_length=100,null=True,blank=True)###newtab
