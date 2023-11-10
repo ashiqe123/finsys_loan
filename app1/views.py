@@ -48971,8 +48971,12 @@ def createrecurringbill(request):
             billno = request.POST.get('bill_code_number')
             profile_name=request.POST.get('profile_name')
             payment_method=request.POST.get('payment_method')
+            upi=request.POST.get('upi_id')
+            cheque=request.POST.get('cheque_id')
             payment_terms=request.POST.get('payment_terms')
             sourceofsupply=request.POST.get('sourceof_supply')
+            place_supply=request.POST.get('placosupply')
+            
             repeat_every=request.POST.get('repeat_every')
             start_date=request.POST.get('start_date')
             sub_total=request.POST.get('sub_total')
@@ -49009,7 +49013,12 @@ def createrecurringbill(request):
             if payment_method == 'cash':
                 cmp1.cash -= int(grand_total)
                 cmp1.save()
-            
+            elif payment_method == 'upi':
+                 bill.upi_no = upi
+                 bill.save()
+            elif payment_method == 'cheque':
+                 bill.cheque_no = cheque
+                 bill.save()
             else:
                 received_bank = bankings_G.objects.get(bankname=payment_method)
                 received_bank.balance -= int(grand_total)
@@ -49115,11 +49124,19 @@ def update_recurringbill(request,id):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
     rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
+    upi=request.POST.get('upi_id')
+    cheque=request.POST.get('cheque_id')
     print(rbl)
             # rbl = recurring_bill.objects.get(rbillid=id, cid=cmp1)
     if  rbl.payment_method == 'cash':
         cmp1.cash += rbl.grand_total
         cmp1.save()
+    elif rbl.payment_method == 'upi':
+        rbl.upi_no = upi
+        rbl.save()
+    elif rbl.payment_method == 'cheque':
+        rbl.cheque_no = cheque
+        rbl.save()
             
     else:
         received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
@@ -49133,14 +49150,14 @@ def update_recurringbill(request,id):
         rbl.customer_name= " ".join(request.POST.get('customer_name').split(" ")[1:])
           
             # bill_no= '1000'
-        rbl.billno = request.POST.get('billno')
+        rbl.billno = request.POST.get('bill_code_number')
         rbl.profile_name=request.POST.get('profile_name')
         rbl.payment_method=request.POST.get('payment_method')
-        rbl.cheque_no=request.POST.get("cheque_id"),
-        rbl.upi_no=request.POST.get("upi_id"),
+        
             
         rbl.payment_terms=request.POST.get('payment_terms')
         rbl.sourceofsupply=request.POST.get('sourceof_supply')
+        rbl.place_supply=request.POST.get('placosupply')
         rbl.repeat_every=request.POST.get('repeat_every')
         rbl.start_date=request.POST.get('start_date')
         rbl.sub_total=request.POST.get('sub_total')
@@ -49170,7 +49187,12 @@ def update_recurringbill(request,id):
         if  rbl.payment_method == 'cash':
             cmp1.cash -= rbl.grand_total
             cmp1.save()
-            
+        elif rbl.payment_method == 'upi':
+            rbl.upi_no = upi
+            rbl.save()
+        elif rbl.payment_method == 'cheque':
+            rbl.cheque_no = cheque
+            rbl.save()    
         else:
             received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
             received_bank.balance -= int(rbl.grand_total)
@@ -49258,6 +49280,8 @@ def update_recurringbill(request,id):
             
 
 
+def convert_to_recbill(request):
+    pass
 
 
 def demo_v(request):

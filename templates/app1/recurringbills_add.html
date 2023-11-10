@@ -2310,16 +2310,17 @@ $(document).on("click", "#customerSave", function(){
             type : 'POST',
             success: function(data){
                             // console.log(data.email);
+                            console.log(data.gstno)
                             document.getElementById('cust_email').value = data.email;
                             document.getElementById('plosu').value = data.shipstate;
                             document.getElementById('gsttype').value = data.gsttype;
                             document.getElementById('bname').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
                             if(data.gstno){
                                 document.getElementById('gstnodiv').style.display = 'block';
-                                document.getElementById('gstno').value = data.gstno;
+                                document.getElementById('gstn').value = data.gstno;
                             }else{
                                 document.getElementById('gstnodiv').style.display = 'none';
-                                document.getElementById('gstno').value = '';
+                                document.getElementById('gstn').value = '';
                             }
                             var compstate = document.getElementById("cmpstate").value;
                             if (data.shipstate == compstate ) {

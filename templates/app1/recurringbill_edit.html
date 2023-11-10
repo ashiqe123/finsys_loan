@@ -353,11 +353,11 @@
                             </div>
                             <div class="col-md-3" style="display:none;"  id="chequediv">
                                 <label class="col-form-label" >Cheque ID</label>
-                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
+                                <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque ID">
                             </div>
                             <div class="col-md-3"  style="display:none;" id="upidiv">
                                 <label class="col-form-label" >UPI ID</label>
-                                <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID">
+                                <input type="text" class="form-control" name="upi_id" value="{{rbill.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
                             </div>
                             <div class="col-md-3"  style="display:none;" id="bnkdiv">
                                 <label class="col-form-label" >Bank Account</label>
@@ -1875,7 +1875,29 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-   
+   <script>
+    // Get the paid_amount input and the checkbox
+    const paidAmountInpu = document.getElementById('paid_amount');
+    const checkbox = document.getElementById('invalidCheck');
+
+    // Function to check the checkbox if paid_amount is not equal to zero
+    function checkCheckbox() {
+        const paidAmount = parseFloat(paidAmountInpu.value);
+        if (paidAmount !== 0) {
+            checkbox.checked = true;
+        } else {
+            checkbox.checked = false;
+            
+        }
+    }
+
+    // Call the function initially to check based on the initial value
+    checkCheckbox();
+
+    // Listen for changes in the paid_amount input
+    paidAmountInpu.addEventListener('input', checkCheckbox);
+
+   </script>
     
     <script type="text/javascript">
         $(document).on('change','#bill_code_number', function() {
@@ -1905,66 +1927,102 @@
             }
         })
     </script>
-   <script>
-    // Get references to the relevant HTML elements
-    const grandTotalInput = document.getElementById("grandtotal");
-    const paidCheckbox = document.getElementById("invalidCheck");
-    const paidAmountInput = document.getElementById("paid_amount");
-    const balanceDueInput = document.getElementById("bal_due");
 
-    // Add an event listener to the checkbox
-    paidCheckbox.addEventListener("change", function () {
-        // Check if the checkbox is checked
-        if (paidCheckbox.checked) {
-            // Enable the paid amount input field
-            paidAmountInput.removeAttribute("readonly");
+<script>
+    // Get references to the elements
+    const grandTotalElement = document.getElementById('grandtotal');
+    const paidCheckbo = document.getElementById('invalidCheck');
+    const paidAmountElement = document.getElementById('paid_amount');
+    const balanceDueElement = document.getElementById('bal_due');
+
+    // Function to calculate the balance due
+    function calculateBalance() {
+        const grandTotal = parseFloat(grandTotalElement.value) || 0;
+        const paidAmount = parseFloat(paidAmountElement.value) || 0;
+        const isPaid = paidCheckbox.checked;
+
+        if (isPaid) {
+            const balanceDue = grandTotal - paidAmount;
+            balanceDueElement.value = balanceDue.toFixed(2); // Update the balance due
         } else {
-            // Disable the paid amount input field
-            paidAmountInput.setAttribute("readonly", true);
-        }
-
-        // Calculate the balance due and update the input field
-        calculateBalanceDue();
-    });
-
-    // Add an event listener to the paid amount input
-    paidAmountInput.addEventListener("input", function () {
-        // Check the box if the paid amount is not zero
-        paidCheckbox.checked = parseFloat(paidAmountInput.value) !== 0;
-
-        // Calculate the balance due and update the input field
-        calculateBalanceDue();
-    });
-
-    // Function to calculate and update the balance due
-    function calculateBalanceDue() {
-        // Parse the values of grand total and paid amount as numbers
-        const grandTotal = parseFloat(grandTotalInput.value) || 0;
-        const paidAmount = parseFloat(paidAmountInput.value) || 0;
-
-        // Calculate the balance due
-        const balanceDue = grandTotal - paidAmount;
-
-        // Update the balance due input field
-        balanceDueInput.value = balanceDue;
-
-        // Check if the paid amount exceeds the grand total and show an alert if it does
-        if (paidAmount > grandTotal) {
-            alert("Paid amount cannot exceed the grand total.");
-            paidAmountInput.value = grandTotal; // Set the paid amount back to the grand total
-            balanceDueInput.value = 0; // Reset the balance due to zero
-            paidCheckbox.checked = true; // Check the checkbox
+            // If not paid, balance due should be the same as the grand total
+            balanceDueElement.value = grandTotal.toFixed(2);
         }
     }
 
-    // Initialize the input state based on the checkbox
-    if (!paidCheckbox.checked) {
+    // Event listeners to trigger calculation when values change
+    grandTotalElement.addEventListener('input', calculateBalance);
+    paidCheckbo.addEventListener('change', calculateBalance);
+    paidAmountElement.addEventListener('input', calculateBalance);
+
+    // Initial calculation when the page loads
+    calculateBalance();
+</script>
+
+
+
+  <script>
+    // Get references to the relevant HTML elements
+const grandTotalInput = document.getElementById("grandtotal");
+const paidCheckbox = document.getElementById("invalidCheck");
+const paidAmountInput = document.getElementById("paid_amount");
+const balanceDueInput = document.getElementById("bal_due");
+
+// Add an event listener to the checkbox
+paidCheckbox.addEventListener("change", function () {
+    // Check if the checkbox is checked
+    if (paidCheckbox.checked) {
+        // Enable the paid amount input field
+        paidAmountInput.removeAttribute("readonly");
+    } else {
+        // Disable the paid amount input field
         paidAmountInput.setAttribute("readonly", true);
     }
 
-    // Initial call to set the balance due on page load
+    // Calculate the balance due and update the input field
     calculateBalanceDue();
-</script>
+});
+
+// Add an event listener to the paid amount input
+paidAmountInput.addEventListener("input", function () {
+    // Check the box if the paid amount is not zero
+    paidCheckbox.checked = parseFloat(paidAmountInput.value) !== 0;
+
+    // Calculate the balance due and update the input field
+    calculateBalanceDue();
+});
+
+// Add an event listener to the grand total input
+
+// Function to calculate and update the balance due
+function calculateBalanceDue() {
+    // Parse the values of grand total and paid amount as numbers
+    const grandTotal = parseFloat(grandTotalInput.value) || 0;
+    const paidAmount = parseFloat(paidAmountInput.value) || 0;
+
+    // Calculate the balance due
+    const balanceDue = grandTotal - paidAmount;
+
+    // Update the balance due input field
+    balanceDueInput.value = balanceDue;
+
+    // Check if the paid amount exceeds the grand total and show an alert if it does
+    if (paidAmount > grandTotal) {
+        alert("Paid amount cannot exceed the grand total.");
+    
+        paidCheckbox.checked = true; // Check the checkbox
+    }
+}
+
+// Initialize the input state based on the checkbox
+if (!paidCheckbox.checked) {
+    paidAmountInput.setAttribute("readonly", true);
+}
+
+// Initial call to set the balance due on page load
+calculateBalanceDue();
+
+  </script>
 
 
     <script>
@@ -2428,48 +2486,75 @@ $(document).ready(function() {
 
     
 <script>
-    $(document).ready(function() {
-      $("#pay_method").change(function() {
-        var x=$('#pay_method').val();
-        if(x==='cash'){
-          $('#chequediv').hide()
-          $('#bnkdiv').hide()
-          $('#upidiv').hide()
-          document.getElementById('cheque_id').value=null
-          document.getElementById('upi_id').value=null
-        }else if(x==='cheque'){
-          $('#chequediv').show()
-          $('#bnkdiv').hide()
-          $('#upidiv').hide()
-          document.getElementById('upi_id').value=null
-        }else if(x==='upi'){
-          $('#upidiv').show()
-          $('#bnkdiv').hide()
-          $('#chequediv').hide()
-          document.getElementById('cheque_id').value=null
-        }else{
-          $('#bnkdiv').show()
-          $('#chequediv').hide()
-          $('#upidiv').hide()
-          document.getElementById('cheque_id').value=null
-          document.getElementById('upi_id').value=null
+$(document).ready(function() {
+  // Function to handle the initial display based on the existing value
+  var initialMethod = $('#pay_method').val();
+  if (initialMethod === 'cheque') {
+    $('#chequediv').show();
+  } else if (initialMethod === 'upi') {
+    $('#upidiv').show();
+  } else if (initialMethod !== 'cash') {
+    $('#bnkdiv').show();
+    // Assuming you want to make an AJAX call only when the initial value is a bank
+    $.ajax({
+      type: "GET",
+      url: "{% url 'bankdata' %}",
+      data: {
+        id: initialMethod,
+      },
+      success: function(response) {
+        data = response.bank;
+        document.getElementById('cheque_id').value = null;
+        document.getElementById('upi_id').value = null;
+        document.getElementById("bnk_id").value = data;
+      }
+    });
+  }
 
-          $.ajax({
-              type: "GET",
-              url: "{% url 'bankdata' %}",
-              data: {
-                  id: x,
-              },
-              success: function (response) {
-                  data = response.bank
-                  document.getElementById('cheque_id').value=null
-                  document.getElementById('upi_id').value=null
-                  document.getElementById("bnk_id").value = data
-              }
-          });
+  // Function to handle changes in the select dropdown
+  $("#pay_method").change(function() {
+    var x = $('#pay_method').val();
+    if (x === 'cheque') {
+      $('#chequediv').show();
+      $('#upidiv').hide();
+      $('#bnkdiv').hide();
+      document.getElementById('upi_id').value = null;
+      document.getElementById('bnk_id').value = null;
+    } else if (x === 'upi') {
+      $('#upidiv').show();
+      $('#chequediv').hide();
+      $('#bnkdiv').hide();
+      document.getElementById('cheque_id').value = null;
+      document.getElementById('bnk_id').value = null;
+    } else if (x !== 'cash') {
+      $('#bnkdiv').show();
+      $('#chequediv').hide();
+      $('#upidiv').hide();
+      document.getElementById('cheque_id').value = null;
+      document.getElementById('upi_id').value = null;
+      // Assuming you want to make an AJAX call only when the value is a bank
+      $.ajax({
+        type: "GET",
+        url: "{% url 'bankdata' %}",
+        data: {
+          id: x,
+        },
+        success: function(response) {
+          data = response.bank;
+          document.getElementById("bnk_id").value = data;
         }
       });
-    });
+    } else {
+      $('#chequediv').hide();
+      $('#upidiv').hide();
+      $('#bnkdiv').hide();
+      document.getElementById('cheque_id').value = null;
+      document.getElementById('upi_id').value = null;
+      document.getElementById('bnk_id').value = null;
+    }
+  });
+});
+
 </script>
 
 
@@ -3020,6 +3105,7 @@ $(document).ready(function(){
             $('#baldue').val(gtot.toFixed(2));
 
             test()
+            calculateBalanceDue();
         }
 
         function test(){

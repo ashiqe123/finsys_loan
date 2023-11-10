@@ -1331,6 +1331,7 @@ urlpatterns = [
     path('option_dropdown',views.option_dropdown,name='option_dropdown'),
     path('add_option',views.add_option,name='add_option'),
     #End
+    path('convert_to_recbill',views.convert_to_recbill,name='convert_to_recbill'),
     path('demo_v',views.demo_v,name='demo_v'),
 
  

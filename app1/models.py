@@ -2172,6 +2172,7 @@ class recurring_bill(models.Model):
     profile_name = models.CharField(max_length=100,null=True,blank=True)
     purchase_order = models.CharField(max_length=100,null=True,blank=True)
     source_supply = models.CharField(max_length=100,null=True,blank=True)
+    place_supply = models.CharField(max_length=100,null=True,blank=True)
     vendor_name = models.CharField(max_length=100,null=True,blank=True)###vendor table
     customer_name = models.CharField(max_length=100,null=True,blank=True)###customer table
     repeat_every = models.CharField(max_length=100,null=True,blank=True)#####newtab
