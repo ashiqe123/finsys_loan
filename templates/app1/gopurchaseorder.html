@@ -70,17 +70,17 @@
                             </thead>
                             <tbody>
                             {% for p in pordr %}
-                            <tr onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">
-                                <td>{{ p.date| date:'d-m-Y' }}</td>
-                                <td>PO - {{ p.puchaseorder_no }}</a></td>
-                                <th>{{ p.vendor_name }}</th>
-                                <td>{{ p.vendor_mail }}</td>
-                                <td>{{ p.deliver_date| date:'d-m-Y' }}</td>
-                                <td>{{ p.grand_total }}</td>
+                            <tr>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">{{ p.date| date:'d-m-Y' }}</td>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">PO - {{ p.puchaseorder_no }}</a></td>
+                                <th  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">{{ p.vendor_name }}</th>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">{{ p.vendor_mail }}</td>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">{{ p.deliver_date| date:'d-m-Y' }}</td>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">{{ p.grand_total }}</td>
                                 {% if p.balance_amount > 0 %}
-                                <td>{{ p.balance_amount }}</td>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">{{ p.balance_amount }}</td>
                                 {% else %}
-                                <td>0.0</td>
+                                <td  onclick="window.location='viewpurchaseorder/{{ p.porderid }}';">0.0</td>
                                 {% endif %}
 
                                 {% if p.status == 'Billed' %}
@@ -90,9 +90,32 @@
                                 {% endif %}
                                 
                                 {% if p.status == 'Draft' %}
-                                <td><a href="{% url 'purchaseorder_convert' p.porderid %}"><button class="btn btn-outline-info btn-sm text-white">Convert to Bill</button></a></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-info btn-sm dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Convert
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="{% url 'purchaseorder_convert' p.porderid %}">Convert to Bill</a>
+                                            <a class="dropdown-item" href="{% url 'convert_to_recbill' p.porderid %}">Convert to Recurring Bill</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                {% elif p.status == 'REC_BILLED'%}
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-info btn-sm dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Convert
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="{% url 'purchaseorder_convert' p.porderid %}">Convert to Bill</a>
+                                        </div>
+                                    </div>
+                                </td>
                                 {% else %}
-                                <td></td>
+                                <td>
+                                   
+                                </td>
                                 {% endif %}
 
                             </tr>

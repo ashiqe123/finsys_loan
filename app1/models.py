@@ -2194,10 +2194,10 @@ class recurring_bill(models.Model):
     paid_amount= models.FloatField(default=0,max_length=100,null=True)
     balance = models.FloatField(max_length=100,null=True)
     file = models.FileField(upload_to='purchase/rbill',default="default.png")
-
+    vendor_mail = models.CharField(max_length=100,null=True,blank=True)
     bill_status = (
         ('Draft','Draft'),
-        ('Billed','Billed'),
+        ('Save','Save'),
     )
     status =models.CharField(max_length=150,choices=bill_status,default='Draft')
     

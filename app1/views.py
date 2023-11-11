@@ -42897,7 +42897,8 @@ def newemployeeloan(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     loan_d = loan_duration.objects.all()
     employee=payrollemployee.objects.filter(cid_id=request.session["uid"])
-    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d})
+    bank = bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d,'bank':bank})
 
 def addemployeeloan(request):
     cmpy = company.objects.get(id=request.session["uid"])
@@ -44162,23 +44163,10 @@ def billed_rbill(request):
     rbill = recurring_bill.objects.filter(status='Billed',cid=cmp1).all()
     return render(request,'app1/recurringbills_home.html',{'cmp1':cmp1,'rbill':rbill})
 
-@login_required(login_url='regcomp')
-def rbillconvert(request,id):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-        rbill = recurring_bill.objects.get(rbillid=id)
-        rbill.status = 'Billed'
-        rbill.save()
-        return redirect(view_rbill,id)
-    return redirect('/')
+
     
 @login_required(login_url='regcomp')
 def view_rbill(request, id):
-    try:
         cmp1 = company.objects.get(id=request.session["uid"])
         rbill= recurring_bill.objects.get(rbillid=id, cid=cmp1)
         ritem = recurringbill_item.objects.all().filter(bill=id)
@@ -44202,8 +44190,7 @@ def view_rbill(request, id):
         'vendor_gsttype':vendor_gsttype ,'customer_email':customer_email,'customer_gstin':customer_gstin,'vendor_pincode':vendor_pincode,
         'vendor_state':vendor_state,'vendor_city':vendor_city,'vendor_street':vendor_street}
         return render(request, 'app1/recurringbill_view.html', context)
-    except:
-        return redirect('view_rbill')
+
 
 @login_required(login_url='regcomp')
 def addrecurringbill(request):
@@ -44287,97 +44274,6 @@ def addrecurringbill(request):
         }
         return render(request,'app1/recurringbills_add.html',context)
     return redirect('addrecurringbill')
-
-def createrecurringbill(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-        if request.method == 'POST':
-            vname = request.POST.get('vendor_name').split(" ")[1:]
-            vname = " ".join(vname)
-            cname=request.POST.get('customer_name').split(" ")[1:]
-            cname = " ".join(cname)
-            # bill_no= '1000'
-            billno = request.POST.get('bill_code_number')
-            profile_name=request.POST.get('profile_name')
-            payment_method=request.POST.get('payment_method')
-            cheque_no=request.POST.get("cheque_id"),
-            upi_no=request.POST.get("upi_id"),
-            payment_terms=request.POST.get('payment_terms')
-            sourceofsupply=request.POST.get('sourceof_supply')
-            repeat_every=request.POST.get('repeat_every')
-            start_date=request.POST.get('start_date')
-            sub_total=request.POST.get('sub_total')
-            shipping_charge=request.POST.get('shipping_charge')
-            adjustment=request.POST.get('adjustment')
-            sgst=request.POST.get('sgst')
-            cgst=request.POST.get('cgst')
-            igst=request.POST.get('igst')
-            tax_amount=request.POST.get('tax_amount')
-            grand_total=request.POST.get('grand_total')
-            # balance=request.POST.get('balance')
-            adjustment=request.POST.get('adjustment')
-            note=request.POST.get('note')
-            start_date=request.POST.get('start_date')
-            end_date=request.POST.get('end_date')
-            paid_amount=request.POST.get('paid_amount')
-            paid_amount = float(paid_amount)
-            grand_total = float(grand_total)
-            # balance = float(grand_total - paid_amount)
-            balance = round(float(grand_total - paid_amount), 3)
-            bill = recurring_bill(vendor_name=vname,customer_name =cname,repeat_every=repeat_every,profile_name=profile_name,
-                                    payment_method=payment_method,start_date=start_date,end_date=end_date, paid_amount= paid_amount,
-                                    source_supply=sourceofsupply,sub_total=sub_total,sgst=sgst,adjustment=adjustment,balance=balance,note= note,
-                                    shipping_charge=shipping_charge, payment_terms= payment_terms,
-                                    cgst=cgst,igst=igst,tax_amount=tax_amount,
-                                    grand_total=grand_total,cid=cmp1,billno=billno,cheque_no=cheque_no,
-                        upi_no=upi_no)
-
-            if len(request.FILES) != 0:
-                bill.file=request.FILES['file'] 
-            bill.save()
-            # bill.bill_no = int(bill.bill_no) + bill.billid
-            # bill.save()
-            if payment_method == 'cash':
-                cmp1.cash -= int(grand_total)
-                cmp1.save()
-            
-            else:
-                received_bank = bankings_G.objects.get(bankname=payment_method)
-                received_bank.balance -= int(grand_total)
-                received_bank.save()
-            item = request.POST.getlist("item[]")
-            hsn  = request.POST.getlist("hsn[]")
-            qty = request.POST.getlist("qty[]")
-            price = request.POST.getlist("price[]")
-            discount = request.POST.getlist("discount[]")
-            if request.POST.get('sourceof_supply') == cmp1.state:
-                print("Place of supply matches cmp1.state")
-                print("sourceof_supply:", request.POST.get('sourceof_supply'))
-                tax = request.POST.getlist("tax1[]")
-            else:
-                tax = request.POST.getlist("tax2[]")
-
-
-            total = request.POST.getlist("total[]")
-
-            billid=recurring_bill.objects.get(rbillid = bill.rbillid)
-
-            if len(item)==len(hsn)==len(qty)==len(price)==len(tax)==len(discount)==len(total) and item and hsn and qty and price and tax and discount and total:
-                mapped=zip(item,hsn, qty,price,tax,discount, total)
-                mapped=list(mapped)
-                for ele in mapped:
-                    billAdd = recurringbill_item.objects.create(item = ele[0],hsn=ele[1],
-                    qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],bill=billid, cid=cmp1 )
-
-            return redirect('recurringbill_home')
-        return render(request,'app1/recurringbills_add.html',{'cmp1': cmp1})
-    return redirect('/')
-
-
 
 @login_required(login_url='regcomp')
 def credit_period_rbill(request):
@@ -48995,7 +48891,10 @@ def createrecurringbill(request):
             paid_amount=request.POST.get('paid_amount')
             paid_amount = float(paid_amount)
             grand_total = float(grand_total)
-
+            save = request.POST.get('Save')
+            draft = request.POST.get('Draft')
+            vendor_mail = request.POST.get('email_inp')
+            print(save)
             # balance = float(grand_total - paid_amount)
             balance = round(float(grand_total - paid_amount), 3)
             bill = recurring_bill(vendor_name=vname,customer_name =cname,repeat_every=repeat_every,profile_name=profile_name,
@@ -49003,13 +48902,19 @@ def createrecurringbill(request):
                                     source_supply=sourceofsupply,sub_total=sub_total,sgst=sgst,adjustment=adjustment,balance=balance,note= note,
                                     shipping_charge=shipping_charge, payment_terms= payment_terms,
                                     cgst=cgst,igst=igst,tax_amount=tax_amount,
-                                    grand_total=grand_total,cid=cmp1,billno=billno)
+                                    grand_total=grand_total,cid=cmp1,billno=billno,purchase_order=0,vendor_mail=vendor_mail)
 
             if len(request.FILES) != 0:
                 bill.file=request.FILES['file'] 
             bill.save()
             # bill.bill_no = int(bill.bill_no) + bill.billid
             # bill.save()
+            if save != None:
+                bill.status = 'Save'
+                bill.save()
+            else:
+                bill.status = 'Draft'
+                bill.save()
             if payment_method == 'cash':
                 cmp1.cash -= int(grand_total)
                 cmp1.save()
@@ -49153,7 +49058,7 @@ def update_recurringbill(request,id):
         rbl.billno = request.POST.get('bill_code_number')
         rbl.profile_name=request.POST.get('profile_name')
         rbl.payment_method=request.POST.get('payment_method')
-        
+        rbl.vendor_mail =  request.POST.get('email_inp')
             
         rbl.payment_terms=request.POST.get('payment_terms')
         rbl.sourceofsupply=request.POST.get('sourceof_supply')
@@ -49188,10 +49093,10 @@ def update_recurringbill(request,id):
             cmp1.cash -= rbl.grand_total
             cmp1.save()
         elif rbl.payment_method == 'upi':
-            rbl.upi_no = upi
+            
             rbl.save()
         elif rbl.payment_method == 'cheque':
-            rbl.cheque_no = cheque
+            
             rbl.save()    
         else:
             received_bank = bankings_G.objects.get(bankname=rbl.payment_method)
@@ -49280,8 +49185,352 @@ def update_recurringbill(request,id):
             
 
 
-def convert_to_recbill(request):
-    pass
+
+def convert_to_recbill(request,pk):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    po = purchaseorder.objects.get(porderid=pk)
+    salename = po.contact_name.split(" ")[0:]
+    name = ' '.join(salename)
+    po.status = 'REC_BILLED'
+    po.save()
+    print(salename)
+
+    vendor_name = po.vendor_name.split(" ")[0:]
+    print(vendor_name)
+    name = ' '.join(vendor_name)
+
+    ref = recurring_bill.objects.last()
+    if ref:
+        ref_no = int(ref.profile_name) + 1
+       
+
+    else:
+        ref_no = 1
+        
+
+
+    rec_inv = recurring_bill.objects.last()
+    # Sample string
+    example_string = rec_inv.billno
+
+    if rec_inv == None:
+        ord_no = 1001
+    
+        
+
+# Check if the string contains a mix of letters and numbers
+    else :
+        # Separate alphabets and numbers
+        letters = ''.join(filter(str.isalpha, example_string))
+        numbers = int(''.join(filter(str.isdigit, example_string)))
+
+            # Perform addition with a new number
+        updated_numbers = numbers + 1
+
+            # Concatenate string and updated number
+        new_string = f"{letters}{updated_numbers}"
+        print(new_string)
+        ord_no = new_string
+
+    if po.paid_amount:
+        amt=float(po.paid_amount)
+    else:
+        amt = 0
+
+    bill = recurring_bill(vendor_name=po.vendor_name,customer_name =po.contact_name,repeat_every=0,profile_name=ref_no,
+                                    payment_method=po.payment_type,start_date=po.date,end_date=po.due_date, paid_amount= po.paid_amount,
+                                    source_supply=po.sourceofsupply,place_supply=po.destiofsupply ,sub_total=po.sub_total,sgst=po.sgst,adjustment=po.round_off,balance=po.balance_amount,note= po.note,
+                                    shipping_charge=po.ship_charge, payment_terms= po.credit_period,
+                                    cgst=po.cgst,igst=po.igst,tax_amount=po.tax_amount,
+                                    grand_total=po.grand_total,cid=cmp1,billno=ord_no,file=po.file,purchase_order=po.puchaseorder_no,vendor_mail=po.vendor_mail)
+    
+    bill.save()
+    if  po.payment_type == 'cash':
+        cmp1.cash -= int(po.grand_total)
+        cmp1.save()
+    elif po.payment_type == 'upi':
+        bill.upi_no = 0
+        bill.save()
+    elif po.payment_type == 'cheque':
+        bill.cheque_no = 0
+        bill.save()    
+    else:
+        received_bank = bankings_G.objects.get(bankname=po.payment_type)
+        received_bank.balance -= int(po.grand_total)
+        received_bank.save()   
+    rec = recurring_bill.objects.last()
+    sal_itm = purchaseorder_item.objects.filter(porder=pk)
+    for item in sal_itm:
+        rec_item = recurringbill_item(bill=rec ,cid=item.cid, item =item.items,  hsn=item.hsn ,qty =item.quantity ,price =item.rate ,total =item.amount ,
+                                    tax= item.tax ,discount =item.discount )
+        rec_item.save()
+
+    
+    return redirect('gopurchaseorder')
+
+
+def createpurchaseorder(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        if request.method == 'POST':
+            vname = request.POST['vendor_name']
+            vendor_mail=request.POST['email']
+            baddress = request.POST['billing_address']
+            puchaseorder_no= '1000'
+            supply=request.POST['sourceofsupply']
+            destsupply=request.POST['destiofsupply']
+            branch=request.POST['branch']
+            reference=request.POST['reference']
+            contact_name=request.POST['contact_name']
+            deliverto=request.POST['deliverto']
+            date=request.POST['date']
+            deliver_dt=request.POST['deliver_date']
+            credit_period=request.POST['credit_period']
+            due_date=request.POST['due_date']
+            sub_total=request.POST['sub_total']
+            discount=request.POST['discount']
+            sgst=request.POST['sgst']
+            cgst=request.POST['cgst']
+            igst=request.POST['igst']
+            tax_amount=request.POST['tax_amount']
+            tcs=request.POST['tcs']
+            tcs_amount=request.POST['tcs']
+            round_off=request.POST['round_off']
+            balance_due=request.POST['balance_due']
+            grand_total=request.POST['grand_total']
+            note=request.POST['note']
+            total_discount=request.POST['tot_dis']
+            shipping_charge=request.POST['shipcharge']
+            paid_amount=request.POST['paid']
+            payment_type=request.POST['paytype']  
+            balance_amount=int(grand_total)-int(paid_amount)
+
+            porder = purchaseorder(vendor_name=vname,vendor_mail=vendor_mail,billing_address=baddress,
+                                    sourceofsupply=supply,
+                                    destiofsupply=destsupply,branch=branch,reference=reference,
+                                    contact_name=contact_name,deliverto=deliverto,
+                                    date=date,deliver_date=deliver_dt,
+                                    credit_period=credit_period,due_date=due_date,sub_total=sub_total,discount=discount,sgst=sgst,
+                                    cgst=cgst,igst=igst,tax_amount=tax_amount,tcs=tcs,tcs_amount=tcs_amount,round_off=round_off,
+                                    grand_total=grand_total,balance_due=balance_due,note=note,cid=cmp1,
+                                    total_discount=total_discount,ship_charge=shipping_charge,paid_amount=paid_amount,balance_amount=balance_amount,
+                                    payment_type=payment_type)
+
+            if len(request.FILES) != 0:
+                porder.file=request.FILES['file'] 
+            if payment_type == 'cash':
+                cmp1.cash -= balance_amount
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=payment_type)
+                received_bank.balance -= balance_amount
+                received_bank.save()
+            porder.save()
+            porder.puchaseorder_no = int(porder.puchaseorder_no) + porder.porderid
+            porder.save()
+
+
+            items = request.POST.getlist("items[]")
+            hsn = request.POST.getlist("hsn[]")
+            quantity = request.POST.getlist("quantity[]")
+            rate = request.POST.getlist("rate[]")
+            tax = request.POST.getlist("tax[]")
+            amount = request.POST.getlist("amount[]")
+            discount = request.POST.getlist("reduce[]")
+            
+            prid=purchaseorder.objects.get(porderid=porder.porderid)
+
+            if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(amount)==len(discount):
+                
+                mapped=zip(items,hsn,quantity,rate,tax,amount,discount)
+                mapped=list(mapped)
+                for ele in mapped:
+                    porderAdd,created = purchaseorder_item.objects.get_or_create(items = ele[0],hsn = ele[1],quantity=ele[2],rate=ele[3],
+                    tax=ele[4],amount=ele[5],discount=ele[6],porder=prid,cid=cmp1)
+
+                    # itemqty = itemtable.objects.get(name=ele[0],cid=cmp1)
+                    # if itemqty.stock != 0:
+                    #     temp=0
+                    #     temp = itemqty.stock 
+
+                    #     temp = temp-int(ele[2])
+                    #     itemqty.stock =temp
+                    #     itemqty.save()
+
+            return redirect('gopurchaseorder')
+        return render(request,'app1/gopurchaseorder.html',{'cmp1': cmp1})
+    return redirect('/') 
+
+
+def editpurchaseorder(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        pordr=purchaseorder.objects.get(porderid=id)
+    if  pordr.payment_type == 'cash':
+        cmp1.cash += pordr.grand_total
+        cmp1.save()
+            
+    else:
+        received_bank = bankings_G.objects.get(bankname=pordr.payment_type)
+        received_bank.balance += int(pordr.grand_total)
+        received_bank.save()
+        if request.method == 'POST':
+            pordr=purchaseorder.objects.get(porderid=id)
+            pordr.vendor_name = request.POST['vendor_name']
+            pordr.billing_address = request.POST['billing_address']
+            pordr.puchaseorder_no= request.POST['puchaseorder_no']
+            pordr.sourceofsupply=request.POST['sourceofsupply']
+            pordr.destiofsupply=request.POST['destiofsupply']
+            pordr.branch=request.POST['branch']
+            pordr.reference=request.POST['reference']
+            pordr.contact_name=request.POST['contact_name']
+            pordr.deliverto=request.POST['deliverto']
+            pordr.date=request.POST['date']
+            pordr.deliver_date=request.POST['deliver_date']
+            pordr.credit_period=request.POST['credit_period']
+            pordr.due_date=request.POST['due_date']
+            pordr.sub_total=request.POST['sub_total']
+            pordr.discount=request.POST['discount']
+            pordr.sgst=request.POST['sgst']
+            pordr.cgst=request.POST['cgst']
+            pordr.igst=request.POST['igst']
+            pordr.tax_amount=request.POST['tax_amount']
+            pordr.tcs=request.POST['tcs']
+            pordr.tcs_amount=request.POST['tcs_amount']
+            pordr.round_off=request.POST['round_off']
+            pordr.balance_due=request.POST['balance_due']
+            pordr.grand_total=request.POST['grand_total']
+            pordr.note=request.POST['note']
+            pordr.total_discount=request.POST['tot_dis']
+            pordr.ship_charge=request.POST['shipcharge']
+            pordr.paid_amount=request.POST['paid']
+            pordr.payment_type=request.POST['paytype']  
+
+            # Convert the floating-point numbers to integers
+            grand_total = int(float(pordr.grand_total))
+            paid_amount = int(float(pordr.paid_amount))
+
+            # Calculate the balance amount
+            balance_amount = grand_total - paid_amount
+
+            # Now you have the balance amount as an integer
+            pordr.balance_amount = balance_amount
+            if pordr.payment_type == 'cash':
+                cmp1.cash -= int(pordr.grand_total)
+                cmp1.save()
+            
+            else:
+                received_bank = bankings_G.objects.get(bankname=pordr.payment_type)
+                received_bank.balance -= int(pordr.grand_total)
+                received_bank.save()
+            if len(request.FILES) != 0:
+                if len(pordr.file) > 0  :
+                    os.remove(pordr.file.path)    
+                pordr.file = request.FILES['file']
+
+            pordr.save()
+
+            items = request.POST.getlist("items[]")
+            hsn = request.POST.getlist("hsn[]")
+            quantity = request.POST.getlist("quantity[]")
+            rate = request.POST.getlist("price[]")
+            tax = request.POST.getlist("tax[]")
+            amount = request.POST.getlist("total[]")
+            discount = request.POST.getlist("reduce[]")
+
+            pitemid = request.POST.getlist("id[]")
+
+            
+            porderid=purchaseorder.objects.get(porderid=pordr.porderid)
+            count = purchaseorder_item.objects.filter(porder=pordr.porderid).count()
+            
+            if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(amount)==len(discount):
+                if int(len(items))>int(count):
+                    mapped=zip(items,hsn,quantity,rate,tax,amount,discount)
+                    mapped=list(mapped)
+                    for ele in mapped:
+                        porderAdd,created = purchaseorder_item.objects.get_or_create(items = ele[0],hsn = ele[1],quantity=ele[2],rate=ele[3],
+                        tax=ele[4],amount=ele[5],discount=ele[6],porder=porderid,cid=cmp1)
+
+                        itemqty = itemtable.objects.get(name=ele[0],cid=cmp1)
+                        if itemqty.stock != 0:
+                            temp=0
+                            temp = itemqty.stock 
+
+                            temp = temp-int(ele[2])
+                            itemqty.stock =temp
+                            itemqty.save()
+                else:
+                 
+                    mapped=zip(items,hsn,quantity,rate,tax,amount,discount)
+                    mapped=list(mapped)
+                
+                    for ele in mapped:
+                        
+                        created = purchaseorder_item.objects.filter(porder=porderid.porderid,items = ele[0],hsn = ele[1]).update(items = ele[0],hsn = ele[1],quantity=ele[2],rate=ele[3],
+                        tax=ele[4],amount=ele[5],discount=ele[6])
+
+                        itemqty = itemtable.objects.get(name=ele[0],cid=cmp1)
+                        if itemqty.stock != 0:
+                            temp=0
+                            temp = itemqty.stock 
+
+                            temp = temp-int(ele[2])
+                            itemqty.stock =temp
+                            itemqty.save()
+
+            pitem = purchaseorder_item.objects.filter(porder=pordr.porderid)
+            print(pitem)
+            return redirect('viewpurchaseorder',id)
+        return render(request,'app1/gopurchaseorder.html',{'cmp1': cmp1})
+    return redirect('/')  
+
+
+@login_required(login_url='regcomp')
+def rbillconvert(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        rbill = recurring_bill.objects.get(rbillid=id)
+        rbill.status = 'Save'
+        rbill.save()
+        return redirect(view_rbill,id)
+    return redirect('/')
+
+@login_required(login_url='regcomp')
+def rbillconvert_to_draft(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        rbill = recurring_bill.objects.get(rbillid=id)
+        rbill.status = 'Draft'
+        rbill.save()
+        return redirect(view_rbill,id)
+    return redirect('/')
+
+
+def newemployeeloan(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan_d = loan_duration.objects.all()
+    employee=payrollemployee.objects.filter(cid_id=request.session["uid"])
+    bank = bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d,'bank':bank})
+
 
 
 def demo_v(request):

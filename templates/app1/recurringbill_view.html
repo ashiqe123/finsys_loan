@@ -354,7 +354,7 @@ footer p {
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
-                    <center><h2 class="mb-0">SALES ORDER</h2> <h4></h4></center>
+                    <center><h2 class="mb-0">RECURRING BILL</h2> <h4></h4></center>
                     <hr>
                 </div>
                 <div class="row">
@@ -384,15 +384,20 @@ footer p {
                                         <li class="nav-item mx-1">
                                             <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" id="pdflink" >&nbsp;<i class="fa fa-file"></i>&nbsp;PDF&nbsp;&nbsp;</a>
                                           </li>
-                                    
-                                          {% if rbill.status == "Draft"  %}
-                                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                              <a class="dropdown-item" href="{% url 'rbillconvert' rbill.rbillid %}">
-                                                  <i class="fas fa-receipt">To Bill</i>
-                                              </a>
-                                          </div>
-                                      {% endif %}
-                                    
+                                         
+                                         
+                                         
+                                     
+                                      <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Convert&nbsp;&nbsp;</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            {% if rbill.status == "Draft"  %}
+                                            <li style="margin-left: 50px;" ><a href="{% url 'rbillconvert' rbill.rbillid %}">Save</a> </li>
+                                            {% else %}
+                                            <li style="margin-left: 50px;" ><a href="{% url 'rbillconvert_to_draft' rbill.rbillid %}">Draft</a></li>
+                                            {% endif %}
+                                        </ul>
+                                      </div>
         
                                     <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
                                       <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
@@ -491,6 +496,26 @@ footer p {
                                     {% endif %}
                                 </div>
                                 
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Purchase Order</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0">{{ rbill.purchase_order }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0"></p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0"></p>
+                                </div>
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-2 mt-3">
@@ -866,6 +891,7 @@ footer p {
                                                 <td style="color:black">{{rbill.adjustment}}</td>
                                             </tr>
                                             {% endif %}
+                                           
                                             <tfoot>
                                                 <tr>
                                                     <td style="color:black">Grand Total:</td>
@@ -1348,6 +1374,10 @@ footer p {
                                         <div class="col-md-5 text-right">{{ rbill.customer_name}}</div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-md-6 text-left">Vendor Name:</div>
+                                        <div class="col-md-5 text-right">{{ rbill.vendor_name}}</div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-6 text-left">Shipment Date :</div>
                                         <div class="col-md-5 text-right">{{rbill.start_date | date:'d-m-Y'}}</div>
                                     </div>
@@ -1434,7 +1464,7 @@ footer p {
                                             {{ rbill.grand_total }}
                                         </div>
                                     </div>
-                                    {% if sale.igst != '0' %}
+                                    {% if rbill.igst != 0 %}
                                     <div class="row ml-1">
                                         <div class="col-md-5 text-left " style=" color: black;">
                                             IGST

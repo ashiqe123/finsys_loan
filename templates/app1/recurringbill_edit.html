@@ -2005,12 +2005,13 @@ function calculateBalanceDue() {
 
     // Update the balance due input field
     balanceDueInput.value = balanceDue;
-
+    
     // Check if the paid amount exceeds the grand total and show an alert if it does
     if (paidAmount > grandTotal) {
         alert("Paid amount cannot exceed the grand total.");
     
         paidCheckbox.checked = true; // Check the checkbox
+        paidAmountInput.value = 0;
     }
 }
 
@@ -3134,6 +3135,7 @@ $(document).ready(function(){
             var sh = $("#ship").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            calculateBalanceDue();
         });
 
         // $(document).on("change", "#adj", function(){
@@ -3148,6 +3150,7 @@ $(document).ready(function(){
             var ad=$("#adj").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
+            calculateBalanceDue();
         });
 
         $(document).on("click",".seltax",function(){
