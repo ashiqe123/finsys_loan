@@ -46,7 +46,7 @@
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Employee</label>
                         <div class="d-flex">
-                            <select name="employee" id="empl_id" class="form-control" style="width: 95%;" required>
+                            <select  name="employee" id="empl_id" class="form-control" style="width: 95%;" required>
                                 <option value="NIL" >Select Employee</option>
                                 {% for cust in employee %}
                                 {% if cust.cid_id == cmp1.cid %}
@@ -116,38 +116,33 @@
                                     data-toggle="modal">+</a>
                         </div>
                     </div>
-                    <div class="col-md-5 ml-4">
-                        <label class="col-form-label">Paid from</label>
-                        <div class="d-flex">
-                            <div class="col-md-3">
-                                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;">
-                                    <option value="" selected hidden>Select Payment Method</option>
-                                    <option value="cash">Cash</option>
-                                    <option value="cheque">Cheque</option>
-                                    <option value="upi">UPI</option>
-                                    {% for i in bank %}
-                                      <option value="{{i.bankname}}">{{i.bankname}}</option>
-                                    {% endfor %}
-                                  </select>
-                            </div>
-                           
-
-                                                       
-                        </div>
-                   
+    
                 </div>
-                <div class="col-md-3 ml-4" style="display:none;"  id="chequediv">
-                    <label class="col-form-label" >Cheque ID</label>
-                    <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
-                </div>
-                <div class="col-md-3 ml-4"  style="display:none;" id="upidiv">
-                    <label class="col-form-label" >UPI ID</label>
-                    <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID">
-                </div>
-                <div class="col-md-3 ml-4"  style="display:none;" id="bnkdiv">
-                    <label class="col-form-label" >Bank Account</label>
-                    <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
-                </div>
+                <div class="row">
+                    <div class="col-md-3 ml-4">
+                        <label class="col-form-label">Payment Type</label>
+                        <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
+                            <option value="" selected hidden>Choose Payment</option>
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="upi">UPI</option>
+                            {% for i in bank %}
+                              <option value="{{i.bankname}}">{{i.bankname}}</option>
+                            {% endfor %}
+                          </select>
+                    </div>
+                    <div class="col-md-3" style="display:none;"  id="chequediv">
+                        <label class="col-form-label" >Cheque No</label>
+                        <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="upidiv">
+                        <label class="col-form-label" >UPI ID</label>
+                        <input type="text" class="form-control" name="upi_id" value="{{rbill.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                        <label class="col-form-label" >Bank Account</label>
+                        <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                    </div>
                 </div>
                 <div class="row m-4 ml-5 pt-4">   
                     <!-- <div class="col-md-4 m-4 ml-5 pt-4"> -->

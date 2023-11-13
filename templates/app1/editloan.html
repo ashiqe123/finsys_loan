@@ -105,6 +105,32 @@
                         </div>
                     </div>
                 </div>  
+                <div class="row">
+                    <div class="col-md-3 ml-4">
+                        <label class="col-form-label">Payment Type</label>
+                        <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
+                            <option value="{{loan.payment_method}}" selected hidden>{{loan.payment_method}}</option>
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="upi">UPI</option>
+                            {% for i in bank %}
+                              <option value="{{i.bankname}}">{{i.bankname}}</option>
+                            {% endfor %}
+                          </select>
+                    </div>
+                    <div class="col-md-3" style="display:none;"  id="chequediv">
+                        <label class="col-form-label" >Cheque No</label>
+                        <input type="text" class="form-control" name="cheque_id" value="{{loan.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="upidiv">
+                        <label class="col-form-label" >UPI ID</label>
+                        <input type="text" class="form-control" name="upi_id" value="{{loan.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                        <label class="col-form-label" >Bank Account</label>
+                        <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                    </div>
+                </div>
                 <div class="row m-4 ml-5 pt-4">   
                     <!-- <div class="col-md-4 m-4 ml-5 pt-4"> -->
                         <label><b>Monthly Cutting :</b></label>&nbsp;&nbsp;
@@ -1447,5 +1473,81 @@
         }
     }
 </script>
+
+
+    
+<script>
+    $(document).ready(function() {
+      // Function to handle the initial display based on the existing value
+      var initialMethod = $('#pay_method').val();
+      if (initialMethod === 'cheque') {
+        $('#chequediv').show();
+      } else if (initialMethod === 'upi') {
+        $('#upidiv').show();
+      } else if (initialMethod !== 'cash') {
+        $('#bnkdiv').show();
+        // Assuming you want to make an AJAX call only when the initial value is a bank
+        $.ajax({
+          type: "GET",
+          url: "{% url 'bankdata' %}",
+          data: {
+            id: initialMethod,
+          },
+          success: function(response) {
+            data = response.bank;
+            document.getElementById('cheque_id').value = null;
+            document.getElementById('upi_id').value = null;
+            document.getElementById("bnk_id").value = data;
+          }
+        });
+      }
+    
+      // Function to handle changes in the select dropdown
+      $("#pay_method").change(function() {
+        var x = $('#pay_method').val();
+        if (x === 'cheque') {
+          $('#chequediv').show();
+          $('#upidiv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('upi_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        } else if (x === 'upi') {
+          $('#upidiv').show();
+          $('#chequediv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        } else if (x !== 'cash') {
+          $('#bnkdiv').show();
+          $('#chequediv').hide();
+          $('#upidiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('upi_id').value = null;
+          // Assuming you want to make an AJAX call only when the value is a bank
+          $.ajax({
+            type: "GET",
+            url: "{% url 'bankdata' %}",
+            data: {
+              id: x,
+            },
+            success: function(response) {
+              data = response.bank;
+              document.getElementById("bnk_id").value = data;
+            }
+          });
+        } else {
+          $('#chequediv').hide();
+          $('#upidiv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('upi_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        }
+      });
+    });
+    
+    </script>
+    
+    
 
 {% endblock %}

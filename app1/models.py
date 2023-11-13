@@ -2161,6 +2161,9 @@ class EmployeeLoan(models.Model):
     status = models.CharField(max_length=20,null=True)
     action= models.IntegerField(blank=True,null=True)
     balance_loan = models.IntegerField(blank=True,null=True)
+    cheque_no=models.CharField(null=True,blank=True,max_length=255)
+    upi_no=models.CharField(null=True,blank=True,max_length=255)
+    payment_method=models.CharField(null=True,blank=True,max_length=255)
       
 ########################recurring bill-reshna-start#############
 
@@ -2169,8 +2172,8 @@ class recurring_bill(models.Model):
     rbillid = models.AutoField(('rid'), primary_key=True)
     # bill_no = models.IntegerField(default=1000)
     billno =  models.CharField(max_length=100,null=True,blank=True,unique=True)
-    profile_name = models.CharField(max_length=100,null=True,blank=True)
-    purchase_order = models.CharField(max_length=100,null=True,blank=True)
+    profile_name = models.IntegerField(default=0)
+    purchase_order = models.CharField(max_length=100,null=True,blank=True,default=0)
     source_supply = models.CharField(max_length=100,null=True,blank=True)
     place_supply = models.CharField(max_length=100,null=True,blank=True)
     vendor_name = models.CharField(max_length=100,null=True,blank=True)###vendor table
@@ -2373,7 +2376,10 @@ class employee_loan_tran(models.Model):
     total_amount = models.IntegerField()
     payment_type = models.CharField(max_length=100)
     balance_loan = models.IntegerField(blank=True,null=True)
-    
+    cheque_no=models.CharField(null=True,blank=True,max_length=255)
+    upi_no=models.CharField(null=True,blank=True,max_length=255)
+    payment_method=models.CharField(null=True,blank=True,max_length=255)
+  
     
 class paymnt_made_comments(models.Model):
     commentid = models.AutoField(('COMMENTID'), primary_key=True)
