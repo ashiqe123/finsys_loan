@@ -44031,10 +44031,22 @@ def all_parties(request):
 
 
 # # recurring_bills-Reshna-start
+
 @login_required(login_url='regcomp')
 def recurringbill_home(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     rbill= recurring_bill.objects.filter(cid=cmp1)
+    cmp1 = company.objects.get(id=request.session['uid'])
+    
+    if not repeatevery.objects.filter(repeat = '3 Month').exists():
+        re=repeatevery(repeat= '3 Month',cid=cmp1)
+        re.save()
+    if not repeatevery.objects.filter(repeat = '6 Month').exists():
+        re=repeatevery(repeat= '6 Month',cid=cmp1)
+        re.save()
+    if not repeatevery.objects.filter(repeat = '1 Year').exists():
+        re=repeatevery(repeat= '1 Year',cid=cmp1)
+        re.save()
     context={'cmp1': cmp1,
             'rbill':rbill
             }
@@ -44102,7 +44114,7 @@ def addrecurringbill(request):
         tod = toda.strftime("%Y-%m-%d")
         ref = recurring_bill.objects.last()
         if ref:
-            ref_no = int(ref.profile_name) + 1
+            ref_no = int(ref.refference) + 1
             ord_no = 1000+ref_no
 
         else:
@@ -44250,6 +44262,7 @@ def createitem_rbill(request):
             iinv = request.POST.get('invacc')
             istock = request.POST.get('stock')
             istatus = request.POST['status']
+            istock_rate = request.POST['stock_rate']
             item = itemtable(name=iname,item_type=itype,unit=iunit,
                                 hsn=ihsn,tax_reference=itax,
                                 purchase_cost=ipcost,
@@ -44266,7 +44279,8 @@ def createitem_rbill(request):
                                 stockin=istock,
                                 stock=istock,
                                 status=istatus,
-                                cid=cmp1)
+                                cid=cmp1,
+                                stock_rate=istock_rate)
             item.save()
     #         return redirect('addrecurringbill')
     #     return render(request,'app1/recurringbills_add.html')
@@ -44432,6 +44446,7 @@ def update_recurringbill(request,id):
             # bill_no= '1000'
             rbl.billno = request.POST.get('billno')
             rbl.profile_name=request.POST.get('profile_name')
+            rbl.refference=request.POST.get('Reference')
             rbl.payment_method=request.POST.get('payment_method')
             rbl.cheque_no=request.POST.get("cheque_id"),
             rbl.upi_no=request.POST.get("upi_id"),
@@ -48345,6 +48360,8 @@ def createcustomer_rbill(request):
             else:
                 toda = date.today()
                 tod = toda.strftime("%Y-%m-%d")
+                gsttype=request.POST['gsttype']
+                print(gsttype)
                 customer1 = customer(title=request.POST['title'], firstname=request.POST['firstname'],
                                     lastname=request.POST['lastname'], company=request.POST['company'],
                                     location=request.POST['location'], gsttype=request.POST['gsttype'],
@@ -48525,6 +48542,7 @@ def createrecurringbill(request):
             # bill_no= '1000'
             billno = request.POST.get('bill_code_number')
             profile_name=request.POST.get('profile_name')
+            Reference=request.POST.get('Reference')
             payment_method=request.POST.get('payment_method')
             upi=request.POST.get('upi_id')
             cheque=request.POST.get('cheque_id')
@@ -48561,7 +48579,7 @@ def createrecurringbill(request):
                                     source_supply=sourceofsupply,sub_total=sub_total,sgst=sgst,adjustment=adjustment,balance=balance,note= note,
                                     shipping_charge=shipping_charge, payment_terms= payment_terms,
                                     cgst=cgst,igst=igst,tax_amount=tax_amount,
-                                    grand_total=grand_total,cid=cmp1,billno=billno,purchase_order=0,vendor_mail=vendor_mail)
+                                    grand_total=grand_total,cid=cmp1,billno=billno,purchase_order=0,vendor_mail=vendor_mail,refference = Reference)
 
             if len(request.FILES) != 0:
                 bill.file=request.FILES['file'] 
@@ -49716,3 +49734,178 @@ def make_edit_pay(request,id):
     return redirect('employee_details',employee_id.id)
     
  
+#-------------------
+ 
+def check_user_loan(request):
+    emp = request.GET.get('emp',None)
+    print('done')
+    print(emp)
+    data = {
+        'is_tak': EmployeeLoan.objects.filter(employee_id=emp).exists()
+    }
+    if data['is_tak']:
+        data['error_message'] = 'Loan  already Taken.'
+    return JsonResponse(data)
+
+
+
+
+@login_required(login_url='regcomp')
+def addrecurringbill(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        vndr = vendor.objects.filter(cid=cmp1)
+        itm = itemtable.objects.filter(cid=cmp1)
+        unit = unittable.objects.filter(cid=cmp1)
+        cust = customer.objects.filter(cid=cmp1)
+        cpd = creditperiod.objects.filter(cid=cmp1)
+        re = repeatevery.objects.filter(cid=cmp1)
+        bank=bankings_G.objects.filter(cid=cmp1)
+        acc2 = accounts1.objects.filter(cid=cmp1,acctype='Sales')
+        acc1 = accounts1.objects.filter(cid=cmp1,acctype='Cost of Goods Sold')
+        toda = date.today()
+        tod = toda.strftime("%Y-%m-%d")
+        ref = recurring_bill.objects.last()
+        if ref:
+            ref_no = int(ref.refference) + 1
+            ord_no = 1000+ref_no
+
+        else:
+            ref_no = 1
+            ord_no = 1001
+
+        sel = recurring_bill.objects.filter(cid=cmp1).last()
+        if sel:
+            ord_no = str(sel.billno)
+            numbers = []
+            stri = []
+            for word in ord_no:
+                if word.isdigit():
+                    numbers.append(word)
+                else:
+                    stri.append(word)
+            
+            num=''
+            for i in numbers:
+                num +=i
+            
+            st = ''
+            for j in stri:
+                st = st+j
+
+            ord_no = int(num)+1
+
+            if num[0] == '0':
+                if ord_no <10:
+                    ord_no = st+'0'+ str(ord_no)
+                else:
+                    ord_no = st+ str(ord_no)
+            else:
+                ord_no = st+ str(ord_no)
+
+        sale_list = ''
+        sale = recurring_bill.objects.all().count()
+        sale_ord = recurring_bill.objects.all()
+        for s in sale_ord:
+            sale_list = s.billno+ ',' + sale_list
+
+        context = {'ref_no':ref_no,
+                    'cmp1': cmp1,
+                    'vndr':vndr,
+                    'item':itm ,
+                    'unit':unit,
+                    'cust':cust,  
+                    'cpd':cpd,
+                    're':re,
+                    'bank':bank,
+                    'acc2':acc2,
+                    'acc1':acc1,
+                    'tod':tod,
+                    'ord_no':ord_no,
+                    'sale_list':sale_list,
+                    'sale':sale
+
+        }
+        return render(request,'app1/recurringbills_add.html',context)
+    return redirect('addrecurringbill')
+
+
+
+@login_required(login_url='regcomp')
+def recurringbill_home(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    rbill= recurring_bill.objects.filter(cid=cmp1)
+    cmp1 = company.objects.get(id=request.session['uid'])
+    
+    if not repeatevery.objects.filter(repeat = '3 Month').exists():
+        re=repeatevery(repeat= '3 Month',cid=cmp1)
+        re.save()
+    if not repeatevery.objects.filter(repeat = '6 Month').exists():
+        re=repeatevery(repeat= '6 Month',cid=cmp1)
+        re.save()
+    if not repeatevery.objects.filter(repeat = '1 Year').exists():
+        re=repeatevery(repeat= '1 Year',cid=cmp1)
+        re.save()
+    context={'cmp1': cmp1,
+            'rbill':rbill
+            }
+    return render(request,"app1/recurringbills_home.html",context)
+
+
+
+    
+def createitem_rbill(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        if request.method == 'POST':
+            cmp1 = company.objects.get(id=request.session['uid'])
+            iname = request.POST['name']
+            itype = request.POST['type']
+            iunit = request.POST.get('unit')
+            ihsn = request.POST['hsn']
+            itax = request.POST['taxref']
+            ipcost = request.POST['pcost']
+            iscost = request.POST['salesprice']
+            # itmdate = request.POST['itmdate']
+            #itrate = request.POST['tax']
+            ipuracc = request.POST['pur_account']
+            isalacc = request.POST['sale_account']
+            ipurdesc = request.POST['pur_desc']
+            isaledesc = request.POST['sale_desc']
+            iintra = request.POST.get('intra_st')
+            iinter = request.POST.get('inter_st')
+            iinv = request.POST.get('invacc')
+            istock = request.POST.get('stock')
+            istatus = request.POST['status']
+            istock_rate = request.POST['stock_rate']
+            item = itemtable(name=iname,item_type=itype,unit=iunit,
+                                hsn=ihsn,tax_reference=itax,
+                                purchase_cost=ipcost,
+                                sales_cost=iscost,
+                                # itmdate=itmdate,
+                                #tax_rate=itrate,
+                                acount_pur=ipuracc,
+                                account_sal=isalacc,
+                                pur_desc=ipurdesc,
+                                sale_desc=isaledesc,
+                                intra_st=iintra,
+                                inter_st=iinter,
+                                inventry=iinv,
+                                stockin=istock,
+                                stock=istock,
+                                status=istatus,
+                                cid=cmp1,
+                                stock_rate=istock_rate)
+            item.save()
+    #         return redirect('addrecurringbill')
+    #     return render(request,'app1/recurringbills_add.html')
+    # return redirect('/') 
+            return HttpResponse({"message": "success"})

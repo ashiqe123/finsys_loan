@@ -1157,36 +1157,7 @@ $(document).ready(function () {
      calculateExpiryDate();
 });
 </script>
-<script>
 
-
-    $(document).ready(function () {
-        $('#empl_id').on('change', function() {
-            console.log($('#empl_id').val())
-            $.ajax({
-                type : 'POST',
-                
-                url: "{% url 'listemployee_loan' %}",
-                data: {
-                    id: $('#empl_id').val(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                },
-                
-                success: function(data){
-                    console.log(data.email);
-                    document.getElementById('email').value = data.email;
-                    console.log(data.employeeno);
-                    document.getElementById('eid').value = data.employeeno;
-                    console.log(data.joindate);
-                    document.getElementById('joindate').value = data.joindate;
-                    console.log(data.amount);
-                    document.getElementById('Salary').value = data.amount;
-                }
-            });
-        });
-    });
-
-</script>
 
 
 
@@ -2110,5 +2081,66 @@ $(document).ready(function () {
         }
     }
 </script>
+<script>
+    $(document).ready(function(){
+        var loanAlreadyTaken = false; // Variable to track whether a loan is already taken
+
+        $("#empl_id").change(function () {
+            var emp = $(this).val();
+
+            console.log(emp);
+            console.log('done');
+            $.ajax({
+                url: 'check_user_loan',
+                data: {
+                    'emp': emp
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.is_tak) {
+                        alert("Loan already Taken by the employee.");
+                        loanAlreadyTaken = true;
+                        console.log(data.email);
+                        document.getElementById('email').value =' ';
+                        console.log(data.employeeno);
+                        document.getElementById('eid').value = ' ';
+                        console.log(data.joindate);
+                        document.getElementById('joindate').value =' ';
+                        console.log(data.amount);
+                        document.getElementById('Salary').value = ' ';
+                    } else {
+                        loanAlreadyTaken = false;
+                    }
+                }
+            });
+        });
+
+        // Only run this function if loanAlreadyTaken is false
+        $('#empl_id').on('change', function() {
+            if (loanAlreadyTaken) {
+                console.log($('#empl_id').val());
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'listemployee_loan' %}",
+                    data: {
+                        id: $('#empl_id').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function(data){
+                        console.log(data.email);
+                        document.getElementById('email').value = data.email;
+                        console.log(data.employeeno);
+                        document.getElementById('eid').value = data.employeeno;
+                        console.log(data.joindate);
+                        document.getElementById('joindate').value = data.joindate;
+                        console.log(data.amount);
+                        document.getElementById('Salary').value = data.amount;
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 
 {% endblock %}

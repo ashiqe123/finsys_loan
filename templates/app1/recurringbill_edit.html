@@ -79,7 +79,7 @@
                         <div  id="gstin_row" style="display: none;" class="" >
                             <div class="col-form-label">
                                 <label class="col-form-label">GSTIN</label> 
-                                <input type="text" class="form-control" id="gstno" name="gstno" style="background-color: #243e54;" readonly>
+                                <input type="text" class="form-control" id="gstno" name="gstno" >
                            </div>
                           
                      </div> 
@@ -173,6 +173,10 @@
                                 <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" value="{{rbill.billno}}" placeholder="{{ord_no}}" required>
                               </div>
                               <div class="col-md-3 mt-2">
+                                <label for="">Refference Number </label>
+                                <input type="number" class="form-control" id="" name="Reference" value="{{rbill.refference}}">   
+                            </div>
+                              <div class="col-md-3 mt-2">
                                   <label for="">Profile Name </label>
                                   <input type="text" class="form-control" id="" name="profile_name" placeholder="" value="{{rbill.profile_name}}">   
                               </div>
@@ -185,17 +189,7 @@
                                 <label for="">Repeat Every</label>
                                 <div class="d-flex">
                                     <select class="form-control" name="repeat_every" id="repeat">
-                                        <option value="1 Week" {% if rbill.repeat_every == "1 Week" %} selected {% endif %}>1 Week</option>
-                                        <option value="2 Weeks" {% if rbill.repeat_every == "2 Weeks" %} selected {% endif %}>2 Weeks</option>
-                                        <option value="1 Month" {% if rbill.repeat_every == "1 Month" %} selected {% endif %}>1 Month</option>
-                                        <option value="2 Months" {% if rbill.repeat_every == "2 Months" %} selected {% endif %}>2 Months</option>
-                                        <option value="3 Months" {% if rbill.repeat_every == "3 Months" %} selected {% endif %}>3 Months</option>
-                                        <option value="6 Months" {% if rbill.repeat_every == "6 Months" %} selected {% endif %}>6 Months</option>
-                                        <option value="1 Year" {% if rbill.repeat_every == "1 Year" %} selected {% endif %}>1 Year</option>
-                                        <option value="2 Years" {% if rbill.repeat_every == "2 Years" %} selected {% endif %}>2 Years</option>
-                                        <option value="3 Years" {% if rbill.repeat_every == "3 Years" %} selected {% endif %}>3 Years</option>
-                                        <option value="6 Years" {% if rbill.repeat_every == "6 Years" %} selected {% endif %}>6 Years</option>
-                                        
+                               
                                         {% for r in re %}
                                             <option value="{{ r.repeat }}" {% if rbill.repeat_every == r.repeat %} selected {% endif %}>{{ r.repeat }}</option>
                                         {% endfor %}
@@ -233,17 +227,17 @@
         
 
                                 <label class="col-form-label mt-2">GST Type</label>
-                                <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" readonly>
+                                <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" >
         
         
                             </div>
         
                             <div class="col-md-4">
                                 <label class="col-form-label mt-2">Email</label>
-                                <input type="text" class="form-control" id="cust_email" name="cemail" placeholder="Email" style="background-color: #43596c;" readonly ><br>
+                                <input type="text" class="form-control" id="cust_email" name="cemail" placeholder="Email" style="background-color: #43596c;"  ><br>
                                 <div id="gstnodiv" style="display: none;" class="mt-2">
                                     <label class="col-form-label">GSTIN</label>
-                                    <input type="text" class="form-control" id="gstn" name="gstin_inp" style="background-color: #43596c;" readonly>
+                                    <input type="text" class="form-control" id="gstn" name="gstin_inp" style="background-color: #43596c;" >
                                 </div>
                                
                             </div>
@@ -251,7 +245,7 @@
                     <div class="col-md-4">
                         <label class="col-form-label">Billing Address</label>
                         <label for="billingaddress"></label>
-                        <textarea class="form-control" rows="6" id="bname" name="billingaddress" style="background-color: #43596c; margin-bottom: 10px;"  readonly></textarea>
+                        <textarea class="form-control" rows="6" id="bname" name="billingaddress" style="background-color: #43596c; margin-bottom: 10px;"  ></textarea>
 
                        
                     </div>
@@ -352,8 +346,8 @@
                                   </select>
                             </div>
                             <div class="col-md-3" style="display:none;"  id="chequediv">
-                                <label class="col-form-label" >Cheque ID</label>
-                                <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque ID">
+                                <label class="col-form-label" >Cheque No</label>
+                                <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
                             </div>
                             <div class="col-md-3"  style="display:none;" id="upidiv">
                                 <label class="col-form-label" >UPI ID</label>

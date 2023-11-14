@@ -387,17 +387,18 @@ footer p {
                                          
                                          
                                          
-                                     
+                                     {% if  rbill.status == "Draft" %}
                                       <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
                                         <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Convert&nbsp;&nbsp;</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
-                                            {% if rbill.status == "Draft"  %}
+                                            
                                             <li style="margin-left: 50px;" ><a href="{% url 'rbillconvert' rbill.rbillid %}">Save</a> </li>
-                                            {% else %}
-                                            <li style="margin-left: 50px;" ><a href="{% url 'rbillconvert_to_draft' rbill.rbillid %}">Draft</a></li>
-                                            {% endif %}
+                                          
                                         </ul>
                                       </div>
+                                      {% else %}
+                                      <td></td>
+                                      {% endif %}
         
                                     <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
                                       <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
@@ -816,6 +817,7 @@ footer p {
                                     <thead >
                                         <tr>
                                             <td style="text-align: center; font-weight:bold; color:black ">Items</td>
+                                            <td style="font-weight:bold; color:black">Hsn</td>
                                             <td style="font-weight:bold; color:black ">Price</td>
                                             <td style="font-weight:bold; color:black">Quantity</td>
                                             <td style="font-weight:bold; color:black">Tax</td>
@@ -831,6 +833,7 @@ footer p {
                                                 {{j.item}}
                                                 
                                             </td>
+                                            <td style="color:black">{{j.hsn}}</td>
                                             <td style="color:black">{{j.price}}</td>
                                             <td style="color:black">{{j.qty}}</td>
                                             <td style="color:black">{{j.tax}} %</td>
@@ -879,6 +882,10 @@ footer p {
                                                 <td style="color:black">{{rbill.sgst}}</td>
                                             </tr>
                                             {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                            </tr>
                                             {% if rbill.shipping_charge != 0 %}
                                             <tr>
                                                 <td style="color:black">Shipping Charge :</td>
@@ -1007,6 +1014,7 @@ footer p {
                                     <thead >
                                         <tr >
                                             <td style="text-align: center; font-weight:bold; color:black;background-color: greenyellow; ">Items</td>
+                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Hsn</td>
                                             <td style="font-weight:bold; color:black;background-color: #ccc; ">Price</td>
                                             <td style="font-weight:bold; color:black;background-color: #ccc; ">Quantity</td>
                                             <td style="font-weight:bold; color:black;background-color: #ccc; ">Tax</td>
@@ -1021,7 +1029,8 @@ footer p {
                                             <td style="color:black; text-align: center;background-color: greenyellow;">
                                                 {{j.item}}
                                                 
-                                            </td>
+                                            </td>                                            
+                                            <td style="color:black;background-color: #ccc; ">{{j.hsn}}</td>
                                             <td style="color:black;background-color: #ccc; ">{{j.price}}</td>
                                             <td style="color:black;background-color: #ccc; ">{{j.qty}}</td>
                                             <td style="color:black;background-color: #ccc; ">{{j.tax}} %</td>
@@ -1070,6 +1079,10 @@ footer p {
                                                 <td style="color:black">{{rbill.sgst}}</td>
                                             </tr>
                                             {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                            </tr>
                                             {% if rbill.shipping_charge != 0 %}
                                             <tr>
                                                 <td style="color:black">Shipping Charge :</td>
@@ -1206,6 +1219,7 @@ footer p {
                                     <thead >
                                         <tr >
                                             <td style="text-align: center; font-weight:bold; background-color: orange; color: #000;">Items</td>
+                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Hsn</td>
                                             <td style="font-weight:bold; background-color: orange; color: #000; ">Price</td>
                                             <td style="font-weight:bold; background-color: orange; color: #000; ">Quantity</td>
                                             <td style="font-weight:bold; background-color: orange; color: #000; ">Tax</td>
@@ -1221,6 +1235,7 @@ footer p {
                                                 {{j.item}}
                                                 
                                             </td>
+                                            <td style="color:black;">{{j.hsn}}</td>
                                             <td style="color:black;">{{j.price}}</td>
                                             <td style="color:black;">{{j.qty}}</td>
                                             <td style="color:black;">{{j.tax}} %</td>
@@ -1269,6 +1284,10 @@ footer p {
                                                 <td style="color:black">{{rbill.sgst}}</td>
                                             </tr>
                                             {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                            </tr>
                                             {% if rbill.shipping_charge != 0 %}
                                             <tr>
                                                 <td style="color:black">Shipping Charge :</td>
@@ -1408,6 +1427,10 @@ footer p {
                                             Tax
                                             <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
                                         </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Discount
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
                                         <div class="equal-length-item" style=" text-align: center; ">
                                             Total
                                             <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
@@ -1431,6 +1454,9 @@ footer p {
                                         </div>
                                         <div class="equal-length-item" style="text-align: center; ">
                                             {{j.tax}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.discount}}
                                         </div>
                                         <div class="equal-length-item" style="text-align: center; ">
                                             {{j.total}}
@@ -1491,6 +1517,15 @@ footer p {
                                         </div>
                                     </div>
                                     {% endif %}
+                                    <div class="row ml-1">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Total Tax
+                                        </div>
+                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                            {{ rbill.tax_amount }}
+                                        </div>
+                                    </div>
+                                   
                                     <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
                                 </div>
 
@@ -1549,10 +1584,11 @@ footer p {
                  
                 // element.style.color = 'black';
                 // element.style.backgroundColor = 'white';
+                var recurringBillNumber = "{{ rbill.billno }}";
                 var opt =
                 {
                     margin: 1,
-                    filename: 'SalesOrder' + '.pdf',
+                    filename: 'recurringBill '+ recurringBillNumber + '.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }

@@ -1333,6 +1333,7 @@ urlpatterns = [
     #End
     path('convert_to_recbill/<int:pk>',views.convert_to_recbill,name='convert_to_recbill'),
     path('rbillconvert_to_draft/<int:id>',views.rbillconvert_to_draft,name='rbillconvert_to_draft'),
+    path('check_user_loan',views.check_user_loan,name='check_user_loan'),
     path('demo_v',views.demo_v,name='demo_v'),
 
  

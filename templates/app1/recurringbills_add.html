@@ -80,7 +80,7 @@
                                 
                                 <div id="gstin_row" style="display: none;" class="" >
                                     <label class="col-form-label">GSTIN</label>
-                                    <input type="text" class="form-control" id="gstno" name="gstno" style="background-color: #243e54;" readonly>
+                                    <input type="text" class="form-control" id="gstno" name="gstno" >
                                 </div>
 
                                
@@ -168,9 +168,13 @@
                                   <label for="">Recurring Bill No.</label><span class="text-danger mt-1 ml-3" id="dangerdiv" style="display: none;"><span class="text-white"> (</span>This Id Should be Continous <span class="text-white">)</span></span>
                                   <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" value="" placeholder="{{ord_no}}" required>
                                 </div>
+                                <div class="col-md-3 mt-2">
+                                    <label for="">Refference Number </label>
+                                    <input type="number" class="form-control" id="" name="Reference" value="{{ref_no}}">   
+                                </div>
                               <div class="col-md-3 mt-2">
                                   <label for="">Profile Name </label>
-                                  <input type="text" class="form-control" id="" name="profile_name" value="{{ref_no}}">   
+                                  <input type="text" class="form-control" id="" name="profile_name" >   
                               </div>
                               <div class="col-md-3 mt-2">
                                 <label for="">Purchase Order No.</label>
@@ -182,12 +186,7 @@
                                 <div class="d-flex">
                                     <select class="form-control" name="repeat_every" id="repeat">
                         
-                                       
-                                        <option value="1 Month">1 Month</option>
-                                       
-                                        <option value="6 Months">6 Months</option>
-                                        <option value="1 Year">1 Years</option>
-                                       
+                                
                                         {% for r in re %}
                                             <option value="{{ r.repeat}}">{{ r.repeat}}</option>
                                         {% endfor %}
@@ -222,22 +221,22 @@
                                                 <option value="{{ c.customerid }} {{c.firstname }} {{ c.lastname }}">{{ c.title }} {{ c.firstname }} {{ c.lastname }}</option>
                                         {% endfor %}
                                     </select>
-                                    <a class="btn btn-outline-secondary ml-1" role="button" data-target="#customercreation" data-toggle="modal">+</a>
+                                    <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newcustomer" data-toggle="modal">+</a>
                                 </div><br>
         
 
                                 <label class="col-form-label mt-2">GST Type</label>
-                                <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" readonly>
+                                <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" >
         
         
                             </div>
         
                             <div class="col-md-4">
                                 <label class="col-form-label mt-2">Email</label>
-                                <input type="text" class="form-control" id="cust_email" name="cemail" placeholder="Email" style="background-color: #43596c;" readonly ><br>
+                                <input type="text" class="form-control" id="cust_email" name="cemail" placeholder="Email" style="background-color: #43596c;"  ><br>
                                 <div id="gstnodiv" style="display: none;" class="mt-2">
                                     <label class="col-form-label">GSTIN</label>
-                                    <input type="text" class="form-control" id="gstn" name="gstin_inp" style="background-color: #43596c;" readonly>
+                                    <input type="text" class="form-control" id="gstn" name="gstin_inp" style="background-color: #43596c;" >
                                 </div>
                                
                             </div>
@@ -245,7 +244,7 @@
                     <div class="col-md-4">
                         <label class="col-form-label">Billing Address</label>
                         <label for="billingaddress"></label>
-                        <textarea class="form-control" rows="6" id="bname" name="billingaddress" style="background-color: #43596c; margin-bottom: 10px;"  readonly></textarea>
+                        <textarea class="form-control" rows="6" id="bname" name="billingaddress" style="background-color: #43596c; margin-bottom: 10px;"  ></textarea>
 
                        
                     </div>
@@ -348,8 +347,8 @@
                                   </select>
                             </div>
                             <div class="col-md-3" style="display:none;"  id="chequediv">
-                                <label class="col-form-label" >Cheque ID</label>
-                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
+                                <label class="col-form-label" >Cheque No</label>
+                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque No">
                             </div>
                             <div class="col-md-3"  style="display:none;" id="upidiv">
                                 <label class="col-form-label" >UPI ID</label>
@@ -530,7 +529,7 @@
                                       <div class="row container-fluid p-2 m-0">
                                           <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                           <div class="col-sm-1 mt-2">:</div>
-                                          <div class="col-sm-7 mt-2"><input type="number" value=0  step=0 min=0 name='adjustment' id="adj" placeholder='0.00' 
+                                          <div class="col-sm-7 mt-2"><input type="number" value=0  name='adjustment' id="adj" placeholder='0.00' 
                                               class="form-control"/>
                                           </div>
                                           <div class="col-sm-4 m-0 p-0"></div>
@@ -564,7 +563,7 @@
                                         <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance Due</label></div>
                                         <div class="col-sm-1 mt-2"></div>
                                         <div class="col-sm-7 mt-2">
-                                            <input type="number" name='bal_due' id="bal_due" placeholder="0" step="any" 
+                                            <input type="number" name='bal_due' id="bal_due" value=0 placeholder="0" step="any" 
                                             class="form-control" readonly >
                                             
                                         </div>
@@ -681,7 +680,7 @@
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="validationCustom04">GST Treatment</label>
-                            <select class="form-control" id="gsttyp" name="gsttype" onchange="showgsttyp()"
+                            <select class="form-control" id="gsttyp1" name="gsttype" onchange="showgsttyp()"
                                 onclick="hidinput('hello', this)" required>
                                 <option selected disabled value="">Choose..</option>
                                 <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>
@@ -1153,7 +1152,7 @@
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="gsttype">GST type</label>
-                            <select class="custom-select" id="gsttype" name="gsttype"
+                            <select class="custom-select" id="gsttype1" name="gsttype"
                                     onclick="hidinput1('hello1',this)   "
                                     
                                     required
@@ -1587,32 +1586,62 @@
                                                         </div>
                                                        
                                                     </div>
-                                                    
-                                    <div class="row">
-                                        <div class="col-md-3 mt-3">
-                                            <label for="validationCustom05" name style="color: white;">Tax Reference
-                                                </label>
-                                         
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check mt-1">
-                                               
-                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive"
-                                                         value="taxable" checked >Taxable
-                                                    <label style="color: white;">
-                                                        </label>
-                                              
-                                            </div>
-                                        </div>
-                                        <div class="form-check mt-1">
-                                            <input class="form-check-input" name="taxref" type="checkbox"
-                                                   value="non taxable" 
-                                                   id="check">
-                                            <label style="color: white;">Non Taxable</label>
+                                                    <div class="row">
+                                                        <div class="col-md-3 mt-3">
+                                                            <label for="validationCustom05" name style="color: white;">Tax Reference
+                                                                </label>
+                                                         
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-check mt-1">
+                                                               
+                                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive" 
+                                                                         value="taxable"  onchange="ShowHideDivi(inclusive)" >taxable
+                                                                    <label style="color: white;" for="inclusive">
+                                                                        </label>
+                                                              
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-check mt-1">
+                                                            <input class="form-check-input" name="taxref" type="checkbox"
+                                                                   value="non taxable" 
+                                                                   id="check">
+                                                            <label style="color: white;">non taxable</label>
+                                                        </div>
+                                                    </div>
+                                </div>
+                                </div>
+                                    <div class="row"  id="intrastateFiled" style="display: none;">
+                                        <div class="col-md-6 mt-3">
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Intra State Tax Rate</label>
+                                                   <select name="intra_st" class="form-control" 
+                                                   style="background-color: #2a4964; color: white;"
+                                                   id="validationCustom05" >
+                                                  
+                                                   <option value=0>GST 0 (0%)</option>
+                                                   <option value=5>GST 5 (5%)</option>
+                                                   <option value=12>GST 12 (12%)</option>
+                                                   <option value=18>GST 18 (18%)</option>
+                                                   <option value=28>GST 28 (28%)</option>
+                                                   
+                                        </select>
+                                        <br>
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Inter State Tax Rate</label>
+                                            <select name="inter_st" class="form-control" 
+                                                      style="background-color: #2a4964; color: white;"
+                                                      id="validationCustom05" >
+                                                     
+                                                      <option value=0>IGST 0 (0%)</option>
+                                                   <option value=5>IGST 5 (5%)</option>
+                                                   <option value=12>IGST 12 (12%)</option>
+                                                   <option value=18>IGST 18 (18%)</option>
+                                                   <option value=28>IGST 28 (28%)</option>
+                                                   
+                                        </select>
                                         </div>
                                     </div>
-                                </div>
-                                </div>
                                     <div class="row">
                                         <div class="col-md-6 mt-3">
                                             <label for="validationCustom01"
@@ -1699,39 +1728,7 @@
                                     
                                     <div class="row">
                                         <div class="col-md-12 mx-0">
-                                            <div class="row">
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="validationCustom01"
-                                                           style="color: white;">Intra State Tax Rate</label>
-                                                           <select name="intra_st" class="form-control" 
-                                                           style="background-color: #2a4964; color: white;"
-                                                           id="intra_st" >
-                                                           <option >Choose...</option>
-                                                           <option value=0>GST 0 (0%)</option>
-                                                           <option value=5>GST 5 (5%)</option>
-                                                           <option value=12>GST 12 (12%)</option>
-                                                           <option value=18>GST 18 (18%)</option>
-                                                           <option value=28>GST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="inter_st"
-                                                           style="color: white;">Inter State Tax Rate</label>
-                                                    <select name="inter_st" class="form-control" 
-                                                              style="background-color: #2a4964; color: white;"
-                                                              id="inter_st" >
-                                                              <option >Choose...</option>
-                                                              <option value=0>IGST 0 (0%)</option>
-                                                           <option value=5>IGST 5 (5%)</option>
-                                                           <option value=12>IGST 12 (12%)</option>
-                                                           <option value=18>IGST 18 (18%)</option>
-                                                           <option value=28>IGST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            </div><br>
+                                           <br>
                                             <div class="row" >
                                                
                                                
@@ -1752,7 +1749,7 @@
                                                 <div class="col-md-6 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Inventory Account</label>
-                                                           <select name="invacc" class="form-control" id="invacc"
+                                                           <select name="invacc" class="form-control" 
                                                               style="background-color: #2a4964; color: white;"
                                                               >
                                                            <option selected disabled value="" >Choose...</option>
@@ -1760,14 +1757,24 @@
                                                        
                                                 </select>
                                                 </div>
-                                                <div class="col-md-6 mt-3">
+                                                <div class="col-md-3 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Stock on hand</label>
-                                                           <input type="number" name="stock" class="form-control" id="stock"
-                                                           style="width:540px;background-color: #2a4964; color: white;"
+                                                           <input type="number" name="stock" class="form-control"
+                                                           style="background-color: #2a4964; color: white;"
                                                            value="0"
                                                            >
                                                 </div>
+                                                <!-- reshna added -->
+                                                <div class="col-md-3 mt-3">
+                                                    <label for="validationCustom01"
+                                                           style="color: white;">Stock Rate per Unit</label>
+                                                           <input type="number" name="stock_rate" id="stock_rate" class="form-control"
+                                                           style="background-color: #2a4964; color: white;"
+                                                           value="0"
+                                                           >
+                                                </div>
+                                                <!-- end -->
                                             </div>
                                            
   
@@ -2204,16 +2211,7 @@ function reloadrepeat() {
             console.log("AJAX Success - Dropdown Data:", data);
             var dropdown = $('#repeat');
             dropdown.empty()
-            dropdown.append(`<option selected value="1 Week">Week</option>
-                                        <option value="2 Weeks">2 Weeks</option>
-                                        <option value="1 Month">Month</option>
-                                        <option value="2 Months">2 Months</option>
-                                        <option value="3 Months">3 Months</option>
-                                        <option value="6 Months">6 Months</option>
-                                        <option value="1 Year">Years</option>
-                                        <option value="2 Years">2 Years</option>
-                                        <option value="3 Years">3 Years</option>
-                                        <option value="6 Years">6 Years</option>`);
+            
             $.each(data, function(key, value) {
           
             dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
@@ -2231,12 +2229,12 @@ function reloadrepeat() {
 }
 
 $(document).on("click", "#customerSave", function(){
-            
+            console.log()
             $.ajax({
     
                 type : 'POST',
                 url:"{% url 'createcustomer_rbill' %}",
-
+                
                 data:{
                     csrfmiddlewaretoken: '{{ csrf_token }}',
                     title : $('#title1').val(),
@@ -2258,9 +2256,10 @@ $(document).on("click", "#customerSave", function(){
                     shipstate : $("#shipstate1").val(),
                     shipcountry : $("#shipcountry1").val(),
                     shippincode : $("#shippincode1").val(),
-                    gsttype :$("#gsttype").val(),
+                    gsttype :$("#gsttype1").val(),
                     gstin :$("#gstin1").val(),
                     panno :$("#panno1").val(),
+                    
 
                   
                     
@@ -2735,6 +2734,7 @@ $(document).ready(function(){
                 inter_st : $("#inter_st").val(),
                 invacc : $("#invacc").val(),
                 stock : $("#stock").val(),
+                stock_rate : $("#stock_rate").val(),
                 // itmdate : $("#date3").val(),
                 status : status1,
                 csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -3034,7 +3034,14 @@ $(document).ready(function(){
 
     </script>
 
-   
+<script type="text/javascript">
+    function ShowHideDivi(inclusive) {
+        var inter = document.getElementById("intrastateFiled");
+
+        inter.style.display = inclusive.checked ? "block" : "none";
+
+    }
+</script>
 
    
     
