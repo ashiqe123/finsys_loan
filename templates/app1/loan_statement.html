@@ -382,18 +382,27 @@
                                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                                     <thead>
                                     <tr>
-                                        <th>TYPE</th>
-                                        <th>NAME</th>
                                         <th>DATE</th>
-                                        <th>DESCRIPTION</th>
+                                        <th>TYPE</th>
+                                        <th>AMOUNT</th>
+                                        <th>INTEREST</th>
+                                        <!-- <th>NAME</th>
+                                        
+                                        <th>DESCRIPTION</th> -->
                                         <th>BALANCE</th>
-                                        <th>CLOSING BAL</th>
+                                        <!-- <th>CLOSING BAL</th> -->
                                     </tr>
                                     </thead>
                                     <tbody>
                                    
                                {% for a in bnk %}
                                         <tr>
+                                            {% if a.type == 'LOAN ADJ'   %}
+                                            <td>{{a.loan_date}}</td>
+                                            {% elif a.type == 'LOAN APPROVED' %}
+                                            <td>{{a.loan_date}}</td>
+
+                                            {% endif %}
                                             {% if a.bank_type == 'OPENING BAL' %}
                                            
                                                 <td>{{a.bank_type}}</td>
@@ -402,24 +411,20 @@
                                             {% elif a.bank_type == 'EMI PAID' %}
                                             <td>{{a.bank_type}}</td>
                                             {% endif %}
-                                            {% if a.type == 'LOAN APPROVED' %}
+                                            <!-- {% if a.type == 'LOAN APPROVED' %}
                                             <td>{{a.type}}</td>
                                             {% elif a.type == 'LOAN ADJ' %}
                                             <td>{{a.type}}</td>
-                                            {% endif %}
-                                            {% if a.type == 'LOAN ADJ'   %}
-                                            <td>{{a.loan_date}}</td>
-                                            {% elif a.type == 'LOAN APPROVED' %}
-                                            <td>{{a.loan_date}}</td>
-
-                                            {% endif %}
-                                            {% if a.type == 'LOAN ADJ' %}
+                                            {% endif %} -->
+                                            <td>{{ a.loan_amount }}</td> <!-- Displaying loan amount from loan_transaction model -->
+                                            <td>{{ a.loan_intrest }}</td>
+                                            <!-- {% if a.type == 'LOAN ADJ' %}
                                             <td>{{a.loan_desc}}</td>
                                             {% elif a.type == 'LOAN APPROVED' %}
                                             <td>{{a.loan_desc}}</td>
                                             {% else %}
                                             <td>{{a.cash_description}}</td>
-                                            {% endif %}
+                                            {% endif %} -->
                                             {% if a.type == 'LOAN ADJ' %}
                                                 <td>{{a.loan_amount }}</td>
                                                 {% elif a.type == 'LOAN APPROVED' %}
@@ -431,7 +436,7 @@
                                                 <td>- {{a.cash_cash}}</td>
                                                 {% endif %}
                                                 {% endif %}
-                                                <td>{{a.balance}}</td>
+                                                <!-- <td>{{a.balance}}</td> -->
 
                                         </tr>
                                        

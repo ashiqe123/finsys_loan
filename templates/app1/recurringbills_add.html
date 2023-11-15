@@ -169,9 +169,10 @@
                                   <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" value="" placeholder="{{ord_no}}" required>
                                 </div>
                                 <div class="col-md-3 mt-2">
-                                    <label for="">Refference Number </label>
-                                    <input type="number" class="form-control" id="" name="Reference" value="{{ref_no}}">   
+                                    <label for="">Reference Number </label>
+                                    <input type="number" class="form-control" id="" name="Reference" value="{{ref_no}}" readonly >
                                 </div>
+                                
                               <div class="col-md-3 mt-2">
                                   <label for="">Profile Name </label>
                                   <input type="text" class="form-control" id="" name="profile_name" >   
@@ -680,7 +681,7 @@
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="validationCustom04">GST Treatment</label>
-                            <select class="form-control" id="gsttyp1" name="gsttype" onchange="showgsttyp()"
+                            <select class="form-control" id="gsttyp" name="gsttype" onchange="showgsttyp()"
                                 onclick="hidinput('hello', this)" required>
                                 <option selected disabled value="">Choose..</option>
                                 <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>

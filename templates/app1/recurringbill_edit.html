@@ -94,7 +94,7 @@
                             <div  class=" d-none "  id="addres_row" >
                                
                                     <label class="col-form-label ">Address</label>
-                                    <textarea class="form-control mt-4" rows="6"  id="addres" name="billingaddress_vendor" style="background-color: #43596c;"  readonly></textarea>
+                                    <textarea class="form-control mt-4" rows="6"  id="addres" name="billingaddress_vendor" style="background-color: #43596c;"  ></textarea>
                              
                               
                          </div> 
@@ -173,9 +173,10 @@
                                 <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" value="{{rbill.billno}}" placeholder="{{ord_no}}" required>
                               </div>
                               <div class="col-md-3 mt-2">
-                                <label for="">Refference Number </label>
-                                <input type="number" class="form-control" id="" name="Reference" value="{{rbill.refference}}">   
+                                <label for="">Reference Number </label>
+                                <input type="number" class="form-control" id="" name="Reference" value="{{ref_no}}" readonly>
                             </div>
+                            
                               <div class="col-md-3 mt-2">
                                   <label for="">Profile Name </label>
                                   <input type="text" class="form-control" id="" name="profile_name" placeholder="" value="{{rbill.profile_name}}">   

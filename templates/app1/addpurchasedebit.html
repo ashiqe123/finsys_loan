@@ -174,9 +174,9 @@
                                             class="form-control hsn"/>
                                         </td>
                                         <td>
-                                            <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys" class="form-control quty" hidden >
-                                           
-                                            <input type="number" name='quantity[]' onchange="qtychange1(this)"  style='margin-top:21px' placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
+                                            <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys" class="form-control quty" hidden  >
+                                            <input type="number" name='anotherQuantityInput'   style='margin-top:21px' placeholder='Enter Qty' id="anotherQuantityInput" value="0" class="form-control quty" hidden >
+                                            <input type="number" name='quantity[]' onchange="qtychange1(this)"  style='margin-top:21px' placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0 >
                                                     <div><span>Available Qty :</span> <span id="qtyspan"class='text-muted'></span></div>
                                         </td> 
                                         
@@ -1621,9 +1621,11 @@
                                 <input type="text" name='hsn[]' id="hsn1${roinc}" placeholder='Enter HSN Code' class="form-control"/>
                             </td>                
                             <td>
-                                <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys${roinc}" class="form-control quty"  hidden>
-                                        
-                                <input type="number" name='quantity[]' onchange="qtychange1(this)"  style='margin-top:21px' placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
+                               
+
+                                <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys${roinc}" class="form-control quty" hidden >     
+                                <input type="number" name='anotherQuantityInput'   style='margin-top:21px' placeholder='Enter Qty' id="anotherQuantityInput${roinc}" value="0" class="form-control quty" hidden  >
+                                <input type="number" name='quantity[]' onchange="qtychange2(this)"  style='margin-top:21px' placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
                                 <div><span>Available Qty :</span> <span id="qtyspan${roinc}"class='text-muted'></span></div>
                             </td>                
                             <td>
@@ -1656,27 +1658,36 @@
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
             });
+            $(document).on('change', '.tax', function() {
+                var selectedTaxValue = parseFloat($(this).val());
+                var inputTaxValue = parseFloat($(this).closest('tr').find('.taxs').val());
+                var vid = $('#billno').val();
+               
+
+                // Check if the "billno" field is empty
+                if (vid === "") {
+                    return;        // Exit the function and do not show the alert
+                }
+
+                if (selectedTaxValue !== inputTaxValue) {
+                    alert("Selected tax is not the same as bill tax.");
+                }
+            });
+
 
             var place = document.getElementById('plosu').value;
            
-
+          
             $(document).on('click', '#product', function () {
                 var select = $('#product').val();
                 var vid = $('#billno').val();
-             
-                
-                
-               
+
                 $.ajax({
                     type: "GET",
                     url: "{% url 'itemdatadebit' %}",
                     data: {
                         id: select,
-                        vid: vid,
-                       
-
-                      
-
+                        vid: vid
                     },
                     success: function (response) {
                         if (response.error_flag === 1) {
@@ -1711,7 +1722,7 @@
                     
                 });
             });
-                         
+                
             $(document).on('click','#product1',function(){
                 select = $('#product1').val();
                 var vid = $('#billno').val();
@@ -2724,57 +2735,53 @@
             var inventorytrack = document.getElementById("inventorytrack");
             inventorytrack.style.display = track.checked ? "flex" : "none";
         } 
-    </script>
-    
-    <script>
-        function qtychange1(input) {
+//     </script>
+<script>
+function qtychange1(input) {
+    var availableQtyElement;
     var enteredQty = parseFloat(input.value);
-    var availableQty = parseFloat(document.getElementById("quantitys").value);
+    var availableQtyElement = document.getElementById("quantitys");
+    var anotherInputField = document.getElementById("anotherQuantityInput"); // Change "anotherQuantityInput" to the actual ID of your input field
+    var availableQty = parseFloat(availableQtyElement.value);
 
     if (isNaN(enteredQty) || enteredQty < 0) {
         alert("Please enter a valid quantity.");
         input.value = 0;
-        return;
-    }
-
-    if (enteredQty > availableQty) {
-        alert("Entered quantity greaterthan purchasebill quantity");
+    } else if (enteredQty > availableQty) {
+        alert("Entered quantity is greater than purchasebill quantity.");
+    } else if (enteredQty <= availableQty) {
+        availableQty -= enteredQty ;
+   
         
+        // Update another input field with the reduced available quantity
+        anotherInputField.value = availableQty;
     }
+    
 }
-    </script>
-    
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    // Get the relevant elements
-    var taxSelect = document.getElementById("tax1");
-    var taxInput = document.getElementById("taxs");
+</script>
+<script>
 
-
-    // Add an event listener to the tax select element
-    taxSelect.addEventListener("change", function () {
-        // Get the selected tax value from the select element
-        var selectedTaxValue = parseFloat(taxSelect.value);
-
-        // Get the tax value from the input field
-        var inputTaxValue = parseFloat(taxInput.value);
-      console.log(selectedTaxValue);
-      console.log(inputTaxValue);
-
-        // Check if the selected tax value is greater than the input tax value
-        if (selectedTaxValue > inputTaxValue) {
-            // Show an alert message
-            alert("Selected tax is greater than the input tax value. ");
-
-            // You can also reset the tax value to its previous value here if needed
-           // Clear the selection
+    function qtychange2(input) {
+        var enteredQty = parseFloat(input.value);
+        var row_id = input.id.replace("qty1", "");
+        
+        
+        var anotherInputField = document.getElementById("anotherQuantityInput"+row_id);
+        var availableQty = parseFloat(anotherInputField.value);
+        if (isNaN(enteredQty) || enteredQty < 0) {
+        alert("Please enter a valid quantity.");
+        input.value = 0;
+        }else if (enteredQty > availableQty) {
+            alert("Entered quantity is greater than purchasebill quantity.");
+            
+        }else{
+            
         }
-    });
-});
+    }
 
-    </script>
-    
+ </script>
+   
 <script>
     $(document).ready(function() {
 

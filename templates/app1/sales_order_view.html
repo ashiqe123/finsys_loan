@@ -312,27 +312,27 @@ footer p {
 	
 	
         <!-- modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                <div class="modal-body">
-                  <input type="file" class="form-control" name="file">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-              </div>
-            </div>
-          </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{% url 'sales_add_file' sale.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <div class="modal-body">
+          <input type="file" class="form-control" name="file">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
 
 
     
@@ -1297,7 +1297,164 @@ footer p {
 
 
 
-       
+                <!-- <div style="margin-top: -3rem;">
+                    <div class="my-5 page" size="A4" >
+                        <div class="p-5" id="printslip">
+                            <div class="row" style="border-bottom: 1px dotted #243e54;">
+                                <div class="col-md-4">
+                                    <section > 
+                                        <div class="text-left" style="font-size: 3vh; color: black;">
+                                            <b>{{cmp1.cname}} </b>
+                                        </div>
+                                        <span style="font-size: small; color: black;">{{ cmp1.caddress }} <br>
+                                            {{cmp1.city}},
+                                            {{cmp1.state}}
+                                            {{cmp1.pincode}} <br>
+                                            {{ cmp1.phone }} {{ cmp1.cemail }} 
+                                        </span>
+                                    </section><br>
+                                </div>
+                                <div class="col-md-3"></div>
+                                <div class="col-md-5">
+                                    <br>
+                                    <section> 
+                                        <div class="mb-0 text-right mt-3" style="font-size: small; color: black;">
+                                            <div class="row">
+                                                <div class="col-md-6 text-left">Order No:</div>
+                                                <div class="col-md-6 text-right">{{sale.saleno}}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 text-left">Customer Name:</div>
+                                                <div class="col-md-6 text-right">{{cust.firstname}} {{cust.lastname}}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 text-left">Order Date :</div>
+                                                <div class="col-md-6 text-right">{{sale.saledate}}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 text-left">Shipment Date:</div>
+                                                <div class="col-md-6 text-right">{{sale.shipmentdate }}</div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                
+                            <section class="product-area mt-4">
+                                <table class=" table table-hover table-borderless " id="table1">
+                                    <thead class="bg-white ">
+                                        <tr>
+                                            <td style="text-align: center; font-weight:bold; color:black;">
+                                                Product
+                                                <div style="margin-top: -2vh; font-weight: lighter;">_________________</div>
+                                            </td>
+                                            <td style="font-weight:bold; color:black; ">
+                                                Cost
+                                                <div style="margin-top: -2vh; font-weight: lighter;">________</div>
+                                            </td>
+                                            <td style="font-weight:bold; color:black; ">
+                                                Nos
+                                                <div style="margin-top: -2vh; font-weight: lighter;">________</div>
+                                            </td>
+                                            <td style="font-weight:bold; color:black; ">
+                                                Discount
+                                                <div style="margin-top: -2vh; font-weight: lighter;">____________</div>
+                                            </td>
+                                            <td style="font-weight:bold; color:black; ">
+                                                Total
+                                                <div style="margin-top: -2vh; font-weight: lighter;">________</div>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        
+                                        {% for j in saleitem %}
+                                        <tr>
+                                            <td style="color:black; text-align: center; background-color: white;">{{j.product}} </td>
+                                            <td style="color:black; background-color: white;">{{j.price}}</td>
+                                            <td style="color:black; background-color: white;">{{j.qty}}</td>
+                                            <td style="color:black; background-color: white;">{{j.discount}} </td>
+                                            <td style="color:black; background-color: white;">{{j.total}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table><br>
+                            </section>
+                            <div style="color: black;">
+                                <div class="row mb-2">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-5 text-left" style="margin-left: -2vh;">
+                                        Sub Total
+                                    </div>
+                                    <div class="col-md-5 text-right" style="margin-left: 5vh ;">
+                                        {{ sale.subtotal }}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-5 text-left" style="margin-left: -2vh;" >
+                                        Tax Amount
+                                    </div>
+                                    <div class="col-md-5 text-right" style="margin-left: 5vh ;">
+                                        {{sale.taxamount }}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-5 text-left" style="margin-left: -2vh;" >
+                                        Shipping Charge
+                                    </div>
+                                    <div class="col-md-5 text-right" style="margin-left: 5vh ;">
+                                        {{ sale.shipping_charge}}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                                {% if sale.adjust %}
+                                <div class="row mb-2">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-5 text-left" style="margin-left: -2vh;" >
+                                        Adjustment
+                                    </div>
+                                    <div class="col-md-5 text-right" style="margin-left: 5vh ;">
+                                        {{ sale.adjust}}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                                {% endif %}
+                                <div class="row mb-2">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-5 text-left" style="margin-left: -2vh;" >
+                                        Advance
+                                    </div>
+                                    <div class="col-md-5 text-right" style="margin-left: 5vh ;">
+                                        {{ sale.paidoff}}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                            </div><br>
+
+                            <div style="border-bottom: 1px dotted black;"></div>
+
+                            <div style="color: black;">
+                                <div class="row mb-2 mt-2">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-5 text-left" style="margin-left: -2vh; font-size: 3vh;">
+                                        Total
+                                    </div>
+                                    <div class="col-md-5 text-right" style="margin-left: 5vh; font-size: 3vh;">
+                                        {{ sale.balance }}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                            </div>
+
+                            <div style="border-bottom: 1px dotted black;"></div>
+
+                        </div>
+                    </div>
+                </div> -->
             </div>
         </div>
         

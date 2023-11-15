@@ -30,39 +30,52 @@
                     <h4 class="mb-0">Vendor Details</h4>
                 </div>
                 <hr/>
-                <form action="{% url 'createbill' %}" method="post" enctype="multipart/form-data" autocomplete="off">
+                <form action="{% url 'createbill' %}" id="purchasebillform" method="post" enctype="multipart/form-data" autocomplete="off">
                     {% csrf_token %}
                     
                     {% if user.is_authenticated %}
 
-                        <div class="row">
-                            <div class="col-md-4 mt-2">
-                                <label for="validationCustom01">Select Vendor</label>
-                                <div class="d-flex">
-                                    <select name="vendor_name" id="select" class="custom-select" required>
-                                        <option value="" hidden>Select Vendor</option>
-                                        {% for v in vndr %}
-                                        <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    
-                                    <a>
-                                        <button type="button" class="btn btn-outline-secondary ml-1" 
-                                        data-target="#newvendor" data-toggle="modal">+</button>
-                                    </a>
-                                    <input type="text" id="email" name="email" placeholder='Email' class="form-control" style="display: none;">
-                                    <div class="valid-feedback">Looks good!</div> 
-                                </div>
+                    <div class="row">
+                        <div class="col-md-4 mt-2">
+                            <label for="validationCustom01">Select Vendor</label>
+                            <div class="d-flex">
+                                <select name="vendor_name" id="select" class="custom-select form-control" required>
+                                    <option value=""  hidden>Select Vendor</option>
+                                    {% for v in vndr %}
+                                    <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
+                                    {% endfor %}
+                                </select>
+                                <a>
+                                    <button type="button" class="btn btn-outline-secondary ml-1" 
+                                    data-target="#newvendor" data-toggle="modal">+</button>
+                                </a>
+                                <input type="text" id="email" name="email" placeholder='Email' class="form-control" style="display: none;">
+                                <div class="valid-feedback">Looks good!</div> 
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4 mt-3">
-                                <label for="">Billing Address</label>
-                                <div class="form-row">
-                                    <textarea class="form-control" id="billingaddress" name="billing_address" rows="5"></textarea>
-                                </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mt-3">
+                            <label for="">Billing Address</label>
+                            <div class="form-row">
+                                <textarea class="form-control" id="billingaddress" name="billing_address" rows="5"></textarea>
                             </div>
                         </div>
+                        <div class="col-md-4 mt-3">
+                            <label for="">Email</label> 
+                            <input type="text" id="email1" name="email" placeholder='Email' class="form-control ml-1"><br>
+                            <label for="">GST Treatment</label> 
+                            <input type="text" id="gstTreatment" name="gsttype" placeholder='GST Treatment' class="form-control ml-1">
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <label for="">Balance</label> 
+                            <input type="text" id="balance1" name="Balance" placeholder='Balance' class="form-control ml-1"><br>
+                        <div id="disabled">
+                            <label for="">GSTIN</label> 
+                            <input type="text" id="gstin1" name="gstin" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
+                        </div>
+                    </div>
+                    </div>
                         <hr>
                         <br><br>
                         <div class="row">
@@ -172,31 +185,55 @@
                             </div>
                             <div class="col-md-3 mt-2">
                                 <label for="">Reference</label>
-                                <input type="text" class="form-control" id="" name="reference" placeholder="">   
+                                <input type="text" class="form-control" id="" name="reference" placeholder=""  value="{{ reference_number }}" readonly>   
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mt-3">
+                                <label>Purchase Order Number</label>
+                                <div class="d-flex">
+                                    <input name="purchase_order_number" type="text" class="form-control" value="0">
+                                </div>
                             </div>
                         </div>
                         <hr>
+                        <br><br>
+                        <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div><hr>
                         <div class="row">
-                            <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div>
                             <div class="col-md-3 mt-2">
                                 <div class="d-flex">
                                     <select name="contact_name" id="select1" class="custom-select" required>
                                         <option value="" hidden>Select Customer</option>
                                         {% for c in cust %}
-                                            <option value="{{ c.firstname }} {{ c.lastname }}">{{ c.firstname }} {{ c.lastname }}</option>
+                                        <option value="{{ c.firstname }} {{ c.lastname }}">{{ c.firstname }} {{ c.lastname }}</option>
                                         {% endfor %}
                                     </select>
                                     <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newcustomer" data-toggle="modal">+</a>
-                                </div>
+                                </div>    
                             </div>
-                        </div>
+                        </div><br>
                         <div class="row">
                             <div class="col-md-4 mt-2">
                                 <div class="form-row">
+                                    <label for="">Details</label>
                                     <textarea class="form-control" id="deliverto" name="deliverto" rows="5"></textarea>
                                 </div>
                             </div>
-                        </div><hr>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-row">
+                                    <label for="">GST Treatment</label>
+                                    <input type="text" id="gstTreatment1" name="cgsttype" placeholder='GST Treatment' class="form-control ml-1">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2" id="disabled2">
+                                <div class="form-row">
+                                    <label for="">GSTIN</label>
+                                    <input type="text" id="gstin2" name="cgstin" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <hr>
                         
                         <div class="row">
                             <div class="col-md-3 mt-2">
@@ -271,14 +308,10 @@
                                                     </a>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <input type="number" name='hsn[]' id="hsn1" placeholder='HSN Code' 
-                                                class="form-control">
-                                            </td> 
-                                            <td>
-                                                <input type="number" name='quantity[]' onchange="qtychange1(this)" placeholder='Enter Qty'
-                                                id="qty1" class="form-control qty" step=0 min=0>
-                                            </td> 
+                                            <td><input type="text" name="hsn[]" id="hsn1" placeholder="HSN Code" class="form-control"></td> 
+                                            <td><input type="number" name='quantity[]' onchange="qtychange1(this)"  style='margin-top:21px' placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
+                                                <div><span>Available Qty :</span> <span id="qtyspan" data-initial-qty="0" class='text-muted'></span></div>
+                                        </td>
                                             <td><input type="number" name='rate[]' id="unit1" placeholder='Enter Rate' 
                                                 class="form-control price" step="0.00" min="0">
                                             </td> 
@@ -346,19 +379,40 @@
                                 </div>
                                 <div class="row mt-5 mb-3">
                                     <div class="col-md-6">
-                                        <label for="">Payment Type</label>
+                                        <label for="paytype">Payment Type</label>
                                         <div class="d-flex">
                                             <select class="form-control" name="paytype" id="paytype" required>
                                                 <option value="" hidden>Select</option>
                                                 {% for i in bank %}
-                                                <option value="{{i.bankname}}">{{i.bankname}}</option>
+                                                    <option value="{{i.id}}" data-account="{{i.account_number}}">{{i.bankname}}</option>
                                                 {% endfor %}
-                                                <option value="CASH">Cash</option>
+                                                <option value="Cash">Cash</option>
                                                 <option value="Cheque">Cheque</option>
-                                                
+                                                <option value="UPI">UPI</option>
                                             </select>
-                                            
-                                        </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Add this section to your HTML form -->
+                                <div class="row mt-3 mb-3" id="accountNumberField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="accountNumber">Account Number</label>
+                                        <input type="text" class="form-control" name="accountNumber" id="accountNumber">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 mb-3" id="chequeNumberField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="chequeNumber">Cheque Number</label>
+                                        <input type="text" class="form-control" name="chequeNumber" id="chequeNumber">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 mb-3" id="upiField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="upiNumber">UPI Number</label>
+                                        <input type="text" class="form-control" name="upiNumber" id="upiNumber">
                                     </div>
                                 </div>
                                 
@@ -530,15 +584,17 @@
                                 </div>
                             </div>
                         </div> 
-                        <div class="row">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-4">
-                                <button class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
-                                        type="submit">
-                                    Save
+                        <div class="row justify-content-end">
+                            <!-- <div class="col-md-4"></div> -->
+                            <div class="col-md-2">
+                                <button name="save_type" value="draft" class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3" type="submit">
+                                    Save as Draft
                                 </button>
                             </div>
-                            <div class="col-md-4"></div>
+                            <div class="col-md-2"><button name="save_type"  value="save" class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
+                                type="submit">
+                            Save 
+                        </button></div>
                         </div>
                     {% endif %}
                 </form>
@@ -1730,7 +1786,32 @@
             </div>
         </div>
     </div>
-
+    <script>
+        function submitForm(status) {
+            document.getElementById('status').value = status;
+        
+            document.getElementById('purchasebillform').submit();
+        }
+        </script>
+    <script>
+        document.getElementById('paytype').addEventListener('change', function () {
+            var selectedOption = this.options[this.selectedIndex];
+            var selectedValue = selectedOption.value;
+    
+            document.getElementById('chequeNumberField').style.display = 'none';
+            document.getElementById('upiField').style.display = 'none';
+            document.getElementById('accountNumberField').style.display = 'none';
+    
+            if (selectedValue === 'Cheque') {
+                document.getElementById('chequeNumberField').style.display = 'block';
+            } else if (selectedValue === 'UPI') {
+                document.getElementById('upiField').style.display = 'block';
+            } else if (selectedOption.getAttribute('data-account')) {
+                document.getElementById('accountNumberField').style.display = 'block';
+                document.getElementById('accountNumber').value = selectedOption.getAttribute('data-account');
+            }
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         $('#date').val(new Date().toJSON().slice(0,10));
@@ -1960,8 +2041,9 @@
                             <td>
                                 <input type="text" name='hsn[]' id="hsn1${roinc}" placeholder='Enter HSN Code' class="form-control"/>
                             </td>                
-                            <td><input type="number" name='quantity[]' onchange="qtychange1(this)" placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
-                            </td>                
+                            <td><input type="number" name='quantity[]' onchange="qtychange1(this)"  style='margin-top:21px' placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
+                                <div><span>Available Qty :</span> <span id="qtyspan${roinc}" data-initial-qty="0" class='text-muted'></span></div>
+                            </td>                  
                             <td>
                                 <input type="number" name='rate[]' id="unit1${roinc}" placeholder='Enter Rate' class="form-control price" step="0.00" min="0">
                             </td>                                            
@@ -1993,32 +2075,35 @@
                 calc();
             });
 
-            var place = document.getElementById('plosu').value;
-            $(document).on('click','#product',function(){
-                select = $('#product').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn1').value = data
-                        document.getElementById('unit1').value = data3
-                        if (place == '{{ cmp1.state }}'){
-                            // document.getElementById('ta1').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta1').value=data4
-                        } 
-                        // document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta5').value=data5
+             var place = document.getElementById('plosu').value;
+        $(document).on('click','#product',function(){
+            select = $('#product').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'itemdata' %}",
+                data: {
+                id: select
+                },
+                success:function(response){
+                    console.log(response)
+                    data = response.hsn
+                    data2 = response.qty
+                    data3 = response.price
+                    data4 = response.gst
+                    data5 = response.sgst
+                    document.getElementById('hsn1').value = data
+                    document.getElementById('qtyspan').innerHTML = data2;
+                    document.getElementById('unit1').value = data3
+                    if (place == '{{ cmp1.state }}'){
+                        // document.getElementById('ta1').innerHTML = data4 + ' % GST';
+                        document.getElementById('ta1').value=data4
+                    }else{
+                    // document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
+                    ocument.getElementById('ta5').value=data5
                     }
-                });
-            });     
+                }
+            });
+        });        
                 
             $(document).on('click','#product1',function(){
                 select = $('#product1').val();
@@ -2599,30 +2684,200 @@
                     id: select
                 }
                 }).done(function(response) {
-                var json_data = JSON.parse(response);
-                for (key in json_data) {
-                    document.getElementById('email').value = json_data[key]['email'];
-                    document.getElementById('billingaddress').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
-                    
-                }
+                    var json_data = JSON.parse(response);
+                    for (key in json_data) {
+                        document.getElementById('email1').value = json_data[key]['email'];
+                        document.getElementById('balance1').value = json_data[key]['email'];
+                        document.getElementById('gstTreatment').value = json_data[key]['gsttype'];
+                        document.getElementById('gstin1').value = json_data[key]['gstin'];
+                        document.getElementById('billingaddress').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];    
+                    }
                 })
             });
 
-            $('#select1').on('change', function() {
-                select1 = $('#select1').val();
+    $(document).ready(function() {
+    var gstinElement = $('#gstin1');
+    var disabledElement = $('#disabled');
+
+    function toggleGSTINVisibility() {
+        var gstinValue = gstinElement.val();
+
+        if (gstinValue && gstinValue.trim() !== '') {
+            gstinElement.show();
+            disabledElement.show();
+        } else {
+            gstinElement.hide();
+            disabledElement.hide();
+        }
+    }
+    toggleGSTINVisibility();
+
+//     $('#select').on('change', function() {
+//         var select = $('#select').val();
+//         $.ajax({
+//             type: "GET",
+//             url: "{% url 'getvendordata' %}",
+//             data: {
+//                 id: select
+//             }
+//         }).done(function(response) {
+//             var json_data = JSON.parse(response);
+
+//             if (json_data.length > 0) {
+//                 var vendorData = json_data[0];
+
+//                 document.getElementById('email1').value = vendorData['email'];
+//                 document.getElementById('balance1').value = vendorData['email'];
+//                 document.getElementById('gstTreatment').value = vendorData['gsttype'];
+//                 document.getElementById('gstin1').value = vendorData['gstin'];
+//                 document.getElementById('billingaddress').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];    
+
+//                 toggleGSTINVisibility();
+//             } else {
+//                 document.getElementById('email1').value = '';
+//                 document.getElementById('balance1').value = '';
+//                 document.getElementById('gstTreatment').value = '';
+//                 document.getElementById('gstin1').value = '';
+//                 document.getElementById('billingaddress').value = '';
+//                 gstinElement.hide();
+//                 disabledElement.hide();
+//             }
+//         });
+//     });
+// });
+
+// $(document).ready(function() {
+//     var gstinElement1 = $('#gstin1');
+//     var disabledElement1 = $('#disabled1');
+//     var gstinElement2 = $('#gstin2');
+//     var disabledElement2 = $('#disabled2');
+
+//     function toggleGSTINVisibility(gstinElement, disabledElement) {
+//         var gstinValue = gstinElement.val();
+
+//         if (gstinValue && gstinValue.trim() !== '') {
+//             gstinElement.show();
+//             disabledElement.show();
+//         } else {
+//             gstinElement.hide();
+//             disabledElement.hide();
+//         }
+//     }
+
+//     toggleGSTINVisibility(gstinElement1, disabledElement1);
+//     toggleGSTINVisibility(gstinElement2, disabledElement2);
+
+$(document).ready(function () {
+    $('#select').on('change', function () {
+        var select = $('#select').val();
+        $.ajax({
+            type: "GET",
+            url: "{% url 'getvendordata' %}",
+            data: {
+                id: select
+            }
+        }).done(function (response) {
+            var json_data = JSON.parse(response);
+
+            if (json_data.length > 0) {
+                var vendorData = json_data[0];
+
+                $('#email1').val(vendorData['email']);
+                $('#gstTreatment').val(vendorData['gsttype']);
+                $('#gstin1').val(vendorData['gstin']);
+                $('#billingaddress').val(json_data[0]['street'] + '\n' + json_data[0]['city'] + '\n' + json_data[0]['state'] + '\n' + json_data[0]['pincode'] + '\n' + json_data[0]['country']);
+
+                // Make an AJAX call to get the balance
                 $.ajax({
                     type: "GET",
-                    url: "{% url 'getdata2' %}",
+                    url: "{% url 'get_vendor_balance' %}",
                     data: {
-                    id: select1
+                        vendor_name: select
+                    },
+                    success: function (data) {
+                        $('#balance1').val(data.total_balance); // Change 'balance' to 'total_balance'
+                    },
+                    error: function () {
+                        // Handle error if needed
                     }
-                }).done(function(response) {
-                    var json_data = JSON.parse(response);
-                    for (key in json_data) {
-                    document.getElementById('deliverto').value = json_data[key]['email'] + '\n' + json_data[key]['mobile'] + '\n' + json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'];
-                    }
-                })
-            });
+                });
+
+                toggleGSTINVisibility();
+            } else {
+                $('#email1').val('');
+                $('#balance1').val('');
+                $('#gstTreatment').val('');
+                $('#gstin1').val('');
+                $('#billingaddress').val('');
+                gstinElement.hide();
+                disabledElement.hide();
+            }
+        });
+    });
+});
+
+    $('#select').on('change', function() {
+        var select = $('#select').val();
+        $.ajax({
+            type: "GET",
+            url: "{% url 'getvendordata' %}",
+            data: {
+                id: select
+            }
+        }).done(function(response) {
+            var json_data = JSON.parse(response);
+
+            if (json_data.length > 0) {
+                var vendorData = json_data[0];
+
+                document.getElementById('email1').value = vendorData['email'];
+                document.getElementById('gstTreatment').value = vendorData['gsttype'];
+                document.getElementById('gstin1').value = vendorData['gstin'];
+
+                // Check GSTIN visibility when vendor data changes
+                toggleGSTINVisibility(gstinElement1, disabledElement1);
+            } else {
+                // If no data is returned, clear the fields and hide GSTIN and the disabled div
+                document.getElementById('email1').value = '';
+                document.getElementById('gstTreatment').value = '';
+                document.getElementById('gstin1').value = '';
+                gstinElement1.hide();
+                disabledElement1.hide();
+            }
+        });
+    });
+
+    $('#select1').on('change', function() {
+        var select1 = $('#select1').val();
+        $.ajax({
+            type: "GET",
+            url: "{% url 'getdata2' %}",
+            data: {
+                id: select1
+            }
+        }).done(function(response) {
+            var json_data = JSON.parse(response);
+
+            if (json_data.length > 0) {
+                var deliveryData = json_data[0];
+
+                document.getElementById('deliverto').value = deliveryData['email'] + '\n' + deliveryData['mobile'] + '\n' + deliveryData['street'] + '\n' + deliveryData['city'] + '\n' + deliveryData['state'];
+
+                document.getElementById('gstTreatment1').value = deliveryData['gsttype'];
+                document.getElementById('gstin2').value = deliveryData['gstin'];
+
+                toggleGSTINVisibility(gstinElement2, disabledElement2);
+            } else {
+                document.getElementById('deliverto').value = '';
+                document.getElementById('gstTreatment1').value = '';
+                document.getElementById('gstin2').value = '';
+                gstinElement2.hide();
+                disabledElement2.hide();
+            }
+        });
+    });
+});
+
 
             $('#termadd').on('change', function() {
                 select = $('#termadd').val();

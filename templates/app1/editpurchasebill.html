@@ -713,12 +713,33 @@
                                     rows="5">{{ pbill.billing_address }}</textarea>
                                 </div>
                             </div>
+                            <div class="col-md-4 mt-3">
+                                <label for="">Email</label> 
+                                <input type="text" id="email1" name="email" value="{{pbill.vendor_mail}}" placeholder='Email' class="form-control ml-1"><br>
+                                <label for="">GST Treatment</label> 
+                                <input type="text" id="gstTreatment" name="gsttype" value="{{pbill.vendor_gsttype}}" placeholder='GST Treatment' class="form-control ml-1">
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <label for="">Balance</label> 
+                                <input type="text" id="balance1" name="Balance" value="{{pbill.vendor_balance}}" placeholder='Balance' class="form-control ml-1"><br>
+                            <div id="disabled">
+                                <label for="">GSTIN</label> 
+                                <input type="text" id="gstin1" name="gstin" value="{{pbill.vendor_gstin}}" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
+                            </div>
+                        </div>   
                         </div>
                         <hr>
                         <br><br>
                         <div class="row">
                             <div class="col-md-3 mt-2"><h5>Bill Details</h5></div>
                             <div class="col-md-3 mt-2"></div>
+                            <div class="col-md-3 mt-2">
+                                <label>Purchase Order Number</label>
+                                <div class="d-flex">
+                                    <input name="purchase_order_number" value="{{ pbill.purchase_order_number }}" type="number" class="form-control" placeholder="" readonly>
+                                    <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>
+                                </div>   
+                            </div>
                             <div class="col-md-3 mt-2">
                                 <label>Bill Number</label>
                                 <div class="d-flex">
@@ -827,18 +848,33 @@
                                 <input type="text" class="form-control" value="{{ pbill.reference }}" name="reference" placeholder="">   
                             </div>
                         </div>
-                        <hr>
+                        <hr><br>
+                        <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div><hr>
                         <div class="row">
-                            <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div>
-                            <div class="col-md-3 mt-2">
+                            <div class="col-md-4 mt-2">
+                                <div class="d-flex">
                                 <input type="text" value="{{ pbill.contact_name }}" name="contact_name" class="form-control">
+                                </div>
                             </div>
-                        </div>
+                        </div><br>
                         <div class="row">
                             <div class="col-md-4 mt-2">
                                 <div class="form-row">
+                                    <label for="">Details</label>
                                     <textarea class="form-control" id="deliverto" value="" name="deliverto"
                                     rows="5">{{ pbill.deliverto }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-row">
+                                    <label for="">GST Treatment</label>
+                                    <input type="text" id="gstTreatment1" value="{{ pbill.customer_gsttype }}" name="cgsttype" placeholder='GST Treatment' class="form-control ml-1">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2" id="disabled2">
+                                <div class="form-row">
+                                    <label for="">GSTIN</label>
+                                    <input type="text" id="gstin2" value="{{ pbill.customer_gstin }}" name="cgstin" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
                                 </div>
                             </div>
                         </div><hr>
@@ -902,9 +938,8 @@
                                                         </option>
                                                     {% endfor %}
                                                 </select>
-                                                <td>
-                                                    <input type="number" value="{{ p.hsn }}" name='hsn[]' placeholder='Enter HSN'
-                                                id="hsn1{{ forloop.counter }}" class="form-control hsn">
+                                                <td><input type="number" value="{{ p.hsn }}" name='hsn[]' id="hsn1" placeholder='Enter HSN' 
+                                                    class="form-control hsn" step="0.00" min="0">
                                                 </td>
                                             <td>
                                                 <input type="number" value="{{ p.quantity }}" name='quantity[]'  onchange="qtychange1(this)" placeholder='Enter Qty'
@@ -999,7 +1034,7 @@
                                                 {% for i in banks %}
                                                 <option value="{{i.id}}">{{i.bankname}}</option>
                                                 {% endfor %}
-                                                <option value="CASH">Cash</option>
+                                                <option value="Cash">Cash</option>
                                                 <option value="Cheque">Cheque</option>
                                                 
                                             </select>

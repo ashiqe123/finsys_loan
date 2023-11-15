@@ -220,20 +220,30 @@
             background-color:#000000;
             height: 1px;
         }
+        @media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #whatToPrint,
+    #whatToPrint * {
+        visibility: visible;
+    }
+
+    #whatToPrint {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+}
     </style>
 
-    <script>
-        async function generatePDF() {
-            var downloading = document.getElementById("whatToPrint");
-            var doc = new jsPDF('l', 'pt');
-
-            await html2canvas(downloading, {  
-            }).then((canvas) => {
-                doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
-            })
-            doc.save("Document.pdf");
-        } 
-    </script>
+    
 
     <div class="page-content" >
         <div class="card radius-15">
@@ -241,9 +251,18 @@
                 <div class="card-title">
                     <center><h2 class="mb-0">CASH STATEMENT</h2></center>
                     <hr>
-                    
+                    <div class="right">
+                        <button class="btn toPDF btn-outline-info">pdf</button>
+                        <button class="btn btn_print btn-outline-info" onclick="printSection('whatToPrint')">Print</button>
+
+                        <button class=" btn btn-outline-info"  onclick="shareContent()">Share</button>
+                    </div>
                 </div>
+                
+                
+
             </div>
+            
         </div>
     
         <div id="whatToPrint">
@@ -307,26 +326,29 @@
                                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                                     <thead>
                                     <tr>
+                                        <th>DATE</th>
                                         <th>TYPE</th>
                                         <th>NAME</th>
-                                        <th>DATE</th>
-                                        <th>DESCRIPTION</th>
-                                        <th>BALANCE</th>
+                                        
+                                        <!-- <th>DESCRIPTION</th> -->
+                                        <th>AMOUNT</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                    
                                {% for a in bnk %}
                                         <tr>
+                                            
                                             {% if a.type != 'OPENING BAL' %}
+                                            <td>{{a.cash_date}}</td>
                                             {% if a.cash_adjust == 'ADD CASH' %}
                                                 <td>  {{a.cash_adjust }}</td>
                                                 {% elif a.cash_adjust == 'REDUCE CASH' %}
                                                 <td> {{a.cash_adjust }}</td>
                                             {% endif %}
                                             <td>{{a.bank_type}}</td>
-                                            <td>{{a.cash_date}}</td>
-                                            <td>{{a.cash_description}}</td>
+                                            
+                                            <!-- <td>{{a.cash_description}}</td> -->
                                             {% if a.cash_adjust == 'ADD CASH' %}
                                             <td>+ {{a.cash_cash}}</td>
                                             {% elif a.cash_adjust == 'REDUCE CASH' %}
@@ -340,10 +362,112 @@
                                          
                                             
                                      {% endfor %}
+                                     {% for a in pordr %}  
+                                     <tr>
                                         
+                                        <td>{{a.date}}</td>
+                                        <td>PURCHASE ORDER</td>
+                                        <td>{{a.vendor_name}}</td>
+                                        <td>{{a.grand_total}}</td>
+                                        
+                                        
+                                    </tr>
+                                    {% endfor %} 
+                                    {% for a in sordr %}
+                                    <tr>
+                                        
+                                        <td>{{a.saledate}}</td>
+                                        <td>SALES ORDER</td>
+                                        <td>{{a.salename}}</td>
+                                        <td>{{a.salestotal}}</td>
+                                        
+                                         
+                                    </tr>
+                                    {% endfor %}
+                                    <!-- <tr>
+                                        {% for a in empln %}
+                                        <td>{{a.LoanDate}}</td>
+                                        <td>EMPLOYEE LOAN</td>
+                                        <td>{{a.employee.firstname}}</td>
+                                        <td>{{a.LoanAmount}}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                                <div class="dropdown-menu">
+                
+                                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        {% endfor %} 
+                                    </tr> -->
+                                    {% for a in payrec %}
+                                    <tr>
+                                        
+                                        <td>{{a.paymdate}}</td>
+                                        <td>PAYMENT RECEIVED</td>
+                                        <td>{{a.customer}}</td>
+                                        <td>{{a.amtreceived}}</td>
+                                      
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                    {% for a in bill %}
+                                    <tr>
+                                        
+                                        <td>{{a.date}}</td>
+                                        <td>BILL</td>
+                                        <td>{{a.vendor_name}}</td>
+                                        <td>{{a.balance_amount}}</td>
+                                        
+                                        
+                                    </tr>
+                                    {% endfor %} 
+                                    {% for a in dbtnt %}
+                                    <tr>
+                                        
+                                        <td>{{a.debitdate}}</td>
+                                        <td>DEBIT NOTE</td>
+                                        <td>{{a.vendor}}</td>
+                                        <td>{{a.balance_amount}}</td>
+                                       
+                                       
+                                    </tr>
+                                    {% endfor %} 
+                                    {% for a in rcrbl %}
+                                    <tr>
+                                       
+                                        <td>{{a.start_date}}</td>
+                                        <td>RECURRING BILL</td>
+                                        <td>{{a.vendor_name}}</td>
+                                        <td>{{a.balance}}</td>
+                                       
+                                        
+                                    </tr>
+                                    {% endfor %} 
                                   
-                                  
-                                   
+                                    {% for i in toloan %}
+                        <tr>
+                            
+                            <td>{{i.loan_date}}</td>
+                            <td>{{i.bank_type}}</td>
+                            <td>{{i.type}}</td>
+                            <!-- <td>{{i.loan_desc}}</td> -->
+                            <td>{{i.loan_amount}}</td>
+                          
+                        </tr>
+                        {% endfor %}
+                        {% for i in getloan %}
+                        <tr>
+                            
+                            <td>{{i.loan_date}}</td>
+                            <td>{{i.bank_type}}</td>
+                            <td>{{i.type}}</td>
+                            <!-- <td>{{i.loan_desc}}</td> -->
+                            <td>{{i.loan_amount}}</td>
+                            
+                        </tr>
+                        {% endfor %}
                                   
                                     </tbody>
                                 </table>
@@ -392,18 +516,11 @@
             });
         </script>
 
-        <script> 
-            function printDiv() { 
-                var divContents = document.getElementById("panel").innerHTML; 
-                var a = window.open('', '', 'height=800, width=800'); 
-                a.document.write('<html>'); 
-                a.document.write('<body > <h1> <br>'); 
-                a.document.write(divContents); 
-                a.document.write('</body></html>'); 
-                a.document.close(); 
-                a.print(); 
-            } 
-        </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.js"></script>
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
         <script type="text/javascript">
             $('.delete').click(function(e){
@@ -414,6 +531,75 @@
                 }
             });
         </script>
+<script>
+    function shareContent() {
+    const shareText = "Check out this cash statement!";
+    const shareURL = window.location.href; // Get the current URL or provide a specific URL
 
+    if (navigator.share) {
+        navigator.share({
+            title: document.title,
+            text: shareText,
+            url: shareURL,
+        })
+        .then(() => {
+            console.log('Shared successfully');
+        })
+        .catch((error) => {
+            console.error('Error sharing:', error);
+        });
+    } else {
+        // Fallback for browsers that do not support Web Share API
+        const shareableLink = document.createElement('textarea');
+        shareableLink.value = `${shareText} ${shareURL}`;
+        document.body.appendChild(shareableLink);
+        shareableLink.select();
+        document.execCommand('copy');
+        document.body.removeChild(shareableLink);
+        alert('Link copied to clipboard! You can now paste and share it.');
+    }
+}
+
+</script>
+<script>
+ 
+
+$(document).ready(function () {
+        console.log('print');
+
+        $(document).on('click', '.toPDF', function (event) {
+            console.log('print1');
+            event.preventDefault();
+            var element = document.getElementById('whatToPrint');
+            
+            var opt =
+            {
+                margin: 0,
+                filename: 'cash statement_'+ '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+
+        });
+
+ });
+
+</script>
+<script>  
+    function printSection(sectionId) {
+    var printContents = document.getElementById(sectionId).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;printSection
+
+    window.print();
+   
+
+    document.body.innerHTML = originalContents;
+    window.location.reload();
+}
+</script>
     {% endif %}
     {% endblock %}

@@ -439,34 +439,71 @@
                         </div>
                     </div>
                     <hr class="my-4">
-                    <table class="table">
-                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Items Details</h5>
-                        <thead>
-                            <tr class="">
-                                <th class="text-center" style="color:#fff">Items</th>
-                                <th class="text-center" style="color:#fff">HSN Code</th>
-                                <th class="text-center" style="color:#fff">Quantity</th>
-                                <th class="text-center" style="color:#fff">Rate</th>
-                                <th class="text-center" style="color:#fff">Tax</th>
-                                <th class="text-center" style="color:#fff">Discount</th>
-                                <th class="text-center" style="color:#fff">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                        <div class="col-md-12 mt-3">
+                            <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Item Details</h5>
+
                             {% for p in pdeb %}
-                                        <tr>
-                                            <td class="text-center" style="color:#fff">{{ p.items  }}</td>
-                                            <td class="text-center" style="color:#fff">{{ p.hsn  }}</td>
-                                            <td class="text-center" style="color:#fff">{{ p.quantity }}</td>
-                                            <td class="text-center" style="color:#fff">{{  p.price  }}</td>
-                                            <td class="text-center" style="color:#fff">{{ p.tax  }}</td>
-                                            <td class="text-center" style="color:#fff">{{ p.discount  }}</td>
-                                            <td class="text-center" style="color:#fff">{{ p.total }}</td>
-                                            
-                                        </tr>
-                                    {% endfor %} 
-                        </tbody>
-                    </table>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Name</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ p.items }}</p>
+                                    </div>
+                                    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">HSN Code</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ p.hsn }}</p>
+                                    </div> 
+
+    
+                                    
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Price</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ p.price }}</p>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Quantity</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{  p.quantity }} </p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">Tax Amount</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ p.tax }}% </p>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vl"> 
+                                        <h6 class="mb-0">Discount</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{p.discount}}%</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">Total</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ p.total }}</p>
+                                    </div>
+                                    
+                                </div>
+                                <hr class="my-4" style="width: 50%;">
+                            {% endfor %}
+                        </div>
+                    </div>
+               
                     <hr class="my-4">
                      <div class="row mb-4 d-flex justify-content-between align-items-center">
                         <!-- <div class="col-md-2 mt-3">
@@ -616,82 +653,58 @@
             </div>
             <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
                 <div class="p-5">
-                  
-                    <h3 class="fw-bold mb-5 mt-2 pt-1">Debit Note</h3>
-                    <hr class="my-4" style="font-size: xx-large;background-color: #000;width: 100%;">
-                    <div class="d-flex justify-content-between mb-4">
-                        <h5 class="">Grand Total</h5>
-                        <h5>{{ pdebt.grandtotal }}</h5>
-                    </div>
-                    <div class="d-flex justify-content-between mb-4">
-                        <h5 class="">Paid Amount</h5>
-                        <h5>{{ pdebt.paid_amount }}</h5>
-                    </div>
-                   
-                    <div class="d-flex justify-content-between mb-4">
-                        <h5 class="">Balance</h5>
-                        <h5>{{ pdebt.balance_amount }}</h5>
-                    </div>
-                    <div class=" justify-content-between mb-4 sgst-section">
-                        <h5 class="">SGST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            {{ pdebt.sgst }}</h5>
-                       
-                    </div>
-                    
-                    <div class=" justify-content-between mb-4 cgst-section">
-                        <h5 class="">CGST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{ pdebt.cgst }}</h5>
-                    </div>
-                    
-                    <div class=" justify-content-between mb-4 igst-section">
-                        <h5 class="">IGST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                       {{ pdebt.igst }}</h5>
-                    </div>
-                    <div class="d-flex justify-content-between mb-4">
-                        <h5 class="">Tax Amount</h5>
-                        <h5>{{pdebt.taxamount }}</h5>
-                    </div>
-                    <div class="adjust-section justify-content-between mb-4">
-                        <h5 class="">Adjustment
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <h3 class="fw-bold mb-5 mt-2 pt-1" style="font-size: 40px; justify-content:center">Debit Note</h3>
+                    <hr class="my-4" style="font-size: 20px; background-color: #000; width: 100%;">
+                    <table style="width: 100%;">
+                        <tr >
+                            <td style="font-size: 20px;">Grand Total</td>
+                            <td style="font-size: 18px;">{{ pdebt.grandtotal }}</td>
                          
-                            
-                        {{pdebt.round_off }}</h5>
-                    </div>
-                    
-                    
-                    <div class="ship-section  justify-content-between mb-4">
-                        <h5 class="">Shipping Charge
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                           
-                        {{ pdebt.ship_charge}}</h5>
-                    </div>
-                    <div class="d-flex justify-content-between mb-6">
-                        <h5 class="">Status</h5>
-                        <h5>{{ pdebt.status }}</h5>
-                    </div>
-                    <hr class="my-4" style="font-size: xx-large;background-color: #000;width: 100%;">
-                    
-                    
+                        </tr>
+                     
+                        <tr>
+                            <td style="font-size: 20px;">Paid Amount</td>
+                            <td style="font-size: 18px;">{{ pdebt.paid_amount }}</td>
+                        </tr>
+                      
+                        <tr>
+                            <td style="font-size: 20px;">Balance</td>
+                            <td style="font-size: 18px;">{{ pdebt.balance_amount }}</td>
+                        </tr>
+                        <tr class="sgst-section">
+                            <td style="font-size: 20px;">SGST</td>
+                            <td style="font-size: 18px;">{{ pdebt.sgst }}</td>
+                        </tr>
+                        <tr class="cgst-section">
+                            <td style="font-size: 20px;">CGST</td>
+                            <td style="font-size: 18px;">{{ pdebt.cgst }}</td>
+                        </tr>
+                        <tr class="igst-section">
+                            <td style="font-size: 20px;">IGST</td>
+                            <td style="font-size: 18px;">{{ pdebt.igst }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 20px;">Tax Amount</td>
+                            <td style="font-size: 18px;">{{ pdebt.taxamount }}</td>
+                        </tr>
+                        <tr class="adjust-section">
+                            <td style="font-size: 20px;">Adjustment</td>
+                            <td style="font-size: 18px;">{{ pdebt.round_off }}</td>
+                        </tr>
+                        <tr class="ship-section">
+                            <td style="font-size: 20px;">Shipping Charge</td>
+                            <td style="font-size: 18px;">{{ pdebt.ship_charge }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 20px;">Status</td>
+                            <td style="font-size: 18px;">{{ pdebt.status }}</td>
+                        </tr>
+                    </table>
+                    <hr class="my-4" style="font-size: 20px; background-color: #000; width: 100%;">
                 </div>
             </div>
+            
+            
         </div>
 
         </div>
@@ -825,11 +838,7 @@
                                                 <td style="color: #000;">:</td>
                                                 <td class="text-center" style="color: #000;">{{pdebt.subtotal}}</td>
                                             </tr>
-                                            <tr >
-                                                <td style="color: #000;">Tax Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{pdebt.taxamount}}</td>
-                                            </tr>
+                                            
                                          
                                             <tr class="igst-section">
                                                 <td style="color: #000;">IGST</td>
@@ -849,6 +858,11 @@
                                                 <td style="color: #000;">SGST</td>
                                                 <td style="color: #000;">:</td>
                                                 <td class="text-center" style="color: #000;">{{pdebt.sgst}}</td>
+                                            </tr>
+                                            <tr >
+                                                <td style="color: #000;">Tax Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pdebt.taxamount}}</td>
                                             </tr>
                                             
                                             <tr class="ship-section">

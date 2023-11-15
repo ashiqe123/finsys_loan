@@ -52,17 +52,18 @@
                             <input type="text" name="gsttype" id="gsttype" class="form-control" value="{{ paymt.gst_treatment }}">
                         </div>
 
-                        <div class="col-md-3 mt-2" id="gstinField"  >
+                        <div class="col-md-3 mt-2" id="gstinField" {% if not paymt.gst_number %} style="display: none;" {% endif %}>
                             <label for="">GST Number</label>
                             <input type="text" name="gstin" id="gstin" class="form-control" value="{{ paymt.gst_number }}">
                         </div>
+                        
                     </div>
                     <hr>
 
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Date</label>
-                            <input type="date" name="paymentdate" id="date" class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
+                            <input type="date" name="paymentdate"  class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
                         </div>
                     
                         <div class="col-md-4 mt-3">
@@ -80,23 +81,50 @@
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Method</label>
                             <div class="d-flex">
-                                <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
-                                        <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Cheque">Cheque</option>
-                                        <option value="Credit Card">Credit Card</option>
-                                        {% for p in pymt %}
-                                            <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
-                                        {% endfor %}
-                                    </select>
-                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a> -->
+                                <select name="paymentmethod" id="paymeth" class="form-control" style="width: 87%">
+                                    <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
+                                    
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
+                                    {% for v in bank %}
+                                        <option value="{{ v.bank_name }}">{{ v.bank_name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-md-4 mt-3">
+
+
+                            <div style="display:none;"  id="chequediv">
+                                <label class="col-form-label" >Cheque ID</label>
+                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" value="{{ paymt.cheque_number }}" placeholder="Enter Cheque ID">
+                            </div>
+                            
+                            <div style="display:none;" id="upidiv">
+                                <label class="col-form-label" >UPI ID</label>
+                                <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID" value="{{ paymt.upi_id }}">
+                            </div>
+    
+                            <div style="display:none;" id="bnkdiv">
+                                <label class="col-form-label" >Bank Account</label>
+                                <input type="text" class="form-control" name="bnk_id" id="bnk_id" value="{{ paymt.account_number }}" style="background-color: #43596c;" readonly>
+                            </div>
+
+
+                        </div>
+
+                    
+
                     </div>
+                        
+                        
                     
                     <br><br>
                     
-                    <div class="form-group row">
+                     <!-- <div class="form-group row">
                         <label class="col-lg-2 col-form-label">Paid Through*</label>
                         <div class="col-sm-10 col-md-7 col-9 ml-5">
                             <div class="input-group mb-2">
@@ -132,8 +160,8 @@
                         <div class="col-sm-6 col-md-5 col-6 center-input">
                             <div class="input-group mb-2">
                                 <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
-                                    <!-- Add your bank options here -->
-                                    <option value="{{paymt.account_number}}">{{paymt.account_number}}</option> <!-- A default option to prompt selection -->
+                                
+                                    <option value="{{paymt.account_number}}">{{paymt.account_number}}</option>
                                     {% for v in bank %}
                                     <option value="{{ v.bank_name }}" {% if v.bank_name == paymt.account_number %}selected{% endif %}>{{ v.bank_name }}</option>
                                     {% endfor %}
@@ -159,7 +187,7 @@
                     
                     
 
-                    <br>
+                    <br> -->
 
                       <br><br>
 
@@ -173,7 +201,7 @@
                                         <th class="text-center">Bill Number</th>
                                         <th class="text-center">Bill Amount</th>
                                         <th class="text-center">Bill Due Date</th>
-                                        <th class="text-center">Amount Due</th>
+                                        <th class="text-center">Balance Due</th>
                                         <th class="text-center">Payment</th>
 
                                     </tr>
@@ -207,12 +235,16 @@
                             <div class="col-md-5 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic_total" style="background-color: rgba(0,0,0,0.4);">
                                     <tbody>
-                                    <!-- <tr>
-                                        <th class="text-center">Amount to Apply</th>
-                                        <td class="text-center"><input type="number" name='paymentamount' id="amtoapply"
-                                            placeholder='0.00' value="{{ paymt.paymentamount }}" class="form-control">
-                                        </td>
-                                    </tr> -->
+                                      
+                                        <tr>
+                                            <th class="text-center">Amount to Apply</th>
+                                            <td class="text-center">
+                                                <input type="number" name="paymentamount" id="amtoapply"
+                                                    value="{{ paymt.paymentamount }}" class="form-control">
+                                            </td>
+                                        </tr>
+                                   
+
                                     <tr>
                                         <th class="text-center">Balance amount</th>
                                         <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
@@ -226,8 +258,8 @@
                         <div class="row mt-4">
                             <div class="col-md-10"></div>
                             <div class="" style="margin-left: 30rem; text-align: center;">
-                                <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp;
-                                <button type="submit" name="action" value="save" onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')" class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
+                                <!-- <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp; -->
+                                <button type="submit" name="action" value="save"  class="btn btn-outline-info rounded-pill w-10 text-light">Save Changes</button>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -1019,63 +1051,68 @@
 
 
 
-    <script>
-        $(document).ready(function () {
-            $('#select').on('change', function () {
-                var select = $('#select').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'getvendordata3' %}",
-                    data: {
-                        id: select
-                    },
-                    success: function (response) {
-                        var json_data = JSON.parse(response);
-                        if (json_data.length > 0) {
-                            var vendorData = json_data[0]; // Assuming you are expecting one vendor data
-                            $('#email').val(vendorData.email);
-                            $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
-        
-                            // Show email and GST treatment fields
-                            $('#emailField, #gstTypeField').show();
-        
-                            // Set values for email and GST treatment fields
-                            $('#email').val(vendorData.email);
-                            $('#gsttype').val(vendorData.gsttype);
-        
-                            // Check if GST Number has a value
-                            if (vendorData.gstin) {
-                                // Set the GST Number field to the value and show the field
-                                $('#gstin').val(vendorData.gstin);
-                                $('#gstinField').show();
-                            } else {
-                                // If GST Number is empty, set the field to null or empty and hide it
-                                $('#gstin').val(null); // or $('#gstin').val('');
-                                $('#gstinField').hide();
-                            }
+<script>
+    $(document).ready(function () {
+        $('#select').on('change', function () {
+            var select = $('#select').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'getvendordata3' %}",
+                data: {
+                    id: select
+                },
+                success: function (response) {
+                    var json_data = JSON.parse(response);
+                    if (json_data.length > 0) {
+                        var vendorData = json_data[0]; // Assuming you are expecting one vendor data
+    
+                        $('#email').val(vendorData.email);
+                        $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
+    
+                        // Show email and GST treatment fields
+                        $('#emailField, #gstTypeField').show();
+    
+                        // Set values for email and GST treatment fields
+                        $('#email').val(vendorData.email);
+                        $('#gsttype').val(vendorData.gsttype);
+    
+                        // Check if GST Number has a value
+                        if (vendorData.gstin && vendorData.gstin.trim() !== '') {
+                            // Set the GST Number field to the value and show the field
+                            $('#gstin').val(vendorData.gstin);
+                            $('#gstinField').show();
                         } else {
-                            // Handle the case where no data was found for the selected ID.
+                            // If GST Number is empty or contains only whitespace, hide the field
+                            $('#gstin').val('');
+                            $('#gstinField').hide();
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle the AJAX error.
+                    } else {
+                        // Handle the case where no data was found for the selected ID.
                     }
-                });
+                },
+                error: function (xhr, status, error) {
+                    // Handle the AJAX error.
+                    console.error("AJAX Error:", error);
+                }
             });
         });
-        
-        
+    });
     </script>
+
+    
+    
     
 
     
 
     
     <script>
-        function updateAmountFields() {
+        function updateAmountToApply() {
             var totalPayment = 0;
+    
             for (var i = 0; i <= j; i++) {
                 var paymentField = document.getElementById('payment' + i);
+                
                 if (paymentField) {
                     var payment = parseFloat(paymentField.value);
                     if (!isNaN(payment)) {
@@ -1083,18 +1120,25 @@
                     }
                 }
             }
-        
-            // Update "Amount" and "Amount to Apply" fields with the total payment
-            var amountField = document.getElementById('amtrcvd');
+    
+            // Update "Amount to Apply" field with the total payment
             var amountToApplyField = document.getElementById('amtoapply');
-        
-            if (amountField && amountToApplyField) {
-                amountField.value = totalPayment;
+            
+            if (amountToApplyField) {
                 amountToApplyField.value = totalPayment;
             }
         }
-        </script>
-        <script>
+    
+        // Add event listeners to the payment fields to trigger the update
+        for (var i = 0; i <= j; i++) {
+            var paymentField = document.getElementById('payment' + i);
+            if (paymentField) {
+                paymentField.addEventListener('input', updateAmountToApply);
+            }
+        }
+    </script>
+    
+        <!-- <script>
             document.getElementById("paymentForm").addEventListener("submit", function (event) {
                 event.preventDefault(); // Prevent the default form submission
                 
@@ -1124,7 +1168,7 @@
                     gstinField.style.display = "none";
                 }
             });
-        </script>
+        </script> -->
         
         <!-- <script>
             function showFieldsForPayment(paymentType) {
@@ -1154,8 +1198,8 @@
                 });
             }
         </script> -->
-        <script>
-            // Get references to the radio buttons and related fields
+        <!-- <script>
+            
             const cashRadio = document.getElementById("cashRadio");
             const bankRadio = document.getElementById("bankRadio");
             const chequeRadio = document.getElementById("chequeRadio");
@@ -1193,11 +1237,83 @@
         
             // Call the function to set the initial field visibility
             updateFieldVisibility();
-        </script>
+        </script> -->
 
 <!-- Include this JavaScript in your HTML template -->
 
 
-        
+<!-- <script>
+    function showPaymentFields(paymentMethod) {
+        $('.pymnt-methd-inp').addClass('d-none').removeClass('d-flex');
+        if (paymentMethod === 'Bank Transfer') {
+            $('#bank-field').removeClass('d-none').addClass('d-flex');
+            $('#account-number-field').removeClass('d-none').addClass('d-flex');
+        } else if (paymentMethod === 'Cheque') {
+            $('#cheq-field').removeClass('d-none').addClass('d-flex');
+        } else if (paymentMethod === 'Credit Card') {
+            $('#cc-field').removeClass('d-none').addClass('d-flex');
+        } else if (paymentMethod === 'UPI') {
+            $('#upi-field').removeClass('d-none').addClass('d-flex');
+        }
+            
+    }
+
+    $('#paymeth').on('change', function() {
+        var selectedPaymentMethod = $(this).val();
+        showPaymentFields(selectedPaymentMethod);
+    });
+
+    // Initialize the visibility of fields based on the initial value
+    showPaymentFields($('#paymeth').val());
+</script> -->
+
+<script>
+    $(document).ready(function() {
+        $("#paymeth").change(function() {
+            var selectedPaymentMethod = $(this).val();
+            togglePaymentFields(selectedPaymentMethod);
+        });
+
+        // Initialize the visibility of fields based on the initial value
+        togglePaymentFields($('#paymeth').val());
+    });
+
+    function togglePaymentFields(paymentMethod) {
+        $('.payment-fields').hide();
+
+        if (paymentMethod === 'cash') {
+            $('#chequediv').hide();
+            $('#upidiv').hide();
+            $('#bnkdiv').hide();
+        } else if (paymentMethod === 'cheque') {
+            $('#chequediv').show();
+            $('#upidiv').hide();
+            $('#bnkdiv').hide();
+        } else if (paymentMethod === 'upi') {
+            $('#chequediv').hide();
+            $('#upidiv').show();
+            $('#bnkdiv').hide();
+        } else {
+            // It's a bank, show the bank field
+            $('#chequediv').hide();
+            $('#upidiv').hide();
+            $('#bnkdiv').show();
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'get_bankdata' %}",
+                data: {
+                    id: paymentMethod,
+                },
+                success: function(response) {
+                    document.getElementById('cheque_id').value = null;
+                    document.getElementById('upi_id').value = null;
+                    document.getElementById("bnk_id").value = response.account_number;
+                }
+            });
+        }
+    }
+</script>
+
    
 {% endblock %}

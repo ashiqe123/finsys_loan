@@ -81,7 +81,7 @@
                 <div class="card-title">
                     <center>
                         <h6>{{cmp1.cname}}</h6>
-                        <h2 class="mb-0">DEBITNOTE REPORT</h2><br>
+                        <h2 class="mb-0">CREDIT NOTE DETAILS</h2><br>
                    
                     <div class="display">
                         <div id="d1" style="display: inline-block;"></div>
@@ -101,7 +101,7 @@
                     </div>
                     <div class="btn-group col-md-1" style="float: right;">
     
-                        <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')"> Excel</a>
+                        <a class="btn btn-outline-info text-grey" id="exportBtn" > Excel</a>
                     </div>
     
                     <div class="bar">
@@ -117,6 +117,12 @@
                             </div>
         
                         </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 p-2" style="margin-left: 1%;">
+                        <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                        style="margin-top: 8px; background-color: #2f516f;color: white;width: 115%;">
+                    </div>
                 </div>
     
                 </div>
@@ -139,16 +145,17 @@
                    
                     <div class="container-fluid" id="pdf-card">
     
-                    <table class="table table-responsive-md mt-4" id="tbl_exporttable_to_xls">
+                    <table class="table table-responsive-md mt-4" id="table">
                         <thead>
                             <tr style="text-align: center;">
                                 <th>DATE</th>
-                                <th style="white-space: nowrap;">DEBIT NO</th>
-                                <th style="white-space: nowrap;">VENDOR NAME</th>
+                                <th style="white-space: nowrap;">CREDIT NO</th>
+                                <th style="white-space: nowrap;">CUSTOMER NAME</th>
                                
                                 <th style="white-space: nowrap;">EMAIL</th>
-                                <th>TAX AMOUNT</th>
-                                <th>TOTAL AMOUNNT</th>
+                                
+                                <th>TOTAL AMOUNT</th>
+                                <th>BALANCE</th>
                                 
                                
     
@@ -156,14 +163,14 @@
                         </thead>
                         <tbody>
     
-                            {% for trans in debitnote %}
+                            {% for p in pdebit %}
                             <tr class="table-row " data-href="" style="text-align: center;">
-                                <td>{{ trans.debitdate | date:'Y-m-d' }}</td>
-                                <td>{{trans.debit_no}}</td>
-                                <td>{{ trans.vendor }}</td>
-                                <td>{{ trans.email }}</td>
-                                <td>{{ trans.taxamount }}</td>
-                                <td>{{ trans.grandtotal }}</td>
+                                <td>{{ p.creditdate | date:'Y-m-d' }}</td>
+                                <td>{{p.credit_no}}</td>
+                                <td>{{ p.cust }}</td>
+                                <td>{{ p.email }}</td>
+                                <td>{{ p.grandtotal }}</td>
+                                <td>{{ p.balance }}</td>
                            </tr>
                            {%endfor%}
                         </tbody>
@@ -177,14 +184,14 @@
             
         </div>
         <div class="bar p-5">
-            <div class="lef">
-                <h5 class="pt-3" >Total Tax Amount</h5>
+            <div class="right">
+                <h5 class="pt-3" >Total Amount</h5>
                 <h6 id="totalTaxAmount" ></h6>
             </div>
-            <div class="right">
+            <!-- <div class="right">
                 <h5 class="pt-3">Total Amount</h5>
                 <h6 id="totalAmount" class="d-inline-block"></h6>
-            </div>
+            </div> -->
         </div>
     
     </div>
@@ -195,15 +202,39 @@
         
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
-    <script type="text/javascript">function ExportToExcel(type, fn, dl) {
+    <script>
+        document.getElementById("exportBtn").addEventListener("click", function () {
+        const Table = document.getElementById("table");
+        const ws = XLSX.utils.table_to_sheet(Table);
+        ws['!cols'] = [{ wch: 15 },{ wch: 15 },{ wch: 15 },{ wch: 15 },{ wch: 15 },{ wch: 15 }];
+        ws['!rows'] = [{ hpt: 30 }];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        XLSX.writeFile(wb, "credit_note_details.xlsx"); 
+      });
+
+    </script>
+
+    <!-- <script type="text/javascript">function ExportToExcel(type, fn, dl) {
             var elt = document.getElementById('tbl_exporttable_to_xls');
             var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
             return dl ?
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
                 XLSX.writeFile(wb, fn || ('debitnotereport.' + (type || 'xlsx')));
         }
-    </script> 
+    </script>  -->
+<script>
+    var $rows = $('.table tbody tr');
+            $('#search').keyup(function() {
+                var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                
+                $rows.show().filter(function() {
+                    var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                    return !~text.indexOf(val);
+                }).hide();
+            });
 
+</script>
 
 <script>
     
@@ -248,7 +279,7 @@
             const headerDiv = document.createElement('div');
             headerDiv.style.textAlign = 'center';
             headerDiv.style.marginBottom = '20px';
-            headerDiv.innerHTML = `<p> ${companyName}</p><h1>DEBITNOTE REPORT</h1><p>From: ${fromDate} To:  ${toDate}</p>`;
+            headerDiv.innerHTML = `<p> ${companyName}</p><h1>CREDIT NOTE DETAILS</h1><p>From: ${fromDate} To:  ${toDate}</p>`;
     
             printWindow.document.body.insertBefore(headerDiv, pdfCardClone[0]);
             
@@ -277,7 +308,7 @@
                 ${companyName}
             </div>
             <div style="text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: black;">
-                PURCHASE REPORT
+                CREDIT NOTE DETAILS
             </div>
             <div style="text-align: center; font-size: 12px; color: black;">
                ${fromDate} &nbsp; ${toDate}
@@ -286,12 +317,12 @@
                         <thead>
                             <tr style="text-align: center;color:black;border: 1px solid black;">
                                 <th style="text-align: center;color:black;border: 1px solid black;">DATE</th>
-                                <th style="white-space: nowrap;color:black;border: 1px solid black;">DEBIT NO</th>
-                                <th style="white-space: nowrap;color:black;border: 1px solid black;">VENDOR NAME</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">CREDIT NO</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">CUSTOMER NAME</th>
                                
                                 <th style="white-space: nowrap;color:black;border: 1px solid black;">EMAIL</th>
-                                <th style="white-space: nowrap;color:black;border: 1px solid black;">TAX AMOUNT</th>
-                                <th style="white-space: nowrap;color:black;border: 1px solid black;">TOTAL AMOUNNT</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">TOTAL AMOUNT</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">BALANCE</th>
                                 
                                
     
@@ -299,14 +330,14 @@
                         </thead>
                         <tbody>
     
-                            {% for trans in debitnote %}
+                            {% for p in pdebit %}
                             <tr class="table-row " data-href="" style="text-align: center;color:black;border: 1px solid black;">
-                                <td style="text-align: center;color:black;border: 1px solid black;">{{ trans.debitdate | date:'Y-m-d' }}</td>
-                                <td style="text-align: center;color:black;border: 1px solid black;">DN - {{trans.debit_no}}</td>
-                                <td style="text-align: center;color:black;border: 1px solid black;">{{ trans.vendor }}</td>
-                                <td style="text-align: center;color:black;border: 1px solid black;">{{ trans.email }}</td>
-                                <td style="text-align: center;color:black;border: 1px solid black;">{{ trans.taxamount }}</td>
-                                <td style="text-align: center;color:black;border: 1px solid black;">{{ trans.grandtotal }}</td>
+                                <td style="text-align: center;color:black;border: 1px solid black;">{{ p.creditdate | date:'Y-m-d' }}</td>
+                                <td style="text-align: center;color:black;border: 1px solid black;"> {{p.credit_no}}</td>
+                                <td style="text-align: center;color:black;border: 1px solid black;">{{ p.customer }}</td>
+                                <td style="text-align: center;color:black;border: 1px solid black;">{{ p.email }}</td>
+                                <td style="text-align: center;color:black;border: 1px solid black;">{{ p.grandtotal }}</td>
+                                <td style="text-align: center;color:black;border: 1px solid black;">{{ p.balance }}</td>
                            </tr>
                            {%endfor%}
                         </tbody>
@@ -320,7 +351,7 @@
             var opt =
             {
                 margin: 1,
-                filename: 'Debinote_Report' + '.pdf',
+                filename: 'Creditnote_Details' + '.pdf',
                 image: { type: 'png', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true, backgroundColor: null },
                 jsPDF: { unit: 'in', format: 'a3', orientation: 'portrait' }
@@ -416,11 +447,11 @@ document.getElementById('todate').addEventListener('change', filterTableByDate);
         let totalAmount = 0;
 
         // Iterate over table rows to calculate totals
-        const rows = document.querySelectorAll('#tbl_exporttable_to_xls tbody tr');
+        const rows = document.querySelectorAll('#table tbody tr');
 
         rows.forEach(row => {
-            const taxAmount = parseFloat(row.querySelector('td:nth-child(5)').innerText);
-            const amount = parseFloat(row.querySelector('td:nth-child(6)').innerText);
+            const taxAmount = parseFloat(row.querySelector('td:nth-child(6)').innerText);
+            const amount = parseFloat(row.querySelector('td:nth-child(5)').innerText);
 
             if (!isNaN(taxAmount)) {
                 totalTaxAmount += taxAmount;
