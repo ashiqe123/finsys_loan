@@ -43,6 +43,7 @@ class company(models.Model):
     gst_type= models.CharField(max_length=100, null=True,blank=True)
     pan_number=models.CharField(max_length=100, null=True,blank=True)
     cash=models.IntegerField(default=0)
+    prfile = models.IntegerField(default=0)
 
 class customer(models.Model):
     customerid = models.AutoField(('CUSTID'), primary_key=True)

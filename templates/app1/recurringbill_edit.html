@@ -174,7 +174,7 @@
                               </div>
                               <div class="col-md-3 mt-2">
                                 <label for="">Reference Number </label>
-                                <input type="number" class="form-control" id="" name="Reference" value="{{ref_no}}" readonly>
+                                <input type="number" class="form-control" id="" name="Reference" value="{{rbill.refference}}" readonly>
                             </div>
                             
                               <div class="col-md-3 mt-2">
@@ -255,7 +255,8 @@
                         <label class="col-form-label mt-2">Place of supply</label>
                         <select type="text" class="form-control" id="plosu" name="placosupply" style="background-color: #43596c; color: white;" >
                           <!-- <option value="{{ cmp1.state }}" selected> {{ cmp1.state }}</option> -->
-                          <option value="" selected hidden> Select Place of Supply</option>
+                          <option value="{{rbill.place_supply}}" selected > {{rbill.place_supply}}</option>
+
                           <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
                           <option value="Andhra Predhesh">Andhra Predhesh</option>
                           <option value="Arunachal Predesh">Arunachal Predesh</option>
@@ -418,7 +419,7 @@
                                         <input hidden value="{{cmp1.state}}" id="cmpstate">
                                         <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-none">
                                         <select name='tax1[]' id="tax1{{ forloop.counter }}" class="form-control tax intra_tax d-none">
-                                          <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
+                                            <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
                                             <option value=28 >28.0% GST(28%)</option>
                                             <option value=18 >18.0% GST(18%)</option>
                                             <option value=12  >12.0% GST(12%)</option>
@@ -427,13 +428,15 @@
                                               <option value=0  >0.0% GST(0%)</option>
                                         </select>
                                         <select name='tax2[]' id="tax2{{ forloop.counter }}" class="form-control tax inter_tax d-none">
-                                          <option selected value="{{j.tax}}">{{j.tax}}% IGST ({{j.tax}}%)</option>
+                                            <option selected value="{{j.tax}}">{{j.tax}}% IGST ({{j.tax}}%)</option>
                                             <option value=28 >28.0% IGST(28%)</option>
                                             <option value=18 >18.0% IGST(18%)</option>
                                             <option value=12  >12.0% IGST(12%)</option>
                                               <option value=5  >05.0% IGST(05%)</option>
                                             <option value=3  >03.0% IGST(03%)</option>
                                               <option value=0  >0.0% IGST(0%)</option>
+
+                                        
                                         </select>
                                                          
                                       </td>
@@ -1588,32 +1591,62 @@
                                                         </div>
                                                        
                                                     </div>
-                                                    
-                                    <div class="row">
-                                        <div class="col-md-3 mt-3">
-                                            <label for="validationCustom05" name style="color: white;">Tax Reference
-                                                </label>
-                                         
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check mt-1">
-                                               
-                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive"
-                                                         value="taxable" checked >Taxable
-                                                    <label style="color: white;">
-                                                        </label>
-                                              
-                                            </div>
-                                        </div>
-                                        <div class="form-check mt-1">
-                                            <input class="form-check-input" name="taxref" type="checkbox"
-                                                   value="non taxable" 
-                                                   id="check">
-                                            <label style="color: white;">Non Taxable</label>
+                                                    <div class="row">
+                                                        <div class="col-md-3 mt-3">
+                                                            <label for="validationCustom05" name style="color: white;">Tax Reference
+                                                                </label>
+                                                         
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-check mt-1">
+                                                               
+                                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive" 
+                                                                         value="taxable"  onchange="ShowHideDivi(inclusive)" >taxable
+                                                                    <label style="color: white;" for="inclusive">
+                                                                        </label>
+                                                              
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-check mt-1">
+                                                            <input class="form-check-input" name="taxref" type="checkbox"
+                                                                   value="non taxable" 
+                                                                   id="check">
+                                                            <label style="color: white;">non taxable</label>
+                                                        </div>
+                                                    </div>
+                                </div>
+                                </div>
+                                    <div class="row"  id="intrastateFiled" style="display: none;">
+                                        <div class="col-md-6 mt-3">
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Intra State Tax Rate</label>
+                                                   <select name="intra_st" class="form-control" 
+                                                   style="background-color: #2a4964; color: white;"
+                                                   id="validationCustom05" >
+                                                  
+                                                   <option value=0>GST 0 (0%)</option>
+                                                   <option value=5>GST 5 (5%)</option>
+                                                   <option value=12>GST 12 (12%)</option>
+                                                   <option value=18>GST 18 (18%)</option>
+                                                   <option value=28>GST 28 (28%)</option>
+                                                   
+                                        </select>
+                                        <br>
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Inter State Tax Rate</label>
+                                            <select name="inter_st" class="form-control" 
+                                                      style="background-color: #2a4964; color: white;"
+                                                      id="validationCustom05" >
+                                                     
+                                                      <option value=0>IGST 0 (0%)</option>
+                                                   <option value=5>IGST 5 (5%)</option>
+                                                   <option value=12>IGST 12 (12%)</option>
+                                                   <option value=18>IGST 18 (18%)</option>
+                                                   <option value=28>IGST 28 (28%)</option>
+                                                   
+                                        </select>
                                         </div>
                                     </div>
-                                </div>
-                                </div>
                                     <div class="row">
                                         <div class="col-md-6 mt-3">
                                             <label for="validationCustom01"
@@ -1700,39 +1733,7 @@
                                     
                                     <div class="row">
                                         <div class="col-md-12 mx-0">
-                                            <div class="row">
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="validationCustom01"
-                                                           style="color: white;">Intra State Tax Rate</label>
-                                                           <select name="intra_st" class="form-control" 
-                                                           style="background-color: #2a4964; color: white;"
-                                                           id="intra_st" >
-                                                           <option >Choose...</option>
-                                                           <option value=0>GST 0 (0%)</option>
-                                                           <option value=5>GST 5 (5%)</option>
-                                                           <option value=12>GST 12 (12%)</option>
-                                                           <option value=18>GST 18 (18%)</option>
-                                                           <option value=28>GST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="inter_st"
-                                                           style="color: white;">Inter State Tax Rate</label>
-                                                    <select name="inter_st" class="form-control" 
-                                                              style="background-color: #2a4964; color: white;"
-                                                              id="inter_st" >
-                                                              <option >Choose...</option>
-                                                              <option value=0>IGST 0 (0%)</option>
-                                                           <option value=5>IGST 5 (5%)</option>
-                                                           <option value=12>IGST 12 (12%)</option>
-                                                           <option value=18>IGST 18 (18%)</option>
-                                                           <option value=28>IGST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            </div><br>
+                                           <br>
                                             <div class="row" >
                                                
                                                
@@ -1753,7 +1754,7 @@
                                                 <div class="col-md-6 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Inventory Account</label>
-                                                           <select name="invacc" class="form-control" id="invacc"
+                                                           <select name="invacc" class="form-control" 
                                                               style="background-color: #2a4964; color: white;"
                                                               >
                                                            <option selected disabled value="" >Choose...</option>
@@ -1761,14 +1762,24 @@
                                                        
                                                 </select>
                                                 </div>
-                                                <div class="col-md-6 mt-3">
+                                                <div class="col-md-3 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Stock on hand</label>
-                                                           <input type="number" name="stock" class="form-control" id="stock"
-                                                           style="width:540px;background-color: #2a4964; color: white;"
+                                                           <input type="number" name="stock" class="form-control"
+                                                           style="background-color: #2a4964; color: white;"
                                                            value="0"
                                                            >
                                                 </div>
+                                                <!-- reshna added -->
+                                                <div class="col-md-3 mt-3">
+                                                    <label for="validationCustom01"
+                                                           style="color: white;">Stock Rate per Unit</label>
+                                                           <input type="number" name="stock_rate" id="stock_rate" class="form-control"
+                                                           style="background-color: #2a4964; color: white;"
+                                                           value="0"
+                                                           >
+                                                </div>
+                                                <!-- end -->
                                             </div>
                                            
   
@@ -1820,7 +1831,7 @@
                         </div>
                     </div>
                 </form>
-              </div>
+                  </div>
           </div>
       </div>
   </div> 
@@ -2697,7 +2708,7 @@ $(document).ready(function() {
 $(document).ready(function () {
   
   var bc = document.getElementById("plosur").value;
-  var compstate = document.getElementById("cmpstate").value;
+  var compstate = document.getElementById("plosu").value;
   if (bc == compstate ) {
       document.getElementById('cgst1').style.display = 'flex';
       document.getElementById('sgst1').style.display = 'flex';
@@ -2842,12 +2853,7 @@ $(document).ready(function(){
         });
            
         
-            function ShowHideDiv(track) {
-                var inventorytrack = document.getElementById("inventorytrack");
-    
-                inventorytrack.style.display = track.checked ? "flex" : "none";
-    
-            }
+          
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
@@ -3107,7 +3113,7 @@ $(document).ready(function(){
         function test(){
                      
             var bc = $("#plosur").val();
-            var compstate = $("#cmpstate").val();
+            var compstate = $("#plosu").val();
             d=0
             if (bc == compstate  ) {
                 gst = taxamount/2
@@ -3116,7 +3122,7 @@ $(document).ready(function(){
                 $('#igst').val(parseFloat(d.toFixed(2)));
             }
                 
-            if (bc != "{{ cmp1.state }}"  ) {
+            if (bc != compstate  ) {
                 $('#igst').val(taxamount.toFixed(2));
                 $('#cgst').val(d.toFixed(2));
                 $('#sgst').val(d.toFixed(2));
@@ -3154,9 +3160,9 @@ $(document).ready(function(){
                 $(".seltax").addClass('d-none');
 
                 console.log($("#plosur").val());
-                console.log($("#cmpstate").val());
+                console.log($("#plosu").val());
 
-                if($("#plosur").val() == $("#cmpstate").val()){
+                if($("#plosur").val() == $("#plosu").val()){
                     console.log("yes");
                     $(".inter_tax").removeClass('d-flex');
                     $(".inter_tax").addClass('d-none');
@@ -3175,32 +3181,64 @@ $(document).ready(function(){
                 }
 
             });
-            $(document).on('change','#plosur',function()   {
-                $(".seltax").removeClass('d-none');
-                $(".seltax").addClass('d-flex');
-                $(".intra_tax").removeClass('d-flex');
-                $(".intra_tax").addClass('d-none');
-                $(".inter_tax").removeClass('d-flex');
-                $(".inter_tax").addClass('d-none');
-                var bc = document.getElementById("plosur").value;
-                var compstate = document.getElementById("cmpstate").value;
-                if (bc == compstate ) {
-                    document.getElementById('cgst1').style.display = 'flex';
-                    document.getElementById('sgst1').style.display = 'flex';
-                    document.getElementById('igst1').style.display = 'none'; 
+            $(document).on('change', '#plosur', function () {
+    $(".seltax").removeClass('d-none');
+    $(".seltax").addClass('d-flex');
+    $(".intra_tax").removeClass('d-flex');
+    $(".intra_tax").addClass('d-none');
+    $(".inter_tax").removeClass('d-flex');
+    $(".inter_tax").addClass('d-none');
+    var bc = document.getElementById("plosur").value;
+    var compstate = document.getElementById("plosu").value;
+    if (bc == compstate) {
+        document.getElementById('cgst1').style.display = 'flex';
+        document.getElementById('sgst1').style.display = 'flex';
+        document.getElementById('igst1').style.display = 'none';
+    } else {
+        document.getElementById('cgst1').style.display = 'none';
+        document.getElementById('sgst1').style.display = 'none';
+        document.getElementById('igst1').style.display = 'flex'; // Updated this line
+    }
+});
 
-                } else {
-                    document.getElementById('cgst1').style.display = 'none';
-                    document.getElementById('sgst1').style.display = 'none';
-                    document.getElementById('igst1').style.display = 'flex';
+$(document).on('change', '#plosu', function () {
+    $(".seltax").removeClass('d-none');
+    $(".seltax").addClass('d-flex');
+    $(".intra_tax").removeClass('d-flex');
+    $(".intra_tax").addClass('d-none');
+    $(".inter_tax").removeClass('d-flex');
+    $(".inter_tax").addClass('d-none');
+    var bc = document.getElementById("plosur").value;
+    var compstate = document.getElementById("plosu").value;
+    if (bc == compstate) {
+        document.getElementById('cgst1').style.display = 'flex';
+        document.getElementById('sgst1').style.display = 'flex';
+        document.getElementById('igst1').style.display = 'none';
+    } else {
+        document.getElementById('cgst1').style.display = 'none';
+        document.getElementById('sgst1').style.display = 'none';
+        document.getElementById('igst1').style.display = 'flex'; // Updated this line
+    }
+});
 
-                }
-                    
-            });
 
     </script>
 
    
+<script type="text/javascript">
+    function ShowHideDivi(inclusive) {
+        var inter = document.getElementById("intrastateFiled");
+
+        inter.style.display = inclusive.checked ? "block" : "none";
+
+    }
+    function ShowHideDiv(track) {
+                var inventorytrack = document.getElementById("inventorytrack");
+    
+                inventorytrack.style.display = track.checked ? "flex" : "none";
+    
+            }
+</script>
 
    
     

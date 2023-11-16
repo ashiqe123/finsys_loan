@@ -45,7 +45,7 @@
                             <div class="col-md-4 mt-2">
                                 <label for="validationCustom01">Select Vendor</label>
                                 <div class="d-flex">
-                                    <select name="vendor_name" id="vendor_det" class="custom-select">
+                                    <select name="vendor_name" id="vendor_det" class="custom-select" required>
                                         <option selected disabled>Select Vendor</option>
                                         {% for v in vndr %}
                                         <option value="{{v.vendorid}} {{ v.firstname }} {{ v.lastname }}">{{ v.title }} {{ v.firstname }} {{ v.lastname }}</option>
@@ -337,7 +337,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="col-form-label">Payment Type</label>
-                                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;">
+                                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
                                     <option value="" selected hidden>Select Payment Method</option>
                                     <option value="cash">Cash</option>
                                     <option value="cheque">Cheque</option>
@@ -422,22 +422,25 @@
                                       <input hidden value="{{cmp1.state}}" id="cmpstate">
                                       <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
                                       <select name='tax1[]' id="tax11" class="form-control tax intra_tax d-none">
-                                          <option selected disabled >Select GST</option>
-                                          <option value=28 >28.0% GST(28%)</option>
-                                          <option value=18 >18.0% GST(18%)</option>
-                                          <option value=12  >12.0% GST(12%)</option>
-                                            <option value=5  >05.0% GST(05%)</option>
-                                          <option value=3  >03.0% GST(03%)</option>
-                                            <option value=0  >0.0% GST(0%)</option>
+
+                                        <option selected disabled >Select GST</option>
+                                        <option value=28 >28.0% GST(28%)</option>
+                                        <option value=18 >18.0% GST(18%)</option>
+                                        <option value=12  >12.0% GST(12%)</option>
+                                          <option value=5  >05.0% GST(05%)</option>
+                                        <option value=3  >03.0% GST(03%)</option>
+                                          <option value=0  >0.0% GST(0%)</option>
+                                       
                                       </select>
                                       <select name='tax2[]' id="tax21" class="form-control tax inter_tax d-none">
-                                          <option selected disabled >Select IGST</option>
-                                          <option value=28 >28.0% IGST(28%)</option>
-                                          <option value=18 >18.0% IGST(18%)</option>
-                                          <option value=12  >12.0% IGST(12%)</option>
-                                            <option value=5  >05.0% IGST(05%)</option>
-                                          <option value=3  >03.0% IGST(03%)</option>
-                                            <option value=0  >0.0% IGST(0%)</option>
+                                       
+                                        <option selected disabled >Select IGST</option>
+                                        <option value=28 >28.0% IGST(28%)</option>
+                                        <option value=18 >18.0% IGST(18%)</option>
+                                        <option value=12  >12.0% IGST(12%)</option>
+                                          <option value=5  >05.0% IGST(05%)</option>
+                                        <option value=3  >03.0% IGST(03%)</option>
+                                          <option value=0  >0.0% IGST(0%)</option>
                                       </select>
                                                           
                                     </td>
@@ -2324,7 +2327,7 @@ $(document).on("click", "#customerSave", function(){
                                 document.getElementById('gstnodiv').style.display = 'none';
                                 document.getElementById('gstn').value = '';
                             }
-                            var compstate = document.getElementById("cmpstate").value;
+                            var compstate = document.getElementById("plosur").value;
                             if (data.shipstate == compstate ) {
                                 document.getElementById('cgst1').style.display = 'flex';
                                 document.getElementById('sgst1').style.display = 'flex';
@@ -2588,7 +2591,7 @@ $(document).ready(function() {
 
 
 var bc = document.getElementById("plosur").value;
-var compstate = document.getElementById("cmpstate").value;
+var compstate = document.getElementById("plosu").value;
 if (bc == compstate ) {
     document.getElementById('cgst1').style.display = 'flex';
     document.getElementById('sgst1').style.display = 'flex';
@@ -2905,7 +2908,7 @@ $(document).ready(function(){
                     console.log(parseFloat(dis))
                     console.log(typeof(parseFloat(dis)))
                     var bc = $("#plosur").val();
-                    var compstate = $("#cmpstate").val();
+                    var compstate = $("#plosu").val();
                     if(bc==compstate){
                         tax = $(this).find('.intra_tax').val();
                     }
@@ -2944,7 +2947,7 @@ $(document).ready(function(){
         function test(){
                      
             var bc = $("#plosur").val();
-            var compstate = $("#cmpstate").val();
+            var compstate = $("#plosu").val();
             d=0
             if (bc == compstate  ) {
                 gst = taxamount/2
@@ -2953,7 +2956,7 @@ $(document).ready(function(){
                 $('#igst').val(parseFloat(d.toFixed(2)));
             }
                 
-            if (bc != "{{ cmp1.state }}"  ) {
+            if (bc != compstate  ) {
                 $('#igst').val(taxamount.toFixed(2));
                 $('#cgst').val(d.toFixed(2));
                 $('#sgst').val(d.toFixed(2));
@@ -2967,6 +2970,7 @@ $(document).ready(function(){
             var sh = $("#ship").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            
         });
 
         // $(document).on("change", "#adj", function(){
@@ -2981,6 +2985,7 @@ $(document).ready(function(){
             var ad=$("#adj").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
+            
         });
 
         $(document).on("click",".seltax",function(){
@@ -2991,7 +2996,7 @@ $(document).ready(function(){
                 console.log($("#plosur").val());
                 console.log($("#cmpstate").val());
 
-                if($("#plosur").val() == $("#cmpstate").val()){
+                if($("#plosur").val() == $("#plosu").val()){
                     console.log("yes");
                     $(".inter_tax").removeClass('d-flex');
                     $(".inter_tax").addClass('d-none');
@@ -3018,7 +3023,7 @@ $(document).ready(function(){
                 $(".inter_tax").removeClass('d-flex');
                 $(".inter_tax").addClass('d-none');
                 var bc = document.getElementById("plosur").value;
-                var compstate = document.getElementById("cmpstate").value;
+                var compstate = document.getElementById("plosu").value;
                 if (bc == compstate ) {
                     document.getElementById('cgst1').style.display = 'flex';
                     document.getElementById('sgst1').style.display = 'flex';
