@@ -536,7 +536,7 @@
                                       <div class="row container-fluid p-2 m-0">
                                           <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                           <div class="col-sm-1 mt-2">:</div>
-                                          <div class="col-sm-7 mt-2"><input type="number" value="{{rbill.adjustment}}"  step=0 min=0 name='adjustment' id="adj" placeholder='0.00' 
+                                          <div class="col-sm-7 mt-2"><input type="number" value="{{rbill.adjustment}}"  name='adjustment' id="adj" placeholder='0' 
                                               class="form-control"/>
                                           </div>
                                           <div class="col-sm-4 m-0 p-0"></div>
@@ -1944,15 +1944,17 @@
     // Function to calculate the balance due
     function calculateBalance() {
         const grandTotal = parseFloat(grandTotalElement.value) || 0;
-        const paidAmount = parseFloat(paidAmountElement.value) || 0;
+        const paidAmount = parseFloat(paidAmountElement.value) ;
         const isPaid = paidCheckbox.checked;
 
         if (isPaid) {
             const balanceDue = grandTotal - paidAmount;
             balanceDueElement.value = balanceDue.toFixed(2); // Update the balance due
+            paidAmountElement.value = paidAmount.toFixed()
         } else {
             // If not paid, balance due should be the same as the grand total
             balanceDueElement.value = grandTotal.toFixed(2);
+            paidAmountElement.value = paidAmount.toFixed()
         }
     }
 
@@ -2003,8 +2005,8 @@ paidAmountInput.addEventListener("input", function () {
 // Function to calculate and update the balance due
 function calculateBalanceDue() {
     // Parse the values of grand total and paid amount as numbers
-    const grandTotal = parseFloat(grandTotalInput.value) || 0;
-    const paidAmount = parseFloat(paidAmountInput.value) || 0;
+    const grandTotal = parseFloat(grandTotalInput.value) ;
+    const paidAmount = parseFloat(paidAmountInput.value) ;
 
     // Calculate the balance due
     const balanceDue = grandTotal - paidAmount;
@@ -2017,7 +2019,8 @@ function calculateBalanceDue() {
         alert("Paid amount cannot exceed the grand total.");
     
         paidCheckbox.checked = true; // Check the checkbox
-        paidAmountInput.value = 0;
+        paidAmountInput.value = '{{rbill.paid_amount}}';
+        
     }
 }
 
@@ -2903,6 +2906,7 @@ $(document).ready(function(){
                 inter_st : $("#inter_st").val(),
                 invacc : $("#invacc").val(),
                 stock : $("#stock").val(),
+                stock_rate : $("#stock_rate").val(),
                 // itmdate : $("#date3").val(),
                 status : status1,
                 csrfmiddlewaretoken: '{{ csrf_token }}',

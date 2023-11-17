@@ -21,7 +21,10 @@
             </div>
             
         </div>
-        <div class="col-md-3 mt-4" style="margin-left: 1000px;">
+        <div class="col-md-4 mt-5" style="margin-left: 1000px;">
+            <!-- <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
+                                    data-toggle="dropdown">Filter by
+                            </button> -->
             <button type="button" class="btn btn-outline-info  text-grey"><a href="{% url 'cash_statement' %}">STATEMENT</a>
             </button>
             <button type="button" class="btn btn-outline-info text-grey" >
@@ -58,9 +61,19 @@
                            
                     
                                 </div>
+                                
                             </div>
+                            
                           </div>
-                          <div class="col-md-2"></div>
+                          <div class="col-md-4">
+                            <form method='POST' id="dateFilterForm">
+                                {% csrf_token %}
+                                <input type="date" id="start_date" name='sdate' value="{{ today_date }}">
+                                <span class="ml-2 mr-2 mt-2"> TO </span>
+                                <input type="date" id="end_date" name='edate' value="{{ today_date }}">
+                                <input type="button" value='View' onclick="filterByDate()">
+                            </form>
+                        </div>
                           <div class="col-md-2">
                           <div class="dropdown">
                             <!-- <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
@@ -158,7 +171,7 @@
                            
                             <!-- <td>{{a.cash_description}}</td> -->
                             {% if a.cash_adjust == 'ADD CASH' %}
-                            <td>+ {{a.cash_cash}}</td>
+                            <td> {{a.cash_cash}}</td>
                             {% elif a.cash_adjust == 'REDUCE CASH' %}
                             <td>-{{a.cash_cash}}</td>
                             {% endif %}
@@ -238,13 +251,13 @@
                         
                             
                      {% endfor %}
-                     {% for a in pordr %}  
+                     <!-- {% for a in pordr %}  
                      <tr>
                         
                         <td>{{a.date}}</td>
                         <td>PURCHASE ORDER</td>
                         <td>{{a.vendor_name}}</td>
-                        <td>{{a.grand_total}}</td>
+                        <td>-{{a.grand_total}}</td>
                         <td>
                             <div class="dropdown">
                                 <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -256,8 +269,8 @@
                         </td>
                         
                     </tr>
-                    {% endfor %} 
-                    {% for a in sordr %}
+                    {% endfor %}  -->
+                    <!-- {% for a in sordr %}
                     <tr>
                         
                         <td>{{a.saledate}}</td>
@@ -275,7 +288,7 @@
                         </td>
                          
                     </tr>
-                    {% endfor %}
+                    {% endfor %} -->
                     <!-- <tr>
                         {% for a in empln %}
                         <td>{{a.LoanDate}}</td>
@@ -293,7 +306,7 @@
                         </td>
                         {% endfor %} 
                     </tr> -->
-                    {% for a in payrec %}
+                    <!-- {% for a in payrec %}
                     <tr>
                         
                         <td>{{a.paymdate}}</td>
@@ -311,14 +324,14 @@
                         </td>
                         
                     </tr>
-                    {% endfor %}
+                    {% endfor %} -->
                     {% for a in bill %}
                     <tr>
                         
                         <td>{{a.date}}</td>
                         <td>BILL</td>
                         <td>{{a.vendor_name}}</td>
-                        <td>{{a.balance_amount}}</td>
+                        <td>-{{a.paid_amount}}</td>
                         <td>
                             <div class="dropdown">
                                 <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -337,7 +350,7 @@
                         <td>{{a.debitdate}}</td>
                         <td>DEBIT NOTE</td>
                         <td>{{a.vendor}}</td>
-                        <td>{{a.balance_amount}}</td>
+                        <td>{{a.grandtotal}}</td>
                         <td>
                             <div class="dropdown">
                                 <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -356,7 +369,7 @@
                         <td>{{a.start_date}}</td>
                         <td>RECURRING BILL</td>
                         <td>{{a.vendor_name}}</td>
-                        <td>{{a.balance}}</td>
+                        <td>-{{a.balance}}</td>
                         <td>
                             <div class="dropdown">
                                 <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -497,6 +510,31 @@
             row.style.display = foundMatch ? 'table-row' : 'none';
         });
     });
+</script>
+<script>
+    function filterByDate() {
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        const tableRows = document.querySelectorAll('#tabletobe tbody tr');
+
+        tableRows.forEach(row => {
+            const dateCell = row.querySelector('td:first-child'); // Assuming date is the first column
+
+            if (dateCell) {
+                const rowDate = dateCell.textContent;
+                row.style.display = isDateInRange(rowDate, startDate, endDate) ? 'table-row' : 'none';
+            }
+        });
+    }
+
+    function isDateInRange(date, startDate, endDate) {
+        const currentDate = new Date(date);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        return currentDate >= start && currentDate <= end;
+    }
 </script>
 
 {% endblock %}
