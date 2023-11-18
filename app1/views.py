@@ -43468,13 +43468,6 @@ def listemployee_loan(request):
     return JsonResponse({'email': email,'employeeno': employeeno,'joindate':joindate,'amount': amount},safe=False)
 
 
-def newemployeeloan(request):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    loan_d = loan_duration.objects.all()
-    employee=payrollemployee.objects.filter(cid_id=request.session["uid"])
-    bank = bankings_G.objects.filter(cid=cmp1)
-    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d,'bank':bank})
-
 def addemployeeloan(request):
     cmpy = company.objects.get(id=request.session["uid"])
     if request.method == 'POST':
@@ -43639,8 +43632,10 @@ def AddEmployeeInloanPage(request):
                  emppayroll.file=file
 
             emppayroll.save()
+            print('done')
             return redirect('newemployeeloan')
     except:    
+        print('sorry')
         return redirect('newemployeeloan')
 
 def employee_details(request,id):
@@ -45129,197 +45124,6 @@ def createrecurringbill(request):
         return render(request,'app1/recurringbills_add.html',{'cmp1': cmp1})
     return redirect('/')
 
-@login_required(login_url='regcomp')
-def createcustomer_rbill(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-    
-        if request.method == "POST":
-            firstname = request.POST['firstname']
-            lastname = request.POST['lastname']
-            if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
-                messages.info(request,
-                    f"Customer {firstname} {lastname} already exists. Please provide a different name.")
-                return redirect('gocustomers')
-            else:
-                toda = date.today()
-                tod = toda.strftime("%Y-%m-%d")
-                customer1 = customer(title=request.POST['title'], firstname=request.POST['firstname'],
-                                    lastname=request.POST['lastname'], company=request.POST['company'],
-                                    location=request.POST['location'], gsttype=request.POST['gsttype'],
-                                    gstin=request.POST['gstin'], panno=request.POST['panno'],
-                                    email=request.POST['email'],
-                                    website=request.POST['website'], mobile=request.POST['mobile'],
-                                    street=request.POST['street'], city=request.POST['city'],
-                                    state=request.POST['state'],
-                                    pincode=request.POST['pincode'], country=request.POST['country'],
-                                    shipstreet=request.POST['shipstreet'], shipcity=request.POST['shipcity'],
-                                    shipstate=request.POST['shipstate'],
-                                    shippincode=request.POST['shippincode'], shipcountry=request.POST['shipcountry'],
-                                    cid=cmp1,
-
-                                    #  opening_balance = request.POST['openbalance'], 
-                            )
-
-                customer1.save()
-                
-                temp=request.POST['openbalance']
-                if temp != "":
-                    customer1.opening_balance = request.POST['openbalance'] 
-                    customer1.opening_balance_due = request.POST['openbalance'] 
-                    customer1.date= tod
-                    customer1.save()
-
-                if customer1.opening_balance != "":
-                    add_cust_stat=cust_statment(
-                    customer = customer1.firstname +" "+ customer1.lastname,
-                    cid  = cmp1,
-                    Date = tod,
-                    Transactions="Customer Opening Balance",
-                    Amount= customer1.opening_balance,
-                )
-                add_cust_stat.save()
-
-                return redirect('addrecurringbill')
-            customers = customer.objects.filter(cid=cmp1).all()
-            context = {'customers': customers, 'cmp1': cmp1}
-        return render(request, 'app1/recurringbills_add.html', context)
-    return redirect('/')
-
-def cust_dropdown_rbill(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        comp = company.objects.get(id=request.session["uid"])
-        options = {}
-        option_objects = customer.objects.filter(cid = comp)
-        for option in option_objects:
-            options[option.customerid] = [option.customerid , option.title, option.firstname, option.lastname]
-
-        return JsonResponse(options)
-
-@login_required(login_url='regcomp')
-def get_customerdet(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        comp = company.objects.get(id=request.session["uid"])
-
-        customer_id = request.POST.get('id').split(" ")[0]
-     
-        cust = customer.objects.get(customerid=customer_id,cid = comp)
-
-        email = cust.email
-        street = cust.street
-        city = cust.city
-        state = cust.state
-        pincode = cust.pincode
-        country = cust.country
-        gsttype = cust.gsttype
-        gstno = cust.gstin
-        shipstate = cust.shipstate
-        print(gstno)
-        return JsonResponse({'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstno' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
-
-@login_required(login_url='regcomp')
-def createvendor_rbill(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-        if request.method=='POST':
-            title=request.POST['title']
-            first_name=request.POST['firstname']
-            last_name=request.POST['lastname']
-            cmpnm=request.POST['company_name']
-            email=request.POST['email']
-            website=request.POST['website']
-            mobile=request.POST['mobile']
-            gsttype=request.POST['gsttype']
-            gstin=request.POST['gstin']
-            panno=request.POST['panno']
-            supply=request.POST['sourceofsupply']
-            currency=request.POST['currency']
-            balance=request.POST['openingbalance']
-            due=request.POST['openingbalance']
-            # date=request.POST['date']
-            payment=request.POST['paymentterms']
-            street=request.POST['street']
-            city=request.POST['city']
-            state=request.POST['state']
-            pincode=request.POST['pincode']
-            country=request.POST['country']
-            shipstreet=request.POST['shipstreet']
-            shipcity=request.POST['shipcity']
-            shipstate=request.POST['shipstate']
-            shippincode=request.POST['shippincode']
-            shipcountry=request.POST['shipcountry']
-            
-            vndr = vendor(title=title, firstname=first_name, lastname=last_name, companyname= cmpnm, gsttype=gsttype, gstin=gstin, 
-                        panno=panno, email=email,sourceofsupply=supply,currency=currency, website=website, mobile=mobile, 
-                        openingbalance=balance,opblnc_due=due, street=street, city=city, state=state, paymentterms=payment,
-                        pincode=pincode, country=country, shipstreet=shipstreet, shipcity=shipcity, shipstate=shipstate,
-                        shippincode=shippincode, shipcountry=shipcountry,cid=cmp1)
-            vndr.save()
-            print('Vendor created succe fully ')
-            return HttpResponse({"message": "success"})
-
-def vendor_dropdown_rbill(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        comp = company.objects.get(id=request.session["uid"])
-        options = {}
-        option_objects = vendor.objects.filter(cid = comp)
-        for option in option_objects:
-            # options[option.vendorid] = option.firstname+ " " + option.lastname
-            options[option.vendorid] = [option.vendorid , option.title, option.firstname, option.lastname]
-
-        return JsonResponse(options)
-
-
-
-
-@login_required(login_url='regcomp')
-def get_vendordet(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        comp = company.objects.get(id=request.session["uid"])
-
-        vendor_id = request.POST.get('id').split(" ")[0]
-        print(vendor_id)
-        # Query the vendor using the correct vendor_id
-        vdr = vendor.objects.get(vendorid=vendor_id,cid = comp)
-
-        email = vdr.email
-        street = vdr.street
-        city = vdr.city
-        state = vdr.state
-        pincode = vdr.pincode
-        country = vdr.country
-        gsttype = vdr.gsttype
-        gstno = vdr.gstin
-        shipstate = vdr.shipstate
-        print(shipstate)
-
-        return JsonResponse({'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstno' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
-
-
 
 @login_required(login_url='regcomp')
 def credit_period_rbill(request):
@@ -45431,18 +45235,6 @@ def createitem_rbill(request):
     #     return render(request,'app1/recurringbills_add.html')
     # return redirect('/') 
             return HttpResponse({"message": "success"})
-
-@login_required(login_url='regcomp')
-def item_dropdown_rbill(request):
-
-    company1 = company.objects.get(id=request.session["uid"])
-
-    options = {}
-    option_objects = itemtable.objects.filter(cid=request.session["uid"])
-    for option in option_objects:
-        options[option.id] = [option.name]
-
-    return JsonResponse(options)
 
 def itemdata_rbill(request):
     if 'uid' in request.session:
@@ -50993,5 +50785,220 @@ def check_user_loan(request):
     return JsonResponse(data)
 
 
+#00000000000000000000000000000000000000
 
 
+@login_required(login_url='regcomp')
+def createcustomer_rbill(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+    
+        if request.method == "POST":
+            firstname = request.POST['firstname']
+            lastname = request.POST['lastname']
+            if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
+                messages.info(request,
+                    f"Customer {firstname} {lastname} already exists. Please provide a different name.")
+                return redirect('gocustomers')
+            else:
+                toda = date.today()
+                tod = toda.strftime("%Y-%m-%d") 
+                customer1 = customer(title=request.POST['title'], firstname=request.POST['firstname'],
+                                    lastname=request.POST['lastname'], company=request.POST['company'],
+                                    location=request.POST['location'], gsttype=request.POST['gsttype'],
+                                    gstin=request.POST['gstin'], panno=request.POST['panno'],
+                                    email=request.POST['email'],
+                                    website=request.POST['website'], mobile=request.POST['mobile'],
+                                    street=request.POST['street'], city=request.POST['city'],
+                                    state=request.POST['state'],
+                                    pincode=request.POST['pincode'], country=request.POST['country'],
+                                    shipstreet=request.POST['shipstreet'], shipcity=request.POST['shipcity'],
+                                    shipstate=request.POST['shipstate'],
+                                    shippincode=request.POST['shippincode'], shipcountry=request.POST['shipcountry'],
+                                    cid=cmp1,placesupply = request.POST['placeof_supply']
+
+                                    #  opening_balance = request.POST['openbalance'], 
+                            )
+
+                customer1.save()
+                
+                temp=request.POST['openbalance']
+                if temp != "":
+                    customer1.opening_balance = request.POST['openbalance'] 
+                    customer1.opening_balance_due = request.POST['openbalance'] 
+                    customer1.date= tod
+                    customer1.save()
+
+                if customer1.opening_balance != "":
+                    add_cust_stat=cust_statment(
+                    customer = customer1.firstname +" "+ customer1.lastname,
+                    cid  = cmp1,
+                    Date = tod,
+                    Transactions="Customer Opening Balance",
+                    Amount= customer1.opening_balance,
+                )
+                add_cust_stat.save()
+
+                return redirect('addrecurringbill')
+            customers = customer.objects.filter(cid=cmp1).all()
+            context = {'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/recurringbills_add.html', context)
+    return redirect('/')
+
+def cust_dropdown_rbill(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        comp = company.objects.get(id=request.session["uid"])
+        options = {}
+        option_objects = customer.objects.filter(cid = comp)
+        for option in option_objects:
+            options[option.customerid] = [option.customerid , option.title, option.firstname, option.lastname]
+
+        return JsonResponse(options)
+
+@login_required(login_url='regcomp')
+def get_customerdet(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        comp = company.objects.get(id=request.session["uid"])
+
+        customer_id = request.POST.get('id').split(" ")[0]
+     
+        cust = customer.objects.get(customerid=customer_id,cid = comp)
+
+        email = cust.email
+        street = cust.street
+        city = cust.city
+        state = cust.state
+        pincode = cust.pincode
+        country = cust.country
+        gsttype = cust.gsttype
+        gstno = cust.gstin
+        shipstate = cust.shipstate
+        placesupply = cust.placesupply
+        print(gstno)
+        return JsonResponse({'placesupply':placesupply,'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstno' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
+
+@login_required(login_url='regcomp')
+def createvendor_rbill(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        if request.method=='POST':
+            title=request.POST['title']
+            first_name=request.POST['firstname']
+            last_name=request.POST['lastname']
+            cmpnm=request.POST['company_name']
+            email=request.POST['email']
+            website=request.POST['website']
+            mobile=request.POST['mobile']
+            gsttype=request.POST['gsttype']
+            gstin=request.POST['gstin']
+            panno=request.POST['panno']
+            supply=request.POST['sourceofsupply']
+            currency=request.POST['currency']
+            balance=request.POST['openingbalance']
+            due=request.POST['openingbalance']
+            # date=request.POST['date']
+            payment=request.POST['paymentterms']
+            street=request.POST['street']
+            city=request.POST['city']
+            state=request.POST['state']
+            pincode=request.POST['pincode']
+            country=request.POST['country']
+            shipstreet=request.POST['shipstreet']
+            shipcity=request.POST['shipcity']
+            shipstate=request.POST['shipstate']
+            shippincode=request.POST['shippincode']
+            shipcountry=request.POST['shipcountry']
+            
+            vndr = vendor(title=title, firstname=first_name, lastname=last_name, companyname= cmpnm, gsttype=gsttype, gstin=gstin, 
+                        panno=panno, email=email,sourceofsupply=supply,currency=currency, website=website, mobile=mobile, 
+                        openingbalance=balance,opblnc_due=due, street=street, city=city, state=state, paymentterms=payment,
+                        pincode=pincode, country=country, shipstreet=shipstreet, shipcity=shipcity, shipstate=shipstate,
+                        shippincode=shippincode, shipcountry=shipcountry,cid=cmp1)
+            vndr.save()
+            print('Vendor created succe fully ')
+            return HttpResponse({"message": "success"})
+
+def vendor_dropdown_rbill(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        comp = company.objects.get(id=request.session["uid"])
+        options = {}
+        option_objects = vendor.objects.filter(cid = comp)
+        for option in option_objects:
+            # options[option.vendorid] = option.firstname+ " " + option.lastname
+            options[option.vendorid] = [option.vendorid , option.title, option.firstname, option.lastname]
+
+        return JsonResponse(options)
+
+
+
+
+@login_required(login_url='regcomp')
+def get_vendordet(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        comp = company.objects.get(id=request.session["uid"])
+
+        vendor_id = request.POST.get('id').split(" ")[0]
+        print(vendor_id)
+        # Query the vendor using the correct vendor_id
+        vdr = vendor.objects.get(vendorid=vendor_id,cid = comp)
+
+        email = vdr.email
+        street = vdr.street
+        city = vdr.city
+        state = vdr.state
+        pincode = vdr.pincode
+        country = vdr.country
+        gsttype = vdr.gsttype
+        gstno = vdr.gstin
+        shipstate = vdr.shipstate
+        sourceofsupply = vdr.sourceofsupply
+        print(shipstate)
+
+        return JsonResponse({'sourceofsupply':sourceofsupply,'country':country,'city':city,'street':street,'pincode':pincode,'state':state,'email' : email, 'gstno' : gstno, 'gsttype': gsttype,'shipstate':shipstate,}, safe=False)
+
+
+
+@login_required(login_url='regcomp')
+def item_dropdown_rbill(request):
+
+    company1 = company.objects.get(id=request.session["uid"])
+
+    options = {}
+    option_objects = itemtable.objects.filter(cid=company1)
+    for option in option_objects:
+        options[option.id] = [option.name]
+
+    return JsonResponse(options)
+
+
+
+def newemployeeloan(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan_d = loan_duration.objects.all()
+    employee=payrollemployee.objects.filter(cid=cmp1)
+    bank = bankings_G.objects.filter(cid=cmp1)
+    return render(request,'app1/newemployeeloanloan.html',{'employee':employee,'cmp1':cmp1,'loan_d':loan_d,'bank':bank})
