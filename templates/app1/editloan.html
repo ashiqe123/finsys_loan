@@ -79,8 +79,8 @@
                         <input type="date" class="form-control" value="{{loan.LoanDate}}" id="loandate" name="loandate" required ><br>
                     </div>
                     <div class="col-md-5 ml-4">
-                        <label class="col-form-label">Loan Amound</label>
-                        <input type="text" class="form-control" id="Loan_Amound" name="Loan_Amound"
+                        <label class="col-form-label">Loan Amount</label>
+                        <input type="text" class="form-control" id="Loan_Amound" name="Loan_Amound" onchange="calculateExpiryDate_by_loan()"
                             placeholder="Loan Amound" value="{{ loan.LoanAmount }}"><br>
                     </div>
                     <div class="col-md-5 ml-4">
@@ -1547,6 +1547,36 @@
     });
     
     </script>
+
+    <!-- Add these script tags in the head or at the end of the body -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to calculate and update the expiry date
+        function calculateExpiryDate_by_loan() {
+            // Get the selected loan date and loan duration
+            var loanDate = new Date($('#loandate').val());
+            var loanDuration = parseInt($('#loan_duration').val());
+
+            // Check if the loan date is valid and the loan duration is a number
+            if (!isNaN(loanDate.getTime()) && !isNaN(loanDuration)) {
+                // Calculate the expiry date based on the loan date and duration
+                var expiryDate = new Date(loanDate.getTime());
+                expiryDate.setMonth(expiryDate.getMonth() + loanDuration);
+
+                // Update the expiry date field with the calculated date
+                $('#experydat').val(expiryDate.toISOString().slice(0, 10));
+            }
+        }
+
+        // Attach the calculateExpiryDate function to the loan date and loan duration change events
+        $('#loandate, #loan_duration').change(calculateExpiryDate_by_loan);
+
+        // Call calculateExpiryDate initially to set the initial expiry date
+        calculateExpiryDate_by_loan();
+    });
+</script>
+
     
     
 

@@ -27,11 +27,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-5 p-2">
-                                    <input class="form-control" type="number" name="remain_loan" value="{{remain}}" id="remain_loan" readonly>
+                                    <input class="form-control" type="number" name="remain_loan" value="{{remain}}" id="remain_loan" readonly required>
                                 </div>
                                 <div class="col-md-2 p-2"></div>
                                 <div class="col-md-5 p-2">
-                                    <input class="form-control" type="number" name="new" value="{{employ.amount}}" id="new" oninput="updateAmount()">
+                                    <input class="form-control" type="number" name="new" value="{{employ.amount}}" id="new" oninput="updateAmount()" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -45,11 +45,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-5 p-2">
-                                    <input class="form-control" type="number" name="amount" id="amount">
+                                    <input class="form-control" type="number" name="amount" id="amount" required>
                                 </div>
                                 <div class="col-md-2 p-2"></div>
                                 <div class="col-md-5 p-2">
-                                    <input class="form-control" type="date" value="{{employ.loan_trans_date}}" name="adjdate">
+                                    <input class="form-control" type="date" value="{{employ.loan_trans_date}}" name="adjdate" required>
                                 </div>
                             </div>
 

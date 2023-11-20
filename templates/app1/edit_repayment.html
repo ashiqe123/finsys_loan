@@ -63,8 +63,8 @@
     </div>
 
     <div class="row">
-        <div class="col-md-5 p-2"> <div class="row">
-            <div class="col-md-5">
+  
+            <div class="col-md-5 p-2">
                 <label class="col-form-label">Payment Type</label>
                 <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
                     <option value="{{employ.payment_method}}" selected hidden>{{employ.payment_method}}</option>
@@ -76,8 +76,7 @@
                     {% endfor %}
                   </select>
             </div>
-           
-        </div>  </div>
+    
         <div class="col-md-2"></div>
         <div class="col-md-5 p-2"><input class="form-control" autocomplete="off" type="number" name="total" id="total" readonly></div>
 

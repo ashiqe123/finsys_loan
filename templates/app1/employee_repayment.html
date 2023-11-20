@@ -53,7 +53,7 @@
     <div class="row">
         <div class="col-md-5 p-2"> <input class="form-control" type="text" name="interest" id="interest" value="0"></div>
         <div class="col-md-2"></div>
-        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control"></div>
+        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control" required></div>
     </div>
 
     <div class="row">
@@ -63,10 +63,10 @@
     </div>
 
     <div class="row">
-        <div class="col-md-5 p-2">
-            <div class="row">
-            <div class="col-md-6">
-                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;"required
+      
+           
+            <div class="col-md-5 p-2">
+                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;"required>
                     <option value="{{rbill.payment_method}}" selected hidden>{{rbill.payment_method}}</option>
                     <option value="cash">Cash</option>
                     <option value="cheque">Cheque</option>
@@ -77,7 +77,7 @@
                   </select>
             </div>
            
-        </div>  </div>
+       
         <div class="col-md-2"></div>
         <div class="col-md-5 p-2"><input class="form-control" autocomplete="off" type="number" name="total" id="total" readonly></div>
 
