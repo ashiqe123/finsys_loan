@@ -1180,7 +1180,6 @@
             document.getElementById('cuttingPercentage').style.display = 'block';
         }
         else{
-
             document.getElementById('Cutingamount').style.display = 'block';
             document.getElementById('cuttingPercentage').style.display = 'none';
         }
@@ -1199,15 +1198,19 @@
     //     }
     // });
     function show4(str) {
-  
         document.getElementById('Cutingamount').style.display = 'none';
         document.getElementById('cuttingPercentage').style.display = 'block';
+        clearValues(); // Clear values when switching to Percentage
     }
+
     function show3(sign) {
         document.getElementById('Cutingamount').style.display = 'block';
         document.getElementById('cuttingPercentage').style.display = 'none';
-        
-
+        clearValues(); // Clear values when switching to Amount
+    }
+    function clearValues() {
+        document.getElementById("cu").value = 0;
+        document.getElementById("cp").value = 0;
     }
     
     function convert(){
