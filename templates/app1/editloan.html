@@ -23,6 +23,7 @@
 <script>
 
 </script>
+
 <form action="{% url 'editloan_action' loan.id %}" method="post" class="needs-validation" enctype="multipart/form-data"
     novalidate>{% csrf_token %}
     <div class="page-content">
@@ -1159,6 +1160,7 @@
         }
 
     });
+    
     function show(str) {
         if (document.getElementById('Employees').value != 'Timebased') {
             $('#amount').prop('readonly', false);
